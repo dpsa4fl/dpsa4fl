@@ -75,8 +75,8 @@ pub struct RoundSettings
 #[derive(Clone)]
 pub struct CryptoConfig
 {
-    leaderHpkeConfig: HpkeConfig,
-    helperHpkeConfig: HpkeConfig,
+    leader_hpke_config: HpkeConfig,
+    helper_hpke_config: HpkeConfig,
 }
 
 //
@@ -148,8 +148,8 @@ async fn get_crypto_config(permanent: &ClientState_Permanent, task_id: TaskId, l
     let (l, h) = try_join!(f_leader, f_helper).await?;
 
     Ok(CryptoConfig {
-        leaderHpkeConfig: l,
-        helperHpkeConfig: h,
+        leader_hpke_config: l,
+        helper_hpke_config: h,
     })
 }
 
@@ -239,8 +239,8 @@ impl ClientState
             vdaf_client,
             RealClock::default(),
             &self.permanent.http_client,
-            self.round.config.crypto.leaderHpkeConfig.clone(),
-            self.round.config.crypto.helperHpkeConfig.clone(),
+            self.round.config.crypto.leader_hpke_config.clone(),
+            self.round.config.crypto.helper_hpke_config.clone(),
         );
 
         let () = client.upload(measurement).await?;
@@ -282,11 +282,6 @@ pub async fn api_submit(s: ClientStatePU, round_settings: RoundSettings, data: &
         },
     }
 }
-
-
-
-
-
 
 
 

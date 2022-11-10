@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-janus_client = { path = "../janus/client" }
-janus_core = { path = "../janus/core" }
-janus_messages = { path = "../janus/messages" }
+janus_client = { git = "https://github.com/dpsa-project/janus.git", branch = "fixedvec" }
+janus_core = { git = "https://github.com/dpsa-project/janus.git", branch = "fixedvec" }
+janus_messages = { git = "https://github.com/dpsa-project/janus.git", branch = "fixedvec" }
 prio = { version = "0.10.0", features = ["multithreaded"] }
 url = { version = "2.3.1" }
 anyhow = "1.0"

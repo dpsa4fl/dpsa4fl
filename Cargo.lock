@@ -1135,6 +1135,7 @@ checksum = "4217ad341ebadf8d8e724e264f13e593e0648f5b3e94b3896a5df283be015ecc"
 [[package]]
 name = "janus_client"
 version = "0.2.0"
+source = "git+https://github.com/dpsa-project/janus.git?branch=fixedvec#ef635d558ef8cdb7b12ccef4748bf53276fd1d2c"
 dependencies = [
  "backoff",
  "derivative",
@@ -1154,6 +1155,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.2.0"
+source = "git+https://github.com/dpsa-project/janus.git?branch=fixedvec#ef635d558ef8cdb7b12ccef4748bf53276fd1d2c"
 dependencies = [
  "backoff",
  "chrono",
@@ -1176,6 +1178,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.2.0"
+source = "git+https://github.com/dpsa-project/janus.git?branch=fixedvec#ef635d558ef8cdb7b12ccef4748bf53276fd1d2c"
 dependencies = [
  "anyhow",
  "base64",
