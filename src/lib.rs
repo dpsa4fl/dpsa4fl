@@ -1,4 +1,9 @@
 
+pub mod client;
+pub mod controller;
+pub mod core;
+
+use crate::core::{Locations, CommonState_Parametrization};
 
 use janus_client::{ClientParameters, aggregator_hpke_config, default_http_client, Client};
 use janus_core::{time::RealClock};
@@ -32,25 +37,6 @@ use fixed::{FixedI16, FixedI32, FixedI64};
 type Fx = FixedI32<U31>;
 type Measurement = Vec<Fx>;
 
-
-////////////////////////////////////////////////////
-// Parametrization
-
-#[derive(Clone)]
-pub struct Locations
-{
-    leader: Url,
-    helper: Url,
-    controller: Url, // the server that controls the learning process
-}
-
-impl Locations
-{
-    fn get_aggregator_endpoints(&self) -> Vec<Url>
-    {
-        vec![self.leader.clone(),self.helper.clone()]
-    }
-}
 
 
 
@@ -93,12 +79,6 @@ pub struct RoundConfig
 ////////////////////////////////////////////////////
 // State
 
-pub struct ClientState_Parametrization
-{
-    location: Locations,
-    gradient_len: usize,
-}
-
 pub struct ClientState_Permanent
 {
     http_client: reqwest::Client,
@@ -112,7 +92,7 @@ pub struct ClientState_Round
 
 pub struct ClientState
 {
-    parametrization: ClientState_Parametrization,
+    parametrization: CommonState_Parametrization,
     permanent: ClientState_Permanent,
     round: ClientState_Round,
 }
@@ -121,7 +101,7 @@ pub struct ClientState
 pub enum ClientStatePU
 {
     ValidState(ClientState),
-    Parametrization(ClientState_Parametrization)
+    Parametrization(CommonState_Parametrization)
 }
 
 
@@ -158,7 +138,7 @@ async fn get_crypto_config(permanent: &ClientState_Permanent, task_id: TaskId, l
 //
 impl ClientState
 {
-    async fn new(parametrization : ClientState_Parametrization, round_settings : RoundSettings) -> anyhow::Result<ClientState>
+    async fn new(parametrization : CommonState_Parametrization, round_settings : RoundSettings) -> anyhow::Result<ClientState>
     {
         let permanent = ClientState_Permanent
         {
@@ -256,7 +236,7 @@ impl ClientState
 //
 // Init
 //
-pub fn api_get_new_client_state(p: ClientState_Parametrization) -> ClientStatePU
+pub fn api__new_client_state(p: CommonState_Parametrization) -> ClientStatePU
 {
     ClientStatePU::Parametrization(p)
 }
@@ -264,7 +244,7 @@ pub fn api_get_new_client_state(p: ClientState_Parametrization) -> ClientStatePU
 //
 // Submitting
 //
-pub async fn api_submit(s: ClientStatePU, round_settings: RoundSettings, data: &Measurement) -> anyhow::Result<ClientStatePU>
+pub async fn api__submit(s: ClientStatePU, round_settings: RoundSettings, data: &Measurement) -> anyhow::Result<ClientStatePU>
 {
     match s
     {
