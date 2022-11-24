@@ -45,9 +45,9 @@ pub struct ControllerState_Round
 
 pub struct ControllerState
 {
-    parametrization: CommonState_Parametrization,
-    permanent: ControllerState_Permanent,
-    round: ControllerState_Round,
+    pub parametrization: CommonState_Parametrization,
+    pub permanent: ControllerState_Permanent,
+    pub round: ControllerState_Round,
 }
 
 ////////////////////////////////////////////////////
