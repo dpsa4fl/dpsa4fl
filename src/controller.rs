@@ -33,7 +33,7 @@ use crate::core::{CommonState_Parametrization, Locations};
 pub struct ControllerState_Permanent
 {
     // http_client: reqwest::Client,
-    janus_tasks_clients: Vec<JanusTasksClient>,
+    janus_tasks_client: JanusTasksClient,
 
 }
 
@@ -56,11 +56,14 @@ impl ControllerState
 {
     pub fn new(p: CommonState_Parametrization) -> Self
     {
-        let leader_client = JanusTasksClient::new(p.location.leader.clone());
-        let helper_client = JanusTasksClient::new(p.location.helper.clone());
+        let janus_tasks_client = JanusTasksClient::new(
+            p.location.leader.clone(),
+            p.location.helper.clone(),
+            p.gradient_len,
+        );
 
         let permanent = ControllerState_Permanent {
-            janus_tasks_clients: vec![leader_client, helper_client]
+            janus_tasks_client
         };
 
         let round = ControllerState_Round {};
@@ -84,12 +87,9 @@ pub fn api__new_controller_state(p: CommonState_Parametrization) -> ControllerSt
 }
 
 
-pub async fn api__create_session(s: &ControllerState, id: u16) -> Result<()>
+pub async fn api__create_session(s: &ControllerState) -> Result<()>
 {
-    for client in &s.permanent.janus_tasks_clients
-    {
-        client.create_session(id.into()).await?
-    }
+    s.permanent.janus_tasks_client.create_session().await?;
     Ok(())
 }
 
