@@ -87,10 +87,10 @@ pub fn api__new_controller_state(p: CommonState_Parametrization) -> ControllerSt
 }
 
 
-pub async fn api__create_session(s: &ControllerState) -> Result<()>
+pub async fn api__create_session(s: &ControllerState) -> Result<u16>
 {
-    s.permanent.janus_tasks_client.create_session().await?;
-    Ok(())
+    let training_session_id = s.permanent.janus_tasks_client.create_session().await?;
+    Ok(training_session_id.into())
 }
 
 
