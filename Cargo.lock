@@ -1398,7 +1398,7 @@ checksum = "4217ad341ebadf8d8e724e264f13e593e0648f5b3e94b3896a5df283be015ecc"
 [[package]]
 name = "janus_aggregator"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#ef19026c53f05610838f8556bee8bd94a72308eb"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#13faa7f57da13299ab345874fd352add3b69d819"
 dependencies = [
  "anyhow",
  "atty",
@@ -1446,7 +1446,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#ef19026c53f05610838f8556bee8bd94a72308eb"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#13faa7f57da13299ab345874fd352add3b69d819"
 dependencies = [
  "backoff",
  "derivative",
@@ -1466,7 +1466,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#ef19026c53f05610838f8556bee8bd94a72308eb"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#13faa7f57da13299ab345874fd352add3b69d819"
 dependencies = [
  "backoff",
  "chrono",
@@ -1489,7 +1489,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#ef19026c53f05610838f8556bee8bd94a72308eb"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#13faa7f57da13299ab345874fd352add3b69d819"
 dependencies = [
  "anyhow",
  "base64",
