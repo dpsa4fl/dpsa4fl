@@ -119,7 +119,7 @@ async fn get_crypto_config(permanent: &ClientState_Permanent, task_id: TaskId, l
 {
     let c: ClientParameters = ClientParameters::new(
         task_id,
-        l.get_aggregator_endpoints(),
+        l.get_external_aggregator_endpoints(),
         Duration::from_seconds(1),
     );
     let f_leader = aggregator_hpke_config(&c, &Role::Leader, &task_id, &permanent.http_client);
@@ -210,7 +210,7 @@ impl ClientState
 
         let parameters = ClientParameters::new(
             self.round.config.settings.task_id,
-            self.parametrization.location.get_aggregator_endpoints(),
+            self.parametrization.location.get_external_aggregator_endpoints(),
             self.round.config.settings.time_precision,
         );
 

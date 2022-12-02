@@ -17,16 +17,18 @@ use fixed::{FixedI16, FixedI32, FixedI64};
 #[derive(Clone)]
 pub struct Locations
 {
-    pub leader: Url,
-    pub helper: Url,
+    pub internal_leader: Url, // TODO: This internal URL should probably be configured somewhere else, actually
+    pub internal_helper: Url, // TODO: Same.
+    pub external_leader: Url,
+    pub external_helper: Url,
     // controller: Url, // the server that controls the learning process
 }
 
 impl Locations
 {
-    pub fn get_aggregator_endpoints(&self) -> Vec<Url>
+    pub fn get_external_aggregator_endpoints(&self) -> Vec<Url>
     {
-        vec![self.leader.clone(),self.helper.clone()]
+        vec![self.external_leader.clone(),self.external_helper.clone()]
     }
 }
 

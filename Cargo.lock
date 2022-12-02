@@ -65,9 +65,9 @@ checksum = "216261ddc8289130e551ddcd5ce8a064710c0d064a4d2895c67151c92b5443f6"
 
 [[package]]
 name = "array-init"
-version = "2.0.1"
+version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bfb6d71005dc22a708c7496eee5c8dc0300ee47355de6256c3b35b12b5fef596"
+checksum = "3d62b7694a562cdf5a74227903507c56ab2cc8bdd1f781ed5cb4cf9c9f810bfc"
 
 [[package]]
 name = "async-macros"
@@ -1398,7 +1398,7 @@ checksum = "4217ad341ebadf8d8e724e264f13e593e0648f5b3e94b3896a5df283be015ecc"
 [[package]]
 name = "janus_aggregator"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#13faa7f57da13299ab345874fd352add3b69d819"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#25cfde429c72882af048b5b5923b69dac24d01cc"
 dependencies = [
  "anyhow",
  "atty",
@@ -1446,7 +1446,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#13faa7f57da13299ab345874fd352add3b69d819"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#25cfde429c72882af048b5b5923b69dac24d01cc"
 dependencies = [
  "backoff",
  "derivative",
@@ -1466,7 +1466,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#13faa7f57da13299ab345874fd352add3b69d819"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#25cfde429c72882af048b5b5923b69dac24d01cc"
 dependencies = [
  "backoff",
  "chrono",
@@ -1489,7 +1489,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#13faa7f57da13299ab345874fd352add3b69d819"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#25cfde429c72882af048b5b5923b69dac24d01cc"
 dependencies = [
  "anyhow",
  "base64",
