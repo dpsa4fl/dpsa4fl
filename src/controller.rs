@@ -42,8 +42,8 @@ pub struct ControllerState_Permanent
 pub struct ControllerState_Round
 {
     // config: RoundConfig,
-    task_id: Option<TaskId>,
-    training_session_id: Option<TrainingSessionId>,
+    pub rtask_id: Option<TaskId>,
+    pub training_session_id: Option<TrainingSessionId>,
 }
 
 pub struct ControllerState
