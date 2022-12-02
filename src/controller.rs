@@ -46,16 +46,22 @@ pub struct ControllerState_Round
     pub training_session_id: Option<TrainingSessionId>,
 }
 
-pub struct ControllerState
+pub struct ControllerState_Immut
 {
     pub parametrization: CommonState_Parametrization,
     pub permanent: ControllerState_Permanent,
+}
+
+pub struct ControllerState_Mut
+{
     pub round: ControllerState_Round,
 }
 
+
+
 ////////////////////////////////////////////////////
 // Implementation
-impl ControllerState
+impl ControllerState_Immut
 {
     pub fn new(p: CommonState_Parametrization) -> Self
     {
@@ -71,15 +77,14 @@ impl ControllerState
             janus_tasks_client,
         };
 
-        let round = ControllerState_Round {
-            training_session_id: None,
-            task_id: None,
-        };
+        // let round = ControllerState_Round {
+        //     training_session_id: None,
+        //     task_id: None,
+        // };
 
-        ControllerState {
+        ControllerState_Immut {
             parametrization: p,
             permanent,
-            round,
         }
     }
 }
@@ -89,31 +94,31 @@ impl ControllerState
 /////////////////////////////////////////////////////////////////////////
 // api
 
-pub fn api__new_controller_state(p: CommonState_Parametrization) -> ControllerState
+pub fn api__new_controller_state(p: CommonState_Parametrization) -> ControllerState_Immut
 {
-    ControllerState::new(p)
+    ControllerState_Immut::new(p)
 }
 
 
-pub async fn api__create_session(s: &mut ControllerState) -> Result<u16>
+pub async fn api__create_session(istate: &ControllerState_Immut, mstate: &mut ControllerState_Mut) -> Result<u16>
 {
-    let training_session_id = s.permanent.janus_tasks_client.create_session().await?;
+    let training_session_id = istate.permanent.janus_tasks_client.create_session().await?;
 
     // set our current training session id
-    s.round.training_session_id = Some(training_session_id);
+    mstate.round.training_session_id = Some(training_session_id);
 
     Ok(training_session_id.into())
 }
 
-pub async fn api__start_round(s: &mut ControllerState) -> Result<String>
+pub async fn api__start_round(istate: &ControllerState_Immut, mstate: &mut ControllerState_Mut) -> Result<String>
 {
-    let training_session_id = s.round.training_session_id.ok_or(anyhow!("Cannot start round because no session was created."))?;
+    let training_session_id = mstate.round.training_session_id.ok_or(anyhow!("Cannot start round because no session was created."))?;
 
     println!("Starting round for session id {training_session_id}.");
-    let task_id = s.permanent.janus_tasks_client.start_round(training_session_id).await?;
+    let task_id = istate.permanent.janus_tasks_client.start_round(training_session_id).await?;
 
     // set our current task id
-    s.round.task_id = Some(task_id);
+    mstate.round.task_id = Some(task_id);
 
     Ok(task_id.to_string())
 }
