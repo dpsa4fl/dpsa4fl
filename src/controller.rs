@@ -42,7 +42,7 @@ pub struct ControllerState_Permanent
 pub struct ControllerState_Round
 {
     // config: RoundConfig,
-    pub rtask_id: Option<TaskId>,
+    pub task_id: Option<TaskId>,
     pub training_session_id: Option<TrainingSessionId>,
 }
 
@@ -69,10 +69,10 @@ impl ControllerState
 
         let permanent = ControllerState_Permanent {
             janus_tasks_client,
-            training_session_id: None,
         };
 
         let round = ControllerState_Round {
+            training_session_id: None,
             task_id: None,
         };
 
@@ -100,14 +100,14 @@ pub async fn api__create_session(s: &mut ControllerState) -> Result<u16>
     let training_session_id = s.permanent.janus_tasks_client.create_session().await?;
 
     // set our current training session id
-    s.permanent.training_session_id = Some(training_session_id);
+    s.round.training_session_id = Some(training_session_id);
 
     Ok(training_session_id.into())
 }
 
 pub async fn api__start_round(s: &mut ControllerState) -> Result<String>
 {
-    let training_session_id = s.permanent.training_session_id.ok_or(anyhow!("Cannot start round because no session was created."))?;
+    let training_session_id = s.round.training_session_id.ok_or(anyhow!("Cannot start round because no session was created."))?;
 
     println!("Starting round for session id {training_session_id}.");
     let task_id = s.permanent.janus_tasks_client.start_round(training_session_id).await?;
