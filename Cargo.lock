@@ -726,6 +726,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-std",
+ "base64",
  "fixed",
  "janus_aggregator",
  "janus_client",
