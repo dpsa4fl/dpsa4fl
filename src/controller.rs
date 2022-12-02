@@ -35,7 +35,6 @@ pub struct ControllerState_Permanent
 {
     // http_client: reqwest::Client,
     janus_tasks_client: JanusTasksClient,
-    training_session_id: Option<TrainingSessionId>,
 
 }
 
@@ -44,6 +43,7 @@ pub struct ControllerState_Round
 {
     // config: RoundConfig,
     task_id: Option<TaskId>,
+    training_session_id: Option<TrainingSessionId>,
 }
 
 pub struct ControllerState
