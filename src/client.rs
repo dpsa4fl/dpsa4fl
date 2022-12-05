@@ -240,23 +240,23 @@ pub fn api__new_client_state(p: CommonState_Parametrization) -> ClientStatePU
 //
 // Submitting
 //
-pub async fn api__submit(s: ClientStatePU, round_settings: RoundSettings, data: &Measurement) -> anyhow::Result<ClientStatePU>
+pub async fn api__submit(s: &mut ClientStatePU, round_settings: RoundSettings, data: &Measurement) -> anyhow::Result<()>
 {
     match s
     {
-        ClientStatePU::Parametrization(parametrization) =>
+        ClientStatePU::Parametrization(ref parametrization) =>
         {
-            let client_state = ClientState::new(parametrization, round_settings).await?;
+            let client_state = ClientState::new(parametrization.clone(), round_settings).await?;
             let () = client_state.get__submission_result(data).await?;
-            Ok(ClientStatePU::ValidState(client_state))
+            *s = ClientStatePU::ValidState(client_state);
         },
-        ClientStatePU::ValidState(mut client_state) =>
+        ClientStatePU::ValidState(ref mut client_state) =>
         {
             client_state.update__to_next_round_config(round_settings).await?;
             let () = client_state.get__submission_result(data).await?;
-            Ok(ClientStatePU::ValidState(client_state))
         },
-    }
+    };
+    Ok(())
 }
 
 

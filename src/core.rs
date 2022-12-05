@@ -36,6 +36,7 @@ impl Locations
 ////////////////////////////////////////////////////
 // State
 
+#[derive(Clone)]
 pub struct CommonState_Parametrization
 {
     pub location: Locations,
