@@ -1,7 +1,8 @@
 
-use crate::core::{Locations, CommonState_Parametrization};
+use crate::core::{CommonState_Parametrization};
 use crate::helpers::task_id_from_string;
 
+use janus_aggregator::dpsa4fl::core::Locations;
 use janus_client::{ClientParameters, aggregator_hpke_config, default_http_client, Client};
 use janus_core::{time::RealClock};
 use janus_messages::{HpkeConfig, Role, TaskId, Duration};

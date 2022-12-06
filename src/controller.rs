@@ -1,5 +1,6 @@
 
 use janus_aggregator::dpsa4fl::core::TrainingSessionId;
+use janus_collector::{Collector, CollectorParameters, Collection};
 // use janus_client::{ClientParameters, aggregator_hpke_config, default_http_client, Client};
 use janus_core::{time::RealClock};
 use janus_messages::{HpkeConfig, Role, TaskId, Duration};
@@ -12,7 +13,8 @@ use prio::vdaf::prio3::Prio3Aes128FixedPointBoundedL2VecSum;
 use fixed::types::extra::{U15, U31, U63};
 use fixed::{FixedI16, FixedI32, FixedI64};
 
-use crate::core::{CommonState_Parametrization, Locations};
+use crate::client::Fx;
+use crate::core::{CommonState_Parametrization};
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -35,7 +37,6 @@ pub struct ControllerState_Permanent
 {
     // http_client: reqwest::Client,
     janus_tasks_client: JanusTasksClient,
-
 }
 
 #[derive(Clone)]
@@ -65,11 +66,9 @@ impl ControllerState_Immut
 {
     pub fn new(p: CommonState_Parametrization) -> Self
     {
+        // janus tasks
         let janus_tasks_client = JanusTasksClient::new(
-            p.location.external_leader_tasks.clone(),
-            p.location.external_helper_tasks.clone(),
-            p.location.internal_leader.clone(),
-            p.location.internal_helper.clone(),
+            p.location.clone(),
             p.gradient_len,
         );
 
@@ -121,6 +120,14 @@ pub async fn api__start_round(istate: &ControllerState_Immut, mstate: &mut Contr
     mstate.round.task_id = Some(task_id);
 
     Ok(task_id.to_string())
+}
+
+pub async fn api__collect(istate: &ControllerState_Immut, mstate: &mut ControllerState_Mut) -> Result<Collection<Vec<f64>>>
+{
+    let task_id = mstate.round.task_id.ok_or(anyhow!("Cannot collect because no task_id available."))?;
+    let result = istate.permanent.janus_tasks_client.collect(task_id).await?;
+
+    Ok(result)
 }
 
 
