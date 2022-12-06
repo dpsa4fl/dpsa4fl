@@ -66,8 +66,8 @@ impl ControllerState_Immut
     pub fn new(p: CommonState_Parametrization) -> Self
     {
         let janus_tasks_client = JanusTasksClient::new(
-            p.location.external_leader.clone(),
-            p.location.external_helper.clone(),
+            p.location.external_leader_tasks.clone(),
+            p.location.external_helper_tasks.clone(),
             p.location.internal_leader.clone(),
             p.location.internal_helper.clone(),
             p.gradient_len,
