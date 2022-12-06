@@ -30,8 +30,8 @@ use fixed::{FixedI16, FixedI32, FixedI64};
 // Type Parametrization
 //
 // ToDo: remove this, and integrate into runtime parametrization.
-type Fx = FixedI32<U31>;
-type Measurement = Vec<Fx>;
+pub type Fx = FixedI32<U31>;
+pub type Measurement = Vec<Fx>;
 
 
 
@@ -46,9 +46,9 @@ type Measurement = Vec<Fx>;
 #[derive(Clone)]
 pub struct RoundSettings
 {
-    task_id : TaskId,
-    time_precision : Duration,
-    should_request_hpke_config: bool,
+    pub task_id : TaskId,
+    pub time_precision : Duration,
+    pub should_request_hpke_config: bool,
 }
 
 ////////////////////////////////////////////////////
@@ -68,8 +68,8 @@ pub struct CryptoConfig
 #[derive(Clone)]
 pub struct RoundConfig
 {
-    settings: RoundSettings,
-    crypto: CryptoConfig,
+    pub settings: RoundSettings,
+    pub crypto: CryptoConfig,
 }
 
 ////////////////////////////////////////////////////
@@ -83,14 +83,14 @@ pub struct ClientState_Permanent
 #[derive(Clone)]
 pub struct ClientState_Round
 {
-    config: RoundConfig,
+    pub config: RoundConfig,
 }
 
 pub struct ClientState
 {
-    parametrization: CommonState_Parametrization,
-    permanent: ClientState_Permanent,
-    round: ClientState_Round,
+    pub parametrization: CommonState_Parametrization,
+    pub permanent: ClientState_Permanent,
+    pub round: ClientState_Round,
 }
 
 // Possibly Uninitialized client state
