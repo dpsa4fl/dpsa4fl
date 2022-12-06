@@ -115,6 +115,18 @@ pub enum ClientStatePU
     Parametrization(CommonState_Parametrization)
 }
 
+impl ClientStatePU
+{
+    pub fn get_parametrization(&self) -> &CommonState_Parametrization
+    {
+        match self
+        {
+            ClientStatePU::ValidState(ref state) => &state.parametrization,
+            ClientStatePU::Parametrization(ref param) => &param,
+        }
+    }
+}
+
 
 /////////////////////////////////////////////////////////////////////////
 // Step 1, initialization
