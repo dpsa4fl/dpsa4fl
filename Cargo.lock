@@ -1401,9 +1401,9 @@ dependencies = [
 
 [[package]]
 name = "ipnet"
-version = "2.5.1"
+version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f88c5561171189e69df9d98bcf18fd5f9558300f7ea7b801eb8a0fd748bd8745"
+checksum = "ec947b7a4ce12e3b87e353abae7ce124d025b6c7d6c5aea5cc0bcf92e9510ded"
 
 [[package]]
 name = "is-terminal"
@@ -1435,7 +1435,7 @@ checksum = "4217ad341ebadf8d8e724e264f13e593e0648f5b3e94b3896a5df283be015ecc"
 [[package]]
 name = "janus_aggregator"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#7be25b4a3ea11cc15b92420032db7a4ed178e9aa"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#69d31c4b876c1127ad967990d7b0316c294d587e"
 dependencies = [
  "anyhow",
  "atty",
@@ -1484,7 +1484,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#7be25b4a3ea11cc15b92420032db7a4ed178e9aa"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#69d31c4b876c1127ad967990d7b0316c294d587e"
 dependencies = [
  "backoff",
  "derivative",
@@ -1504,7 +1504,7 @@ dependencies = [
 [[package]]
 name = "janus_collector"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#7be25b4a3ea11cc15b92420032db7a4ed178e9aa"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#69d31c4b876c1127ad967990d7b0316c294d587e"
 dependencies = [
  "backoff",
  "derivative",
@@ -1525,7 +1525,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#7be25b4a3ea11cc15b92420032db7a4ed178e9aa"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#69d31c4b876c1127ad967990d7b0316c294d587e"
 dependencies = [
  "backoff",
  "chrono",
@@ -1548,7 +1548,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#7be25b4a3ea11cc15b92420032db7a4ed178e9aa"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#69d31c4b876c1127ad967990d7b0316c294d587e"
 dependencies = [
  "anyhow",
  "base64",
@@ -1971,9 +1971,9 @@ checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 
 [[package]]
 name = "openssl"
-version = "0.10.43"
+version = "0.10.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "020433887e44c27ff16365eaa2d380547a94544ad509aff6eb5b6e3e0b27b376"
+checksum = "29d971fd5722fec23977260f6e81aa67d2f22cadbdc2aa049f1022d9a3be1566"
 dependencies = [
  "bitflags",
  "cfg-if 1.0.0",
@@ -2003,9 +2003,9 @@ checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
 
 [[package]]
 name = "openssl-sys"
-version = "0.9.78"
+version = "0.9.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07d5c8cb6e57b3a3612064d7b18b117912b4ce70955c2504d4b741c9e244b132"
+checksum = "5454462c0eced1e97f2ec09036abc8da362e66802f66fd20f86854d9d8cbcbc4"
 dependencies = [
  "autocfg",
  "cc",
