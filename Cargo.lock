@@ -1280,9 +1280,9 @@ dependencies = [
 
 [[package]]
 name = "hyper-rustls"
-version = "0.23.1"
+version = "0.23.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59df7c4e19c950e6e0e868dcc0a300b09a9b88e9ec55bd879ca819087a77355d"
+checksum = "1788965e61b367cd03a62950836d5cd41560c3577d90e40e0819373194d1661c"
 dependencies = [
  "http",
  "hyper",
@@ -1401,9 +1401,9 @@ dependencies = [
 
 [[package]]
 name = "ipnet"
-version = "2.6.0"
+version = "2.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec947b7a4ce12e3b87e353abae7ce124d025b6c7d6c5aea5cc0bcf92e9510ded"
+checksum = "11b0d96e660696543b251e58030cf9787df56da39dab19ad60eae7353040917e"
 
 [[package]]
 name = "is-terminal"
@@ -1435,7 +1435,7 @@ checksum = "4217ad341ebadf8d8e724e264f13e593e0648f5b3e94b3896a5df283be015ecc"
 [[package]]
 name = "janus_aggregator"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#0d8bf3dfe8f05d9a3aafc933e99b1628ad5a282f"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#2cf6de24a5f5e98ac1c0542818f94b172993a7d3"
 dependencies = [
  "anyhow",
  "atty",
@@ -1484,7 +1484,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#0d8bf3dfe8f05d9a3aafc933e99b1628ad5a282f"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#2cf6de24a5f5e98ac1c0542818f94b172993a7d3"
 dependencies = [
  "backoff",
  "derivative",
@@ -1504,7 +1504,7 @@ dependencies = [
 [[package]]
 name = "janus_collector"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#0d8bf3dfe8f05d9a3aafc933e99b1628ad5a282f"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#2cf6de24a5f5e98ac1c0542818f94b172993a7d3"
 dependencies = [
  "backoff",
  "base64",
@@ -1526,7 +1526,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#0d8bf3dfe8f05d9a3aafc933e99b1628ad5a282f"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#2cf6de24a5f5e98ac1c0542818f94b172993a7d3"
 dependencies = [
  "backoff",
  "chrono",
@@ -1549,7 +1549,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.2.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#0d8bf3dfe8f05d9a3aafc933e99b1628ad5a282f"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy#2cf6de24a5f5e98ac1c0542818f94b172993a7d3"
 dependencies = [
  "anyhow",
  "base64",
@@ -1709,9 +1709,9 @@ checksum = "0717cef1bc8b636c6e1c1bbdefc09e6322da8a9321966e8928ef80d20f7f770f"
 
 [[package]]
 name = "linux-raw-sys"
-version = "0.1.3"
+version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f9f08d8963a6c613f4b1a78f4f4a4dbfadf8e6545b2d72861731e4858b8b47f"
+checksum = "f051f77a7c8e6957c0696eac88f26b0117e54f52d3fc682ab19397a8812846a4"
 
 [[package]]
 name = "lock_api"
@@ -2119,9 +2119,9 @@ dependencies = [
 
 [[package]]
 name = "paste"
-version = "1.0.9"
+version = "1.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1de2e551fb905ac83f73f7aedf2f0cb4a0da7e35efa24a202a936269f1f18e1"
+checksum = "cf1c2c742266c2f1041c914ba65355a83ae8747b05f208319784083583494b4b"
 
 [[package]]
 name = "pem"
@@ -2391,11 +2391,10 @@ dependencies = [
 
 [[package]]
 name = "rayon"
-version = "1.6.0"
+version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e060280438193c554f654141c9ea9417886713b7acd75974c85b18a69a88e0b"
+checksum = "6db3a213adf02b3bcfd2d3846bb41cb22857d131789e01df434fb7e7bc0759b7"
 dependencies = [
- "crossbeam-deque 0.8.2",
  "either",
  "rayon-core",
 ]
@@ -2682,9 +2681,9 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.149"
+version = "1.0.150"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "256b9932320c590e707b94576e3cc1f7c9024d0ee6612dfbcf1cb106cbe8e055"
+checksum = "e326c9ec8042f1b5da33252c8a37e9ffbd2c9bef0155215b6e6c80c790e05f91"
 dependencies = [
  "serde_derive",
 ]
@@ -2701,9 +2700,9 @@ dependencies = [
 
 [[package]]
 name = "serde_derive"
-version = "1.0.149"
+version = "1.0.150"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4eae9b04cbffdfd550eb462ed33bc6a1b68c935127d008b27444d08380f94e4"
+checksum = "42a3df25b0713732468deadad63ab9da1f1fd75a48a15024b50363f128db627e"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3571,9 +3570,9 @@ dependencies = [
 
 [[package]]
 name = "webpki-roots"
-version = "0.22.5"
+version = "0.22.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "368bfe657969fb01238bb756d351dcade285e0f6fcbd36dcb23359a5169975be"
+checksum = "b6c71e40d7d2c34a5106301fb632274ca37242cd0c9d3e64dbece371a40a2d87"
 dependencies = [
  "webpki",
 ]
