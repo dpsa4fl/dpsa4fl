@@ -733,7 +733,7 @@ dependencies = [
  "janus_collector",
  "janus_core",
  "janus_messages",
- "prio 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "prio",
  "reqwest",
  "url",
 ]
@@ -1461,7 +1461,7 @@ dependencies = [
  "opentelemetry",
  "postgres-protocol",
  "postgres-types",
- "prio 0.10.0 (git+https://github.com/dpsa-project/libprio-rs.git?branch=fixedpoint-backported-bugfix)",
+ "prio",
  "rand",
  "reqwest",
  "ring",
@@ -1492,7 +1492,7 @@ dependencies = [
  "http-api-problem",
  "janus_core",
  "janus_messages",
- "prio 0.10.0 (git+https://github.com/dpsa-project/libprio-rs.git?branch=fixedpoint-backported-bugfix)",
+ "prio",
  "rand",
  "reqwest",
  "thiserror",
@@ -1514,7 +1514,7 @@ dependencies = [
  "http-api-problem",
  "janus_core",
  "janus_messages",
- "prio 0.10.0 (git+https://github.com/dpsa-project/libprio-rs.git?branch=fixedpoint-backported-bugfix)",
+ "prio",
  "reqwest",
  "retry-after",
  "thiserror",
@@ -1536,7 +1536,7 @@ dependencies = [
  "hpke-dispatch",
  "http-api-problem",
  "janus_messages",
- "prio 0.10.0 (git+https://github.com/dpsa-project/libprio-rs.git?branch=fixedpoint-backported-bugfix)",
+ "prio",
  "rand",
  "reqwest",
  "ring",
@@ -1556,7 +1556,7 @@ dependencies = [
  "derivative",
  "hex",
  "num_enum",
- "prio 0.10.0 (git+https://github.com/dpsa-project/libprio-rs.git?branch=fixedpoint-backported-bugfix)",
+ "prio",
  "rand",
  "serde",
  "thiserror",
@@ -2274,25 +2274,6 @@ name = "ppv-lite86"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
-
-[[package]]
-name = "prio"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a0453e1ec5f2f48af9a67aab1d812f9aec48619dda0d9a59e2f79ebd235448ec"
-dependencies = [
- "aes 0.8.2",
- "base64",
- "byteorder",
- "cmac",
- "ctr 0.9.2",
- "fixed",
- "getrandom",
- "rayon",
- "serde",
- "static_assertions",
- "thiserror",
-]
 
 [[package]]
 name = "prio"

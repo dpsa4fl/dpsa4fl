@@ -9,7 +9,8 @@ janus_core = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa
 janus_messages = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa-deploy" }
 janus_aggregator = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa-deploy" }
 janus_collector = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa-deploy" }
-prio = { version = "0.10.0", features = ["multithreaded"] }
+# prio = { version = "0.10.0", features = ["multithreaded"] }
+prio = {git = "https://github.com/dpsa-project/libprio-rs.git", branch ="fixedpoint-backported-bugfix", features = ["multithreaded"]}
 url = { version = "2.3.1" }
 anyhow = "1.0"
 reqwest = "0.11.12"
