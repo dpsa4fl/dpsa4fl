@@ -185,12 +185,6 @@ checksum = "9e1b586273c5702936fe7b7d6896644d8be71e6314cfe09d3167c95f712589e8"
 
 [[package]]
 name = "base64"
-version = "0.20.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ea22880d78093b0cbe17c89f64a7d457941e65759157ec6cb31a31d652b05e5"
-
-[[package]]
-name = "base64"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4a4ddaa51a5bc52a6948f74c06d20aaaddb71924eab79b8c97a8c556e942d6a"
@@ -736,7 +730,7 @@ dependencies = [
  "janus_collector",
  "janus_core",
  "janus_messages",
- "prio 0.10.0 (git+https://github.com/dpsa-project/libprio-rs.git?branch=fixedpoint-backported-bugfix)",
+ "prio",
  "reqwest",
  "url",
 ]
@@ -832,6 +826,41 @@ dependencies = [
  "bytemuck",
  "half",
  "typenum",
+]
+
+[[package]]
+name = "fixed-macro"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fd0c48af8cb14e02868f449f8a2187bd78af7a08da201fdc78d518ecb1675bc"
+dependencies = [
+ "fixed",
+ "fixed-macro-impl",
+ "fixed-macro-types",
+]
+
+[[package]]
+name = "fixed-macro-impl"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c93086f471c0a1b9c5e300ea92f5cd990ac6d3f8edf27616ef624b8fa6402d4b"
+dependencies = [
+ "fixed",
+ "paste",
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "fixed-macro-types"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "044a61b034a2264a7f65aa0c3cd112a01b4d4ee58baace51fead3f21b993c7e4"
+dependencies = [
+ "fixed",
+ "fixed-macro-impl",
 ]
 
 [[package]]
@@ -1405,7 +1434,7 @@ checksum = "fad582f4b9e86b6caa621cabeb0963332d92eea04729ab12892c2533951e6440"
 [[package]]
 name = "janus_aggregator"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#26b7fcd41d6b6e3387b0a776fe618d7ed8ae919e"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#9fd6cd9cf516c04b090364abbd03a4908396434d"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1432,7 +1461,7 @@ dependencies = [
  "opentelemetry",
  "postgres-protocol",
  "postgres-types",
- "prio 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "prio",
  "rand",
  "reqwest",
  "ring",
@@ -1456,7 +1485,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#26b7fcd41d6b6e3387b0a776fe618d7ed8ae919e"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#9fd6cd9cf516c04b090364abbd03a4908396434d"
 dependencies = [
  "backoff",
  "derivative",
@@ -1464,7 +1493,7 @@ dependencies = [
  "http-api-problem",
  "janus_core",
  "janus_messages",
- "prio 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "prio",
  "rand",
  "reqwest",
  "thiserror",
@@ -1476,14 +1505,16 @@ dependencies = [
 [[package]]
 name = "janus_collector"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#26b7fcd41d6b6e3387b0a776fe618d7ed8ae919e"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#9fd6cd9cf516c04b090364abbd03a4908396434d"
 dependencies = [
  "backoff",
  "derivative",
+ "fixed",
+ "fixed-macro",
  "http-api-problem",
  "janus_core",
  "janus_messages",
- "prio 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "prio",
  "reqwest",
  "retry-after",
  "thiserror",
@@ -1495,7 +1526,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#26b7fcd41d6b6e3387b0a776fe618d7ed8ae919e"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#9fd6cd9cf516c04b090364abbd03a4908396434d"
 dependencies = [
  "backoff",
  "base64 0.21.0",
@@ -1506,7 +1537,7 @@ dependencies = [
  "hpke-dispatch",
  "http-api-problem",
  "janus_messages",
- "prio 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "prio",
  "rand",
  "reqwest",
  "ring",
@@ -1519,14 +1550,14 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#26b7fcd41d6b6e3387b0a776fe618d7ed8ae919e"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#9fd6cd9cf516c04b090364abbd03a4908396434d"
 dependencies = [
  "anyhow",
  "base64 0.21.0",
  "derivative",
  "hex",
  "num_enum",
- "prio 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "prio",
  "rand",
  "serde",
  "thiserror",
@@ -2097,6 +2128,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "paste"
+version = "1.0.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d01a5bd0424d00070b0098dd17ebca6f961a959dead1dbcbbbc1d1cd8d3deeba"
+
+[[package]]
 name = "pem"
 version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2251,32 +2288,14 @@ checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 [[package]]
 name = "prio"
 version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a0453e1ec5f2f48af9a67aab1d812f9aec48619dda0d9a59e2f79ebd235448ec"
+source = "git+https://github.com/dpsa-project/libprio-rs.git?branch=release/0.10-hotfix-normvector-bugfix#ba113990116336537754e798402664f84415dc37"
 dependencies = [
  "aes",
- "base64 0.13.1",
+ "base64 0.21.0",
  "byteorder",
  "cmac",
  "ctr",
  "fixed",
- "getrandom",
- "rayon",
- "serde",
- "static_assertions",
- "thiserror",
-]
-
-[[package]]
-name = "prio"
-version = "0.10.0"
-source = "git+https://github.com/dpsa-project/libprio-rs.git?branch=fixedpoint-backported-bugfix#ac100ca3f1da59290379f1612d104c732099e000"
-dependencies = [
- "aes",
- "base64 0.20.0",
- "byteorder",
- "cmac",
- "ctr",
  "getrandom",
  "rayon",
  "serde",

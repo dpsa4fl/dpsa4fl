@@ -15,6 +15,7 @@ use fixed::{FixedI16, FixedI32, FixedI64};
 
 use crate::client::Fx;
 use crate::core::{CommonState_Parametrization};
+use janus_messages::query_type::TimeInterval;
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -122,7 +123,7 @@ pub async fn api__start_round(istate: &ControllerState_Immut, mstate: &mut Contr
     Ok(task_id.to_string())
 }
 
-pub async fn api__collect(istate: &ControllerState_Immut, mstate: &mut ControllerState_Mut) -> Result<Collection<Vec<f64>>>
+pub async fn api__collect(istate: &ControllerState_Immut, mstate: &mut ControllerState_Mut) -> Result<Collection<Vec<f64>, TimeInterval>>
 {
     let task_id = mstate.round.task_id.ok_or(anyhow!("Cannot collect because no task_id available."))?;
     let result = istate.permanent.janus_tasks_client.collect(task_id).await?;
