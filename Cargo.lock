@@ -1434,7 +1434,7 @@ checksum = "fad582f4b9e86b6caa621cabeb0963332d92eea04729ab12892c2533951e6440"
 [[package]]
 name = "janus_aggregator"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#d571b873cb3f08bfaaa5f1a61e84d619ad158c95"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#701453cac8cfe4771f497c9be773925f6345e56d"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1485,7 +1485,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#d571b873cb3f08bfaaa5f1a61e84d619ad158c95"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#701453cac8cfe4771f497c9be773925f6345e56d"
 dependencies = [
  "backoff",
  "derivative",
@@ -1505,9 +1505,10 @@ dependencies = [
 [[package]]
 name = "janus_collector"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#d571b873cb3f08bfaaa5f1a61e84d619ad158c95"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#701453cac8cfe4771f497c9be773925f6345e56d"
 dependencies = [
  "backoff",
+ "base64 0.21.0",
  "derivative",
  "fixed",
  "fixed-macro",
@@ -1526,7 +1527,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#d571b873cb3f08bfaaa5f1a61e84d619ad158c95"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#701453cac8cfe4771f497c9be773925f6345e56d"
 dependencies = [
  "backoff",
  "base64 0.21.0",
@@ -1550,7 +1551,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#d571b873cb3f08bfaaa5f1a61e84d619ad158c95"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#701453cac8cfe4771f497c9be773925f6345e56d"
 dependencies = [
  "anyhow",
  "base64 0.21.0",
