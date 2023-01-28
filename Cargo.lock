@@ -240,9 +240,9 @@ checksum = "dfb24e866b15a1af2a1b663f10c6b6b8f397a84aadb828f12e5b289ec23a3a3c"
 
 [[package]]
 name = "cc"
-version = "1.0.78"
+version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a20104e2335ce8a659d6dd92a51a767a0c062599c73b343fd152cb401e828c3d"
+checksum = "50d30906286121d95be3d479533b458f87493b30a4b5f79a607db8f5d11aa91f"
 
 [[package]]
 name = "cfg-if"
@@ -1434,7 +1434,7 @@ checksum = "fad582f4b9e86b6caa621cabeb0963332d92eea04729ab12892c2533951e6440"
 [[package]]
 name = "janus_aggregator"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#701453cac8cfe4771f497c9be773925f6345e56d"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#e1a5f2f24b6f2f6972983b6f706125fad0937195"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1485,7 +1485,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#701453cac8cfe4771f497c9be773925f6345e56d"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#e1a5f2f24b6f2f6972983b6f706125fad0937195"
 dependencies = [
  "backoff",
  "derivative",
@@ -1505,7 +1505,7 @@ dependencies = [
 [[package]]
 name = "janus_collector"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#701453cac8cfe4771f497c9be773925f6345e56d"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#e1a5f2f24b6f2f6972983b6f706125fad0937195"
 dependencies = [
  "backoff",
  "base64 0.21.0",
@@ -1527,7 +1527,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#701453cac8cfe4771f497c9be773925f6345e56d"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#e1a5f2f24b6f2f6972983b6f706125fad0937195"
 dependencies = [
  "backoff",
  "base64 0.21.0",
@@ -1551,7 +1551,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#701453cac8cfe4771f497c9be773925f6345e56d"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-deploy-port-2023-01-26#e1a5f2f24b6f2f6972983b6f706125fad0937195"
 dependencies = [
  "anyhow",
  "base64 0.21.0",
