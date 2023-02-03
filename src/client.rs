@@ -229,7 +229,8 @@ impl ClientState
         let vdaf_client : Prio3Aes128FixedPointBoundedL2VecSum<Fx>
             = Prio3Aes128FixedPointBoundedL2VecSum::new_aes128_fixedpoint_boundedl2_vec_sum(
                 num_aggregators,
-                len
+                len,
+                self.parametrization.noise_parameter, // actually this does not matter for the client
             )?;
 
         let parameters = ClientParameters::new(

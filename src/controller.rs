@@ -71,6 +71,7 @@ impl ControllerState_Immut
         let janus_tasks_client = JanusTasksClient::new(
             p.location.clone(),
             p.gradient_len,
+            p.noise_parameter,
         );
 
         let permanent = ControllerState_Permanent {

@@ -22,4 +22,5 @@ pub struct CommonState_Parametrization
 {
     pub location: Locations,
     pub gradient_len: usize,
+    pub noise_parameter: u8,
 }
