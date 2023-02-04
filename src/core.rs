@@ -3,6 +3,7 @@ pub use janus_aggregator::dpsa4fl::core::Locations;
 use janus_client::{ClientParameters, aggregator_hpke_config, default_http_client, Client};
 use janus_core::{time::RealClock};
 use janus_messages::{HpkeConfig, Role, TaskId, Duration};
+use prio::flp::types::fixedpoint_l2::NoiseParameterType;
 use url::*;
 // use anyhow::Result;
 use async_std::future::try_join;
@@ -22,5 +23,5 @@ pub struct CommonState_Parametrization
 {
     pub location: Locations,
     pub gradient_len: usize,
-    pub noise_parameter: u8,
+    pub noise_parameter: NoiseParameterType,
 }
