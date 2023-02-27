@@ -14,5 +14,9 @@ An example project and description of how to setup an end-to-end test is
 [here](https://github.com/dpsa-project/dpsa4fl-example-project).
 
 
+## Changelog
+
+ - *Differential privacy* (2023-02-27): Gradient vectors are now noised by the aggregators, the amount of noise is configurable. The discrete gaussian distribution is used for sampling.
+ - *Initial release* (2023-01-19): The dpsa4fl library can be used for aggregation of gradient vectors (without differential privacy).
 
 
