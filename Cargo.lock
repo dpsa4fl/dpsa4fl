@@ -1462,7 +1462,7 @@ checksum = "fad582f4b9e86b6caa621cabeb0963332d92eea04729ab12892c2533951e6440"
 [[package]]
 name = "janus_aggregator"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m4-release#b3a4f94b5ee78af30aba960c0056b9e069a08c04"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m4-release#fb672141d66a9dfab702e1edba50f35f04de7c8b"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1516,7 +1516,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m4-release#b3a4f94b5ee78af30aba960c0056b9e069a08c04"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m4-release#fb672141d66a9dfab702e1edba50f35f04de7c8b"
 dependencies = [
  "backoff",
  "derivative",
@@ -1536,7 +1536,7 @@ dependencies = [
 [[package]]
 name = "janus_collector"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m4-release#b3a4f94b5ee78af30aba960c0056b9e069a08c04"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m4-release#fb672141d66a9dfab702e1edba50f35f04de7c8b"
 dependencies = [
  "backoff",
  "base64 0.21.0",
@@ -1559,7 +1559,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m4-release#b3a4f94b5ee78af30aba960c0056b9e069a08c04"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m4-release#fb672141d66a9dfab702e1edba50f35f04de7c8b"
 dependencies = [
  "backoff",
  "base64 0.21.0",
@@ -1583,7 +1583,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m4-release#b3a4f94b5ee78af30aba960c0056b9e069a08c04"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m4-release#fb672141d66a9dfab702e1edba50f35f04de7c8b"
 dependencies = [
  "anyhow",
  "base64 0.21.0",
@@ -2323,7 +2323,7 @@ checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 [[package]]
 name = "prio"
 version = "0.10.0"
-source = "git+https://github.com/dpsa-project/libprio-rs.git?branch=feature-simple-dp#bf506a40930780f19a0a480264c2bb89d9aeea38"
+source = "git+https://github.com/dpsa-project/libprio-rs.git?branch=feature-simple-dp#c0e0380ecf9f06b64cba68fd2053fad62c4eada5"
 dependencies = [
  "aes",
  "base64 0.21.0",
