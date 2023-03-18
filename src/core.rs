@@ -1,5 +1,12 @@
+use fixed::{types::extra::U31, FixedI32};
 pub use janus_aggregator::dpsa4fl::core::Locations;
-use prio::flp::types::fixedpoint_l2::NoiseParameterType;
+
+////////////////////////////////////////////////////
+// Type Parametrization
+//
+// TODO: remove this, and integrate into runtime parametrization.
+pub type Fx = FixedI32<U31>;
+pub type Measurement = Vec<Fx>;
 
 ////////////////////////////////////////////////////
 // State
@@ -8,5 +15,5 @@ use prio::flp::types::fixedpoint_l2::NoiseParameterType;
 pub struct CommonState_Parametrization {
     pub location: Locations,
     pub gradient_len: usize,
-    pub noise_parameter: NoiseParameterType,
+    pub noise_parameter: Fx,
 }

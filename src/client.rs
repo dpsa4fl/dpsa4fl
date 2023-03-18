@@ -1,4 +1,4 @@
-use crate::core::CommonState_Parametrization;
+use crate::core::{CommonState_Parametrization, Fx, Measurement};
 use crate::helpers::task_id_from_string;
 
 use anyhow::Result;
@@ -23,13 +23,6 @@ const TIME_PRECISION: u64 = 3600;
 // 4. Using the RoundSettings, we can get the RoundConfig from the aggregators.
 //    The RoundConfig allows us to submit our results to the aggregators.
 // 5. RoundData we also get from the controller.
-
-////////////////////////////////////////////////////
-// Type Parametrization
-//
-// ToDo: remove this, and integrate into runtime parametrization.
-pub type Fx = FixedI32<U31>;
-pub type Measurement = Vec<Fx>;
 
 ////////////////////////////////////////////////////
 // Settings
