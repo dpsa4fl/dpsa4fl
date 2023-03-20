@@ -9,6 +9,7 @@ janus_core = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa
 janus_messages = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa-m6-dev", features = [] }
 janus_aggregator = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa-m6-dev", features = ["fpvec_bounded_l2"] }
 janus_collector = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa-m6-dev", features = ["fpvec_bounded_l2"] }
+dpsa4fl_janus_tasks = { git = "https://github.com/dpsa-project/dpsa4fl-janus-tasks.git", branch = "main" }
 # prio = { version = "0.10.0", features = ["multithreaded"] }
 # prio = {git = "https://github.com/dpsa-project/libprio-rs.git", branch ="fixedpoint-backported-bugfix", features = ["multithreaded", "experimental"]}
 # prio = {git = "https://github.com/dpsa-project/libprio-rs.git", branch ="release/0.10-hotfix-normvector-bugfix", features = ["multithreaded"]}

@@ -1,7 +1,6 @@
 use crate::core::CommonState_Parametrization;
 use anyhow::{anyhow, Result};
-use janus_aggregator::dpsa4fl::core::TrainingSessionId;
-use janus_aggregator::dpsa4fl::janus_tasks_client::JanusTasksClient;
+use dpsa4fl_janus_tasks::{core::TrainingSessionId, janus_tasks_client::JanusTasksClient};
 use janus_collector::Collection;
 use janus_messages::query_type::TimeInterval;
 use janus_messages::TaskId;

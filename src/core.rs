@@ -1,5 +1,5 @@
+pub use dpsa4fl_janus_tasks::core::Locations;
 use fixed::{types::extra::U31, FixedI32};
-pub use janus_aggregator::dpsa4fl::core::Locations;
 
 ////////////////////////////////////////////////////
 // Type Parametrization
