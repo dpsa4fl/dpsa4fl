@@ -3,7 +3,6 @@ use crate::helpers::task_id_from_string;
 
 use anyhow::Result;
 use async_std::future::try_join;
-use fixed::{types::extra::U31, FixedI32};
 use janus_aggregator::dpsa4fl::core::Locations;
 use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
 use janus_core::time::RealClock;
