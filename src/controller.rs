@@ -1,5 +1,6 @@
 use crate::core::CommonState_Parametrization;
 use anyhow::{anyhow, Result};
+use dpsa4fl_janus_tasks::core::VdafParameter;
 use dpsa4fl_janus_tasks::{core::TrainingSessionId, janus_tasks_client::JanusTasksClient};
 use janus_collector::Collection;
 use janus_messages::query_type::TimeInterval;
@@ -47,7 +48,7 @@ impl ControllerState_Immut {
     pub fn new(p: CommonState_Parametrization) -> Self {
         // janus tasks
         let janus_tasks_client =
-            JanusTasksClient::new(p.location.clone(), p.gradient_len, p.noise_parameter.clone());
+            JanusTasksClient::new(p.location.clone(), p.vdaf_parameter.clone());
 
         let permanent = ControllerState_Permanent { janus_tasks_client };
 

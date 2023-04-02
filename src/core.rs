@@ -1,4 +1,5 @@
 pub use dpsa4fl_janus_tasks::core::Locations;
+use dpsa4fl_janus_tasks::core::VdafParameter;
 pub use dpsa4fl_janus_tasks::fixed::FixedAny;
 use dpsa4fl_janus_tasks::fixed::FixedTypeTag;
 // use fixed::{types::extra::U31, FixedI32};
@@ -95,8 +96,6 @@ impl FixedBase for Fixed64 {}
 #[derive(Clone)]
 pub struct CommonState_Parametrization {
     pub location: Locations,
-    pub gradient_len: usize,
-    // NOTE: This parameter also decides the bitsize of the fixed type of the gradient entries
-    pub noise_parameter: FixedAny,
-    pub submission_type: FixedTypeTag,
+    pub vdaf_parameter: VdafParameter,
+    // pub submission_type: FixedTypeTag,
 }

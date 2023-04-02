@@ -17,6 +17,7 @@ use url::*;
 use anyhow::{anyhow, Result};
 use async_std::future::try_join;
 use dpsa4fl_janus_tasks::core::Locations;
+use dpsa4fl_janus_tasks::janus_tasks_client::get_vdaf_parameter_from_task;
 // use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
 // use janus_core::time::RealClock;
 // use janus_messages::{Duration, HpkeConfig, Role, TaskId};
@@ -158,7 +159,23 @@ async fn get_parametrization(
     l:Locations,
 ) -> Result<CommonState_Parametrization>
 {
-    todo!()
+    let leader_param = get_vdaf_parameter_from_task(l.external_leader_tasks.clone(), task_id).await?;
+    let helper_param = get_vdaf_parameter_from_task(l.external_helper_tasks.clone(), task_id).await?;
+
+    // make sure that the information matchs
+    //
+    // TODO: For the noise parameter we COULD take the minimum instead
+    if leader_param == helper_param
+    {
+        Ok(CommonState_Parametrization {
+            location: l,
+            vdaf_parameter: leader_param,
+        })
+    }
+    else
+    {
+        Err(anyhow!("The leader and helper have different vdaf params:\nleader:\n{leader_param:?}\nhelper:\n{helper_param:?}"))
+    }
 }
 
 //
@@ -207,6 +224,9 @@ impl ClientState {
         &self,
         round_settings: RoundSettings,
     ) -> anyhow::Result<RoundConfig> {
+        // NOTE: We assume that the vdaf parameters don't change between tasks of the same session
+        //       If they could, we would have to get the current vdaf parameters here.
+
         if round_settings.should_request_hpke_config {
             // we get a new crypto config if we were asked for it
             let c = get_crypto_config(
@@ -245,13 +265,15 @@ impl ClientState {
           Fx : IsTagInstance<FixedTypeTag>,
           Fx : FixedBase,
     {
+        let aggregator_tag = self.parametrization.vdaf_parameter.noise_parameter.get_tag();
+
         // assert that the compile time type `Fx` matches with the type tag for this round
-        if Fx::get_tag() != self.parametrization.submission_type {
-            return Err(anyhow!("Tried to submit gradient with fixed type {:?}, but the task has been registered for fixed type {:?}", Fx::get_tag(), self.parametrization.submission_type));
+        if Fx::get_tag() != aggregator_tag {
+            return Err(anyhow!("Tried to submit gradient with fixed type {:?}, but the task has been registered for fixed type {:?}", Fx::get_tag(), aggregator_tag));
         }
 
         // cast noise_parameter
-        let cast_noise_parameter = if let Some(n) = self.parametrization.noise_parameter.clone().downcast::<Fx>() {
+        let cast_noise_parameter = if let Some(n) = self.parametrization.vdaf_parameter.noise_parameter.clone().downcast::<Fx>() {
             n
         } else {
             return Err(anyhow!(""));
@@ -259,7 +281,7 @@ impl ClientState {
 
         // create vdaf instance
         let num_aggregators = 2;
-        let len = self.parametrization.gradient_len;
+        let len = self.parametrization.vdaf_parameter.gradient_len;
         let vdaf_client: Prio3Aes128FixedPointBoundedL2VecSum<Fx> =
             Prio3Aes128FixedPointBoundedL2VecSum::new_aes128_fixedpoint_boundedl2_vec_sum(
                 num_aggregators,
