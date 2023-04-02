@@ -20,6 +20,8 @@ reqwest = "0.11.12"
 async-std = "0.99.12"
 fixed = "1.23"
 base64 = "0.13.0"
+downcast-rs = "1.2"
+dyn-clone = "1.0"
 
 [lib]
 crate-type = ["lib"]

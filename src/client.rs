@@ -1,13 +1,13 @@
-use crate::core::{CommonState_Parametrization, Fx, Measurement};
+// use crate::core::{CommonState_Parametrization, Fx, Measurement};
 use crate::helpers::task_id_from_string;
 
-use anyhow::Result;
 
-use crate::core::{CommonState_Parametrization, FixedTypeTag, IsTagInstance};
-use crate::helpers::task_id_from_string;
+use crate::core::{CommonState_Parametrization};
+// use crate::helpers::task_id_from_string;
 
+use dpsa4fl_janus_tasks::fixed::{FixedTypeTag, IsTagInstance, FixedBase};
 use fixed::traits::Fixed;
-use janus_aggregator::dpsa4fl::core::Locations;
+// use janus_aggregator::dpsa4fl::core::Locations;
 use janus_client::{ClientParameters, aggregator_hpke_config, default_http_client, Client};
 use janus_core::{time::RealClock};
 use janus_messages::{HpkeConfig, Role, TaskId, Duration};
@@ -17,9 +17,9 @@ use url::*;
 use anyhow::{anyhow, Result};
 use async_std::future::try_join;
 use dpsa4fl_janus_tasks::core::Locations;
-use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
-use janus_core::time::RealClock;
-use janus_messages::{Duration, HpkeConfig, Role, TaskId};
+// use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
+// use janus_core::time::RealClock;
+// use janus_messages::{Duration, HpkeConfig, Role, TaskId};
 use prio::vdaf::prio3::Prio3Aes128FixedPointBoundedL2VecSum;
 
 const TIME_PRECISION: u64 = 3600;
@@ -40,8 +40,8 @@ const TIME_PRECISION: u64 = 3600;
 // Type Parametrization
 //
 // ToDo: remove this, and integrate into runtime parametrization.
-pub type Fx = FixedI32<U31>;
-pub type Measurement = Vec<Fx>;
+// pub type Fx = FixedI32<U31>;
+// pub type Measurement = Vec<Fx>;
 
 
 
@@ -230,12 +230,20 @@ impl ClientState {
     async fn get__submission_result<Fx : Fixed>(&self, measurement: &Vec<Fx>) -> anyhow::Result<()>
         where
           Fx : CompatibleFloat<Field128>,
-          Fx : IsTagInstance<FixedTypeTag>
+          Fx : IsTagInstance<FixedTypeTag>,
+          Fx : FixedBase,
     {
         // assert that the compile time type `Fx` matches with the type tag for this round
         if Fx::get_tag() != self.parametrization.submission_type {
             return Err(anyhow!("Tried to submit gradient with fixed type {:?}, but the task has been registered for fixed type {:?}", Fx::get_tag(), self.parametrization.submission_type));
         }
+
+        // cast noise_parameter
+        let cast_noise_parameter = if let Some(n) = self.parametrization.noise_parameter.clone().downcast::<Fx>() {
+            n
+        } else {
+            return Err(anyhow!(""));
+        };
 
         // create vdaf instance
         let num_aggregators = 2;
@@ -244,7 +252,7 @@ impl ClientState {
             Prio3Aes128FixedPointBoundedL2VecSum::new_aes128_fixedpoint_boundedl2_vec_sum(
                 num_aggregators,
                 len,
-                self.parametrization.noise_parameter, // actually this does not matter for the client
+                cast_noise_parameter, // actually this does not matter for the client
             )?;
 
         let parameters = ClientParameters::new(
@@ -284,10 +292,11 @@ pub fn api__new_client_state(p: CommonState_Parametrization) -> ClientStatePU {
 //
 // Submitting
 //
-pub async fn api__submit<Fx : Fixed>(s: &mut ClientStatePU, round_settings: RoundSettings, data: &Measurement) -> anyhow::Result<()>
+pub async fn api__submit<Fx : Fixed>(s: &mut ClientStatePU, round_settings: RoundSettings, data: &Vec<Fx>) -> anyhow::Result<()>
     where
       Fx : CompatibleFloat<Field128>,
-      Fx : IsTagInstance<FixedTypeTag>
+      Fx : IsTagInstance<FixedTypeTag>,
+      Fx : FixedBase,
 {
     match s
     {

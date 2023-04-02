@@ -47,7 +47,7 @@ impl ControllerState_Immut {
     pub fn new(p: CommonState_Parametrization) -> Self {
         // janus tasks
         let janus_tasks_client =
-            JanusTasksClient::new(p.location.clone(), p.gradient_len, p.noise_parameter);
+            JanusTasksClient::new(p.location.clone(), p.gradient_len, p.noise_parameter.clone());
 
         let permanent = ControllerState_Permanent { janus_tasks_client };
 
