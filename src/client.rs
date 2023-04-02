@@ -110,16 +110,16 @@ pub struct ClientState {
 // Possibly Uninitialized client state
 pub enum ClientStatePU {
     ValidState(ClientState),
-    Parametrization(CommonState_Parametrization),
+    InitState(Locations),
 }
 
 impl ClientStatePU {
-    pub fn get_parametrization(&self) -> &CommonState_Parametrization {
-        match self {
-            ClientStatePU::ValidState(ref state) => &state.parametrization,
-            ClientStatePU::Parametrization(ref param) => &param,
-        }
-    }
+    // pub fn get_parametrization(&self) -> &CommonState_Parametrization {
+    //     match self {
+    //         ClientStatePU::ValidState(ref state) => &state.parametrization,
+    //         ClientStatePU::InitState(ref param) => &param,
+    //     }
+    // }
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -153,12 +153,20 @@ async fn get_crypto_config(
     })
 }
 
+async fn get_parametrization(
+    task_id: TaskId,
+    l:Locations,
+) -> Result<CommonState_Parametrization>
+{
+    todo!()
+}
+
 //
 // Functions that take client state as parameter.
 //
 impl ClientState {
     async fn new(
-        parametrization: CommonState_Parametrization,
+        locations: Locations,
         round_settings: RoundSettings,
     ) -> anyhow::Result<ClientState> {
         let permanent = ClientState_Permanent {
@@ -169,9 +177,13 @@ impl ClientState {
         let c = get_crypto_config(
             &permanent,
             round_settings.task_id,
-            parametrization.location.clone(),
+            locations.clone(),
         )
         .await?;
+
+        // get a parametrization from locations
+        let parametrization: CommonState_Parametrization = get_parametrization(round_settings.task_id, locations.clone()).await?;
+
         Ok(ClientState {
             parametrization,
             permanent,
@@ -285,8 +297,8 @@ impl ClientState {
 //
 // Init
 //
-pub fn api__new_client_state(p: CommonState_Parametrization) -> ClientStatePU {
-    ClientStatePU::Parametrization(p)
+pub fn api__new_client_state(p: Locations) -> ClientStatePU {
+    ClientStatePU::InitState(p)
 }
 
 //
@@ -300,7 +312,7 @@ pub async fn api__submit<Fx : Fixed>(s: &mut ClientStatePU, round_settings: Roun
 {
     match s
     {
-        ClientStatePU::Parametrization(ref parametrization) =>
+        ClientStatePU::InitState(ref parametrization) =>
         {
             let client_state = ClientState::new(parametrization.clone(), round_settings).await?;
             let () = client_state.get__submission_result(data).await?;
