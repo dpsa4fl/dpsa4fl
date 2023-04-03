@@ -1,5 +1,5 @@
 pub use dpsa4fl_janus_tasks::core::Locations;
-use dpsa4fl_janus_tasks::core::VdafParameter;
+use dpsa4fl_janus_tasks::{core::VdafParameter, fixed::{Fixed16, Fixed32, Fixed64}};
 pub use dpsa4fl_janus_tasks::fixed::FixedAny;
 use dpsa4fl_janus_tasks::fixed::FixedTypeTag;
 // use fixed::{types::extra::U31, FixedI32};
@@ -99,3 +99,32 @@ pub struct CommonState_Parametrization {
     pub vdaf_parameter: VdafParameter,
     // pub submission_type: FixedTypeTag,
 }
+
+
+////////////////////////////////////////////////////
+// existential type simulation for gradients
+
+pub enum VecFixedAny
+{
+    VecFixed16(Vec<Fixed16>),
+    VecFixed32(Vec<Fixed32>),
+    VecFixed64(Vec<Fixed64>),
+}
+
+impl VecFixedAny
+{
+    pub fn map_out<A, f : Fn(FixedAny) -> A>(self, f : f) -> Vec<A>
+    {
+        match self
+        {
+            VecFixedAny::VecFixed16(v) => v.iter().map(|x| f(FixedAny::Fixed16(*x))).collect(),
+            VecFixedAny::VecFixed32(v) => v.iter().map(|x| f(FixedAny::Fixed32(*x))).collect(),
+            VecFixedAny::VecFixed64(v) => v.iter().map(|x| f(FixedAny::Fixed64(*x))).collect(),
+        }
+    }
+
+}
+
+
+
+

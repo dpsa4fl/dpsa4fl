@@ -2,7 +2,7 @@
 use crate::helpers::task_id_from_string;
 
 
-use crate::core::{CommonState_Parametrization};
+use crate::core::{CommonState_Parametrization, VecFixedAny};
 // use crate::helpers::task_id_from_string;
 
 use dpsa4fl_janus_tasks::fixed::{FixedTypeTag, IsTagInstance, FixedBase};
@@ -259,7 +259,17 @@ impl ClientState {
 
     ///////////////////////////////////////
     // Submission
-    async fn get__submission_result<Fx : Fixed>(&self, measurement: &Vec<Fx>) -> anyhow::Result<()>
+    async fn get__submission_result(&self, measurement: &VecFixedAny) -> anyhow::Result<()>
+    {
+        match measurement
+        {
+            VecFixedAny::VecFixed16(v) => self.get__submission_result_impl(v).await,
+            VecFixedAny::VecFixed32(v) => self.get__submission_result_impl(v).await,
+            VecFixedAny::VecFixed64(v) => self.get__submission_result_impl(v).await,
+        }
+    }
+
+    async fn get__submission_result_impl<Fx : Fixed>(&self, measurement: &Vec<Fx>) -> anyhow::Result<()>
         where
           Fx : CompatibleFloat<Field128>,
           Fx : IsTagInstance<FixedTypeTag>,
@@ -326,11 +336,7 @@ pub fn api__new_client_state(p: Locations) -> ClientStatePU {
 //
 // Submitting
 //
-pub async fn api__submit<Fx : Fixed>(s: &mut ClientStatePU, round_settings: RoundSettings, data: &Vec<Fx>) -> anyhow::Result<()>
-    where
-      Fx : CompatibleFloat<Field128>,
-      Fx : IsTagInstance<FixedTypeTag>,
-      Fx : FixedBase,
+pub async fn api__submit(s: &mut ClientStatePU, round_settings: RoundSettings, data: &VecFixedAny) -> anyhow::Result<()>
 {
     match s
     {
