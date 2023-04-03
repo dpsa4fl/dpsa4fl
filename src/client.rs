@@ -275,6 +275,18 @@ impl ClientState {
           Fx : IsTagInstance<FixedTypeTag>,
           Fx : FixedBase,
     {
+        ////////////////////////
+        // check length
+        let actual_len = measurement.len();
+        let expected_len = self.parametrization.vdaf_parameter.gradient_len;
+        if actual_len != expected_len
+        {
+            return Err(anyhow!("Expected data to be have length {expected_len} but it was {actual_len}"));
+        }
+
+
+        ////////////////////////
+        // check type
         let aggregator_tag = self.parametrization.vdaf_parameter.noise_parameter.get_tag();
 
         // assert that the compile time type `Fx` matches with the type tag for this round
