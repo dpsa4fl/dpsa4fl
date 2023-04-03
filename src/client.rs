@@ -367,3 +367,26 @@ pub async fn api__submit(s: &mut ClientStatePU, round_settings: RoundSettings, d
     };
     Ok(())
 }
+
+
+pub async fn api__submit_with<f : Fn(&CommonState_Parametrization) -> VecFixedAny>(s: &mut ClientStatePU, round_settings: RoundSettings, get_data: f) -> anyhow::Result<()>
+{
+    match s
+    {
+        ClientStatePU::InitState(ref parametrization) =>
+        {
+            let client_state = ClientState::new(parametrization.clone(), round_settings).await?;
+            let data = get_data(&client_state.parametrization);
+            let () = client_state.get__submission_result(&data).await?;
+            *s = ClientStatePU::ValidState(client_state);
+        }
+        ClientStatePU::ValidState(ref mut client_state) => {
+            client_state
+                .update__to_next_round_config(round_settings)
+                .await?;
+            let data = get_data(&client_state.parametrization);
+            let () = client_state.get__submission_result(&data).await?;
+        }
+    };
+    Ok(())
+}
