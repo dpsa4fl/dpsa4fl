@@ -341,8 +341,27 @@ impl ClientState {
 //
 // Init
 //
-pub fn api__new_client_state(p: Locations) -> ClientStatePU {
+pub fn api__new_client_state(p: Locations) -> ClientStatePU
+{
     ClientStatePU::InitState(p)
+}
+
+pub async fn api__update_client_round_settings(s: &mut ClientStatePU, round_settings: RoundSettings) -> Result<()>
+{
+    match s
+    {
+        ClientStatePU::InitState(ref parametrization) =>
+        {
+            let client_state = ClientState::new(parametrization.clone(), round_settings).await?;
+            *s = ClientStatePU::ValidState(client_state);
+        }
+        ClientStatePU::ValidState(ref mut client_state) => {
+            client_state
+                .update__to_next_round_config(round_settings)
+                .await?;
+        }
+    };
+    Ok(())
 }
 
 //
@@ -350,19 +369,17 @@ pub fn api__new_client_state(p: Locations) -> ClientStatePU {
 //
 pub async fn api__submit(s: &mut ClientStatePU, round_settings: RoundSettings, data: &VecFixedAny) -> anyhow::Result<()>
 {
+    api__update_client_round_settings(s, round_settings).await?;
+
     match s
     {
-        ClientStatePU::InitState(ref parametrization) =>
+        ClientStatePU::InitState(_) =>
         {
-            let client_state = ClientState::new(parametrization.clone(), round_settings).await?;
-            let () = client_state.get__submission_result(data).await?;
-            *s = ClientStatePU::ValidState(client_state);
+            Err(anyhow!(""))?;
         }
-        ClientStatePU::ValidState(ref mut client_state) => {
-            client_state
-                .update__to_next_round_config(round_settings)
-                .await?;
-            let () = client_state.get__submission_result(data).await?;
+        ClientStatePU::ValidState(ref mut client_state) =>
+        {
+            client_state.get__submission_result(data).await?;
         }
     };
     Ok(())
@@ -371,21 +388,18 @@ pub async fn api__submit(s: &mut ClientStatePU, round_settings: RoundSettings, d
 
 pub async fn api__submit_with<f : Fn(&CommonState_Parametrization) -> VecFixedAny>(s: &mut ClientStatePU, round_settings: RoundSettings, get_data: f) -> anyhow::Result<()>
 {
+    api__update_client_round_settings(s, round_settings).await?;
+
     match s
     {
-        ClientStatePU::InitState(ref parametrization) =>
+        ClientStatePU::InitState(_) =>
         {
-            let client_state = ClientState::new(parametrization.clone(), round_settings).await?;
-            let data = get_data(&client_state.parametrization);
-            let () = client_state.get__submission_result(&data).await?;
-            *s = ClientStatePU::ValidState(client_state);
+            Err(anyhow!(""))?;
         }
-        ClientStatePU::ValidState(ref mut client_state) => {
-            client_state
-                .update__to_next_round_config(round_settings)
-                .await?;
+        ClientStatePU::ValidState(ref mut client_state) =>
+        {
             let data = get_data(&client_state.parametrization);
-            let () = client_state.get__submission_result(&data).await?;
+            client_state.get__submission_result(&data).await?;
         }
     };
     Ok(())
