@@ -109,18 +109,22 @@ pub struct ClientState {
 }
 
 // Possibly Uninitialized client state
-pub enum ClientStatePU {
+pub enum ClientStatePU
+{
     ValidState(ClientState),
     InitState(Locations),
 }
 
-impl ClientStatePU {
-    // pub fn get_parametrization(&self) -> &CommonState_Parametrization {
-    //     match self {
-    //         ClientStatePU::ValidState(ref state) => &state.parametrization,
-    //         ClientStatePU::InitState(ref param) => &param,
-    //     }
-    // }
+impl ClientStatePU
+{
+    pub fn get_valid_state(&self) -> Option<&ClientState>
+    {
+        match self
+        {
+            ClientStatePU::ValidState(s) => Some(s),
+            ClientStatePU::InitState(_) => None,
+        }
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////
