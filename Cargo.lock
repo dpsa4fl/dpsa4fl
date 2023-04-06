@@ -797,7 +797,7 @@ dependencies = [
 [[package]]
 name = "dpsa4fl_janus_tasks"
 version = "0.1.0"
-source = "git+https://github.com/dpsa-project/dpsa4fl-janus-tasks.git?branch=main#3875cfbeab9009e1f04d200e988aea872e72c62a"
+source = "git+https://github.com/dpsa-project/dpsa4fl-janus-tasks.git?branch=main#315ecbc0e380fc296b9f70a0566bb74167508a09"
 dependencies = [
  "anyhow",
  "async-std",
@@ -812,13 +812,14 @@ dependencies = [
  "janus_collector",
  "janus_core",
  "janus_messages",
+ "num-traits",
  "opentelemetry",
  "prio",
  "rand",
  "reqwest",
  "serde",
  "serde_json",
- "serde_yaml 0.9.19",
+ "serde_yaml 0.9.20",
  "tokio",
  "tokio-postgres",
  "tracing",
@@ -1510,13 +1511,13 @@ dependencies = [
 
 [[package]]
 name = "io-lifetimes"
-version = "1.0.9"
+version = "1.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09270fd4fa1111bc614ed2246c7ef56239a3063d5be0d1ec3b589c505d400aeb"
+checksum = "9c66c74d2ae7e79a5a8f7ac924adbe38ee42a859c6539ad869eb51f0b52dc220"
 dependencies = [
  "hermit-abi 0.3.1",
  "libc",
- "windows-sys 0.45.0",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
@@ -1600,7 +1601,7 @@ dependencies = [
  "rustc_version",
  "serde",
  "serde_json",
- "serde_yaml 0.9.19",
+ "serde_yaml 0.9.20",
  "signal-hook",
  "signal-hook-tokio",
  "thiserror",
@@ -2896,9 +2897,9 @@ dependencies = [
 
 [[package]]
 name = "serde_yaml"
-version = "0.9.19"
+version = "0.9.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f82e6c8c047aa50a7328632d067bcae6ef38772a79e28daf32f735e0e4f3dd10"
+checksum = "0feade41f4649f0549d22df8c0432b2c25128b50f5d926b22173022e25b7c69e"
 dependencies = [
  "indexmap",
  "itoa",
@@ -3824,6 +3825,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75283be5efb2831d37ea142365f009c02ec203cd29a3ebecbc093d52315b66d0"
 dependencies = [
  "windows-targets 0.42.2",
+]
+
+[[package]]
+name = "windows-sys"
+version = "0.48.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "677d2418bec65e3338edb076e806bc1ec15693c5d0104683f2efe857f61056a9"
+dependencies = [
+ "windows-targets 0.48.0",
 ]
 
 [[package]]
