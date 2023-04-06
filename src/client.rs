@@ -390,7 +390,7 @@ pub async fn api__submit(s: &mut ClientStatePU, round_settings: RoundSettings, d
 }
 
 
-pub async fn api__submit_with<f : Fn(&CommonState_Parametrization) -> VecFixedAny>(s: &mut ClientStatePU, round_settings: RoundSettings, get_data: f) -> anyhow::Result<()>
+pub async fn api__submit_with<f : FnOnce(&CommonState_Parametrization) -> VecFixedAny>(s: &mut ClientStatePU, round_settings: RoundSettings, get_data: f) -> anyhow::Result<()>
 {
     api__update_client_round_settings(s, round_settings).await?;
 
