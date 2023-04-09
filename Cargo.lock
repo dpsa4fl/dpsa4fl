@@ -797,7 +797,7 @@ dependencies = [
 [[package]]
 name = "dpsa4fl_janus_tasks"
 version = "0.1.0"
-source = "git+https://github.com/dpsa-project/dpsa4fl-janus-tasks.git?branch=main#315ecbc0e380fc296b9f70a0566bb74167508a09"
+source = "git+https://github.com/dpsa-project/dpsa4fl-janus-tasks.git?branch=main#0848fff4f846c85225de47cdc29d3a49c267a605"
 dependencies = [
  "anyhow",
  "async-std",
@@ -819,7 +819,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
- "serde_yaml 0.9.20",
+ "serde_yaml 0.9.21",
  "tokio",
  "tokio-postgres",
  "tracing",
@@ -873,13 +873,13 @@ dependencies = [
 
 [[package]]
 name = "errno"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50d6a0976c999d473fe89ad888d5a284e55366d9dc9038b1ba2aa15128c4afa0"
+checksum = "4bcfec3a70f97c962c307b2d2c56e358cf1d00b558d74262b5f929ee8cc7e73a"
 dependencies = [
  "errno-dragonfly",
  "libc",
- "windows-sys 0.45.0",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
@@ -1128,9 +1128,9 @@ dependencies = [
 
 [[package]]
 name = "getrandom"
-version = "0.2.8"
+version = "0.2.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c05aeb6a22b8f62540c194aac980f2115af067bfe15a0734d7277a768d396b31"
+checksum = "c85e1d9ab2eadba7e5040d4e09cbd6d072b76a557ad64e797c2cb9d4da21d7e4"
 dependencies = [
  "cfg-if 1.0.0",
  "js-sys",
@@ -1537,14 +1537,14 @@ checksum = "12b6ee2129af8d4fb011108c73d99a1b83a85977f23b82460c0ae2e25bb4b57f"
 
 [[package]]
 name = "is-terminal"
-version = "0.4.6"
+version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "256017f749ab3117e93acb91063009e1f1bb56d03965b14c2c8df4eb02c524d8"
+checksum = "adcf93614601c8129ddf72e2d5633df827ba6551541c6d8c59520a371475be1f"
 dependencies = [
  "hermit-abi 0.3.1",
  "io-lifetimes",
  "rustix",
- "windows-sys 0.45.0",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
@@ -1565,7 +1565,7 @@ checksum = "453ad9f582a441959e5f0d088b02ce04cfe8d51a8eaf077f12ac6d3e94164ca6"
 [[package]]
 name = "janus_aggregator"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#c0871a05a7d3307e87d384da48347ece0edc1bbd"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#4add359a861c558a465296a36ed205ebe3a9fc7d"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1590,6 +1590,7 @@ dependencies = [
  "janus_messages",
  "k8s-openapi",
  "kube",
+ "num-bigint",
  "opentelemetry",
  "postgres-protocol",
  "postgres-types",
@@ -1601,7 +1602,7 @@ dependencies = [
  "rustc_version",
  "serde",
  "serde_json",
- "serde_yaml 0.9.20",
+ "serde_yaml 0.9.21",
  "signal-hook",
  "signal-hook-tokio",
  "thiserror",
@@ -1619,7 +1620,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#c0871a05a7d3307e87d384da48347ece0edc1bbd"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#4add359a861c558a465296a36ed205ebe3a9fc7d"
 dependencies = [
  "backoff",
  "derivative",
@@ -1639,7 +1640,7 @@ dependencies = [
 [[package]]
 name = "janus_collector"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#c0871a05a7d3307e87d384da48347ece0edc1bbd"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#4add359a861c558a465296a36ed205ebe3a9fc7d"
 dependencies = [
  "backoff",
  "base64 0.21.0",
@@ -1662,7 +1663,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#c0871a05a7d3307e87d384da48347ece0edc1bbd"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#4add359a861c558a465296a36ed205ebe3a9fc7d"
 dependencies = [
  "backoff",
  "base64 0.21.0",
@@ -1687,7 +1688,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#c0871a05a7d3307e87d384da48347ece0edc1bbd"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#4add359a861c558a465296a36ed205ebe3a9fc7d"
 dependencies = [
  "anyhow",
  "base64 0.21.0",
@@ -2416,7 +2417,7 @@ checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 [[package]]
 name = "prio"
 version = "0.10.0"
-source = "git+https://github.com/dpsa-project/libprio-rs.git?branch=feature-simple-dp#93992dc5e5dbfb1ef937fbfa7b5aed90ae2b0316"
+source = "git+https://github.com/dpsa-project/libprio-rs.git?branch=feature-simple-dp#d938fd70ec4b8fbe8291d08b9c4abe8f41f6d51c"
 dependencies = [
  "aes",
  "base64 0.21.0",
@@ -2689,16 +2690,16 @@ dependencies = [
 
 [[package]]
 name = "rustix"
-version = "0.37.7"
+version = "0.37.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2aae838e49b3d63e9274e1c01833cc8139d3fec468c3b84688c628f44b1ae11d"
+checksum = "85597d61f83914ddeba6a47b3b8ffe7365107221c2e557ed94426489fefb5f77"
 dependencies = [
  "bitflags",
  "errno",
  "io-lifetimes",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.45.0",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
@@ -2897,9 +2898,9 @@ dependencies = [
 
 [[package]]
 name = "serde_yaml"
-version = "0.9.20"
+version = "0.9.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0feade41f4649f0549d22df8c0432b2c25128b50f5d926b22173022e25b7c69e"
+checksum = "d9d684e3ec7de3bf5466b32bd75303ac16f0736426e5a4e0d6e489559ce1249c"
 dependencies = [
  "indexmap",
  "itoa",
@@ -3531,9 +3532,9 @@ dependencies = [
 
 [[package]]
 name = "unsafe-libyaml"
-version = "0.2.7"
+version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad2024452afd3874bf539695e04af6732ba06517424dbf958fdb16a01f3bef6c"
+checksum = "1865806a559042e51ab5414598446a5871b561d21b6764f2eabb0dd481d880a6"
 
 [[package]]
 name = "untrusted"

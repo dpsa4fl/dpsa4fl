@@ -291,28 +291,22 @@ impl ClientState {
 
         ////////////////////////
         // check type
-        let aggregator_tag = self.parametrization.vdaf_parameter.noise_parameter.get_tag();
+        let aggregator_tag = &self.parametrization.vdaf_parameter.submission_type;
 
         // assert that the compile time type `Fx` matches with the type tag for this round
-        if Fx::get_tag() != aggregator_tag {
+        if &Fx::get_tag() != aggregator_tag {
             return Err(anyhow!("Tried to submit gradient with fixed type {:?}, but the task has been registered for fixed type {:?}", Fx::get_tag(), aggregator_tag));
         }
-
-        // cast noise_parameter
-        let cast_noise_parameter = if let Some(n) = self.parametrization.vdaf_parameter.noise_parameter.clone().downcast::<Fx>() {
-            n
-        } else {
-            return Err(anyhow!(""));
-        };
 
         // create vdaf instance
         let num_aggregators = 2;
         let len = self.parametrization.vdaf_parameter.gradient_len;
+        let privacy_parameter = self.parametrization.vdaf_parameter.privacy_parameter;
         let vdaf_client: Prio3Aes128FixedPointBoundedL2VecSum<Fx> =
             Prio3Aes128FixedPointBoundedL2VecSum::new_aes128_fixedpoint_boundedl2_vec_sum(
                 num_aggregators,
                 len,
-                cast_noise_parameter, // actually this does not matter for the client
+                privacy_parameter, // actually this does not matter for the client
             )?;
 
         let parameters = ClientParameters::new(
