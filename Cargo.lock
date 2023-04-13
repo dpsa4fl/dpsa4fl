@@ -797,7 +797,7 @@ dependencies = [
 [[package]]
 name = "dpsa4fl_janus_tasks"
 version = "0.1.0"
-source = "git+https://github.com/dpsa-project/dpsa4fl-janus-tasks.git?branch=main#50fc9448370462251ff81bc219e828d75085e369"
+source = "git+https://github.com/dpsa-project/dpsa4fl-janus-tasks.git?branch=main#4d4b7c2bfe027759676cd314450167b34193284d"
 dependencies = [
  "anyhow",
  "async-std",
