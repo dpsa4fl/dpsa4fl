@@ -4,7 +4,7 @@ use crate::helpers::task_id_from_string;
 use crate::core::CommonState_Parametrization;
 // use crate::helpers::task_id_from_string;
 
-use dpsa4fl_janus_tasks::fixed::{FixedBase, FixedTypeTag, IsTagInstance, VecFixedAny};
+use dpsa4fl_janus_tasks::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
 use fixed::traits::Fixed;
 // use janus_aggregator::dpsa4fl::core::Locations;
 use anyhow::{anyhow, Result};
@@ -286,7 +286,7 @@ impl ClientState
     where
         Fx: CompatibleFloat<Field128>,
         Fx: IsTagInstance<FixedTypeTag>,
-        Fx: FixedBase,
+        // Fx: FixedBase,
     {
         ////////////////////////
         // check length
