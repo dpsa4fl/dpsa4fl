@@ -1,3 +1,5 @@
+use std::collections::hash_map::DefaultHasher;
+
 use crate::core::CommonState_Parametrization;
 use anyhow::{anyhow, Result};
 use dpsa4fl_janus_tasks::core::VdafParameter;
@@ -81,6 +83,25 @@ pub async fn api__create_session(
     mstate.round.training_session_id = Some(training_session_id);
 
     Ok(training_session_id.into())
+}
+
+pub async fn api__end_session(
+    istate: &ControllerState_Immut,
+    mstate: &mut ControllerState_Mut,
+) -> Result<()> {
+    if let Some(training_session_id) = mstate.round.training_session_id
+    {
+        istate.permanent.janus_tasks_client.end_session(training_session_id).await?;
+
+        // reset the current training session id
+        mstate.round.training_session_id = None;
+
+        Ok(())
+    }
+    else
+    {
+        Err(anyhow!("Tried to end a session, but none was started."))
+    }
 }
 
 pub async fn api__start_round(
