@@ -1,7 +1,7 @@
 // use crate::core::{CommonState_Parametrization, Fx, Measurement};
 use crate::helpers::task_id_from_string;
 
-use crate::core::CommonState_Parametrization;
+use crate::core::CommonStateParametrization;
 // use crate::helpers::task_id_from_string;
 
 use dpsa4fl_janus_tasks::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
@@ -95,22 +95,22 @@ pub struct RoundConfig
 ////////////////////////////////////////////////////
 // State
 
-pub struct ClientState_Permanent
+pub struct ClientStatePermanent
 {
     http_client: reqwest::Client,
 }
 
 #[derive(Clone)]
-pub struct ClientState_Round
+pub struct ClientStateRound
 {
     pub config: RoundConfig,
 }
 
 pub struct ClientState
 {
-    pub parametrization: CommonState_Parametrization,
-    pub permanent: ClientState_Permanent,
-    pub round: ClientState_Round,
+    pub parametrization: CommonStateParametrization,
+    pub permanent: ClientStatePermanent,
+    pub round: ClientStateRound,
 }
 
 // Possibly Uninitialized client state
@@ -143,7 +143,7 @@ impl ClientStatePU
 //
 
 async fn get_crypto_config(
-    permanent: &ClientState_Permanent,
+    permanent: &ClientStatePermanent,
     task_id: TaskId,
     l: Locations,
 ) -> anyhow::Result<CryptoConfig>
@@ -164,7 +164,7 @@ async fn get_crypto_config(
     })
 }
 
-async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonState_Parametrization>
+async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStateParametrization>
 {
     let leader_param =
         get_vdaf_parameter_from_task(l.external_leader_tasks.clone(), task_id).await?;
@@ -176,7 +176,7 @@ async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStat
     // TODO: For the noise parameter we COULD take the minimum instead
     if leader_param == helper_param
     {
-        Ok(CommonState_Parametrization {
+        Ok(CommonStateParametrization {
             location: l,
             vdaf_parameter: leader_param,
         })
@@ -195,7 +195,7 @@ impl ClientState
     async fn new(locations: Locations, round_settings: RoundSettings)
         -> anyhow::Result<ClientState>
     {
-        let permanent = ClientState_Permanent {
+        let permanent = ClientStatePermanent {
             http_client: default_http_client()?,
         };
 
@@ -203,13 +203,13 @@ impl ClientState
         let c = get_crypto_config(&permanent, round_settings.task_id, locations.clone()).await?;
 
         // get a parametrization from locations
-        let parametrization: CommonState_Parametrization =
+        let parametrization: CommonStateParametrization =
             get_parametrization(round_settings.task_id, locations.clone()).await?;
 
         Ok(ClientState {
             parametrization,
             permanent,
-            round: ClientState_Round {
+            round: ClientStateRound {
                 config: RoundConfig {
                     settings: round_settings,
                     crypto: c,
@@ -225,7 +225,7 @@ impl ClientState
     // which exists in the state, or if necessary, get a new configuration from the
     // aggregators.
     //
-    async fn get__next_round_config(
+    async fn get_next_round_config(
         &self,
         round_settings: RoundSettings,
     ) -> anyhow::Result<RoundConfig>
@@ -258,28 +258,28 @@ impl ClientState
         }
     }
 
-    async fn update__to_next_round_config(
+    async fn update_to_next_round_config(
         &mut self,
         round_settings: RoundSettings,
     ) -> anyhow::Result<()>
     {
-        self.round.config = self.get__next_round_config(round_settings).await?;
+        self.round.config = self.get_next_round_config(round_settings).await?;
         Ok(())
     }
 
     ///////////////////////////////////////
     // Submission
-    async fn get__submission_result(&self, measurement: &VecFixedAny) -> anyhow::Result<()>
+    async fn get_submission_result(&self, measurement: &VecFixedAny) -> anyhow::Result<()>
     {
         match measurement
         {
-            VecFixedAny::VecFixed16(v) => self.get__submission_result_impl(v).await,
-            VecFixedAny::VecFixed32(v) => self.get__submission_result_impl(v).await,
-            VecFixedAny::VecFixed64(v) => self.get__submission_result_impl(v).await,
+            VecFixedAny::VecFixed16(v) => self.get_submission_result_impl(v).await,
+            VecFixedAny::VecFixed32(v) => self.get_submission_result_impl(v).await,
+            VecFixedAny::VecFixed64(v) => self.get_submission_result_impl(v).await,
         }
     }
 
-    async fn get__submission_result_impl<Fx: Fixed>(
+    async fn get_submission_result_impl<Fx: Fixed>(
         &self,
         measurement: &Vec<Fx>,
     ) -> anyhow::Result<()>
@@ -350,12 +350,12 @@ impl ClientState
 //
 // Init
 //
-pub fn api__new_client_state(p: Locations) -> ClientStatePU
+pub fn api_new_client_state(p: Locations) -> ClientStatePU
 {
     ClientStatePU::InitState(p)
 }
 
-pub async fn api__update_client_round_settings(
+pub async fn api_update_client_round_settings(
     s: &mut ClientStatePU,
     round_settings: RoundSettings,
 ) -> Result<()>
@@ -370,7 +370,7 @@ pub async fn api__update_client_round_settings(
         ClientStatePU::ValidState(ref mut client_state) =>
         {
             client_state
-                .update__to_next_round_config(round_settings)
+                .update_to_next_round_config(round_settings)
                 .await?;
         }
     };
@@ -380,13 +380,13 @@ pub async fn api__update_client_round_settings(
 //
 // Submitting
 //
-pub async fn api__submit(
+pub async fn api_submit(
     s: &mut ClientStatePU,
     round_settings: RoundSettings,
     data: &VecFixedAny,
 ) -> anyhow::Result<()>
 {
-    api__update_client_round_settings(s, round_settings).await?;
+    api_update_client_round_settings(s, round_settings).await?;
 
     match s
     {
@@ -396,19 +396,19 @@ pub async fn api__submit(
         }
         ClientStatePU::ValidState(ref mut client_state) =>
         {
-            client_state.get__submission_result(data).await?;
+            client_state.get_submission_result(data).await?;
         }
     };
     Ok(())
 }
 
-pub async fn api__submit_with<F: FnOnce(&CommonState_Parametrization) -> VecFixedAny>(
+pub async fn api_submit_with<F: FnOnce(&CommonStateParametrization) -> VecFixedAny>(
     s: &mut ClientStatePU,
     round_settings: RoundSettings,
     get_data: F,
 ) -> anyhow::Result<()>
 {
-    api__update_client_round_settings(s, round_settings).await?;
+    api_update_client_round_settings(s, round_settings).await?;
 
     match s
     {
@@ -419,7 +419,7 @@ pub async fn api__submit_with<F: FnOnce(&CommonState_Parametrization) -> VecFixe
         ClientStatePU::ValidState(ref mut client_state) =>
         {
             let data = get_data(&client_state.parametrization);
-            client_state.get__submission_result(&data).await?;
+            client_state.get_submission_result(&data).await?;
         }
     };
     Ok(())

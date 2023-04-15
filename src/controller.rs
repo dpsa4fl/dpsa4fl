@@ -1,4 +1,4 @@
-use crate::core::CommonState_Parametrization;
+use crate::core::CommonStateParametrization;
 use anyhow::{anyhow, Result};
 
 use dpsa4fl_janus_tasks::{core::TrainingSessionId, janus_tasks_client::JanusTasksClient};
@@ -21,49 +21,49 @@ use janus_messages::TaskId;
 ////////////////////////////////////////////////////
 // State
 
-pub struct ControllerState_Permanent
+pub struct ControllerStatePermanent
 {
     // http_client: reqwest::Client,
     janus_tasks_client: JanusTasksClient,
 }
 
 #[derive(Clone)]
-pub struct ControllerState_Round
+pub struct ControllerStateRound
 {
     // config: RoundConfig,
     pub task_id: Option<TaskId>,
     pub training_session_id: Option<TrainingSessionId>,
 }
 
-pub struct ControllerState_Immut
+pub struct ControllerStateImmut
 {
-    pub parametrization: CommonState_Parametrization,
-    pub permanent: ControllerState_Permanent,
+    pub parametrization: CommonStateParametrization,
+    pub permanent: ControllerStatePermanent,
 }
 
-pub struct ControllerState_Mut
+pub struct ControllerStateMut
 {
-    pub round: ControllerState_Round,
+    pub round: ControllerStateRound,
 }
 
 ////////////////////////////////////////////////////
 // Implementation
-impl ControllerState_Immut
+impl ControllerStateImmut
 {
-    pub fn new(p: CommonState_Parametrization) -> Self
+    pub fn new(p: CommonStateParametrization) -> Self
     {
         // janus tasks
         let janus_tasks_client =
             JanusTasksClient::new(p.location.clone(), p.vdaf_parameter.clone());
 
-        let permanent = ControllerState_Permanent { janus_tasks_client };
+        let permanent = ControllerStatePermanent { janus_tasks_client };
 
         // let round = ControllerState_Round {
         //     training_session_id: None,
         //     task_id: None,
         // };
 
-        ControllerState_Immut {
+        ControllerStateImmut {
             parametrization: p,
             permanent,
         }
@@ -73,14 +73,14 @@ impl ControllerState_Immut
 /////////////////////////////////////////////////////////////////////////
 // api
 
-pub fn api__new_controller_state(p: CommonState_Parametrization) -> ControllerState_Immut
+pub fn api_new_controller_state(p: CommonStateParametrization) -> ControllerStateImmut
 {
-    ControllerState_Immut::new(p)
+    ControllerStateImmut::new(p)
 }
 
-pub async fn api__create_session(
-    istate: &ControllerState_Immut,
-    mstate: &mut ControllerState_Mut,
+pub async fn api_create_session(
+    istate: &ControllerStateImmut,
+    mstate: &mut ControllerStateMut,
 ) -> Result<u16>
 {
     let training_session_id = istate.permanent.janus_tasks_client.create_session().await?;
@@ -91,9 +91,9 @@ pub async fn api__create_session(
     Ok(training_session_id.into())
 }
 
-pub async fn api__end_session(
-    istate: &ControllerState_Immut,
-    mstate: &mut ControllerState_Mut,
+pub async fn api_end_session(
+    istate: &ControllerStateImmut,
+    mstate: &mut ControllerStateMut,
 ) -> Result<()>
 {
     if let Some(training_session_id) = mstate.round.training_session_id
@@ -115,9 +115,9 @@ pub async fn api__end_session(
     }
 }
 
-pub async fn api__start_round(
-    istate: &ControllerState_Immut,
-    mstate: &mut ControllerState_Mut,
+pub async fn api_start_round(
+    istate: &ControllerStateImmut,
+    mstate: &mut ControllerStateMut,
 ) -> Result<String>
 {
     let training_session_id = mstate.round.training_session_id.ok_or(anyhow!(
@@ -137,9 +137,9 @@ pub async fn api__start_round(
     Ok(task_id.to_string())
 }
 
-pub async fn api__collect(
-    istate: &ControllerState_Immut,
-    mstate: &mut ControllerState_Mut,
+pub async fn api_collect(
+    istate: &ControllerStateImmut,
+    mstate: &mut ControllerStateMut,
 ) -> Result<Collection<Vec<f64>, TimeInterval>>
 {
     let task_id = mstate

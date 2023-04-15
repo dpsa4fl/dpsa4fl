@@ -9,7 +9,7 @@ pub type NoiseParameterType = FixedAny;
 // State
 
 #[derive(Clone)]
-pub struct CommonState_Parametrization
+pub struct CommonStateParametrization
 {
     pub location: Locations,
     pub vdaf_parameter: VdafParameter,
