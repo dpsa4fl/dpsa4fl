@@ -1,9 +1,8 @@
 pub use dpsa4fl_janus_tasks::core::Locations;
 pub use dpsa4fl_janus_tasks::fixed::FixedAny;
-use dpsa4fl_janus_tasks::fixed::FixedTypeTag;
+
 use dpsa4fl_janus_tasks::{
     core::VdafParameter,
-    fixed::{Fixed16, Fixed32, Fixed64},
 };
 // use fixed::{types::extra::U31, FixedI32};
 
