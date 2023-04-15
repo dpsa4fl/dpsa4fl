@@ -1,23 +1,22 @@
 // use crate::core::{CommonState_Parametrization, Fx, Measurement};
 use crate::helpers::task_id_from_string;
 
-
-use crate::core::{CommonState_Parametrization};
+use crate::core::CommonState_Parametrization;
 // use crate::helpers::task_id_from_string;
 
-use dpsa4fl_janus_tasks::fixed::{FixedTypeTag, IsTagInstance, FixedBase, VecFixedAny};
+use dpsa4fl_janus_tasks::fixed::{FixedBase, FixedTypeTag, IsTagInstance, VecFixedAny};
 use fixed::traits::Fixed;
 // use janus_aggregator::dpsa4fl::core::Locations;
-use janus_client::{ClientParameters, aggregator_hpke_config, default_http_client, Client};
-use janus_core::{time::RealClock};
-use janus_messages::{HpkeConfig, Role, TaskId, Duration};
-use prio::field::Field128;
-use prio::flp::types::fixedpoint_l2::compatible_float::CompatibleFloat;
-use url::*;
 use anyhow::{anyhow, Result};
 use async_std::future::try_join;
 use dpsa4fl_janus_tasks::core::Locations;
 use dpsa4fl_janus_tasks::janus_tasks_client::get_vdaf_parameter_from_task;
+use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
+use janus_core::time::RealClock;
+use janus_messages::{Duration, HpkeConfig, Role, TaskId};
+use prio::field::Field128;
+use prio::flp::types::fixedpoint_l2::compatible_float::CompatibleFloat;
+use url::*;
 // use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
 // use janus_core::time::RealClock;
 // use janus_messages::{Duration, HpkeConfig, Role, TaskId};
@@ -44,8 +43,6 @@ const TIME_PRECISION: u64 = 3600;
 // pub type Fx = FixedI32<U31>;
 // pub type Measurement = Vec<Fx>;
 
-
-
 ////////////////////////////////////////////////////
 // Settings
 
@@ -54,14 +51,17 @@ const TIME_PRECISION: u64 = 3600;
 // The clients generate a `RoundConfig` from them.
 //
 #[derive(Clone)]
-pub struct RoundSettings {
+pub struct RoundSettings
+{
     pub task_id: TaskId,
     pub time_precision: Duration,
     pub should_request_hpke_config: bool,
 }
 
-impl RoundSettings {
-    pub fn new(task_id_base64: String) -> Result<Self> {
+impl RoundSettings
+{
+    pub fn new(task_id_base64: String) -> Result<Self>
+    {
         let res = RoundSettings {
             task_id: task_id_from_string(task_id_base64)?,
             time_precision: Duration::from_seconds(TIME_PRECISION),
@@ -75,7 +75,8 @@ impl RoundSettings {
 // Config
 
 #[derive(Clone)]
-pub struct CryptoConfig {
+pub struct CryptoConfig
+{
     leader_hpke_config: HpkeConfig,
     helper_hpke_config: HpkeConfig,
 }
@@ -85,7 +86,8 @@ pub struct CryptoConfig {
 // can submit its results.
 //
 #[derive(Clone)]
-pub struct RoundConfig {
+pub struct RoundConfig
+{
     pub settings: RoundSettings,
     pub crypto: CryptoConfig,
 }
@@ -93,16 +95,19 @@ pub struct RoundConfig {
 ////////////////////////////////////////////////////
 // State
 
-pub struct ClientState_Permanent {
+pub struct ClientState_Permanent
+{
     http_client: reqwest::Client,
 }
 
 #[derive(Clone)]
-pub struct ClientState_Round {
+pub struct ClientState_Round
+{
     pub config: RoundConfig,
 }
 
-pub struct ClientState {
+pub struct ClientState
+{
     pub parametrization: CommonState_Parametrization,
     pub permanent: ClientState_Permanent,
     pub round: ClientState_Round,
@@ -141,7 +146,8 @@ async fn get_crypto_config(
     permanent: &ClientState_Permanent,
     task_id: TaskId,
     l: Locations,
-) -> anyhow::Result<CryptoConfig> {
+) -> anyhow::Result<CryptoConfig>
+{
     let c: ClientParameters = ClientParameters::new(
         task_id,
         l.get_external_aggregator_endpoints(),
@@ -158,13 +164,12 @@ async fn get_crypto_config(
     })
 }
 
-async fn get_parametrization(
-    task_id: TaskId,
-    l:Locations,
-) -> Result<CommonState_Parametrization>
+async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonState_Parametrization>
 {
-    let leader_param = get_vdaf_parameter_from_task(l.external_leader_tasks.clone(), task_id).await?;
-    let helper_param = get_vdaf_parameter_from_task(l.external_helper_tasks.clone(), task_id).await?;
+    let leader_param =
+        get_vdaf_parameter_from_task(l.external_leader_tasks.clone(), task_id).await?;
+    let helper_param =
+        get_vdaf_parameter_from_task(l.external_helper_tasks.clone(), task_id).await?;
 
     // make sure that the information matchs
     //
@@ -185,25 +190,21 @@ async fn get_parametrization(
 //
 // Functions that take client state as parameter.
 //
-impl ClientState {
-    async fn new(
-        locations: Locations,
-        round_settings: RoundSettings,
-    ) -> anyhow::Result<ClientState> {
+impl ClientState
+{
+    async fn new(locations: Locations, round_settings: RoundSettings)
+        -> anyhow::Result<ClientState>
+    {
         let permanent = ClientState_Permanent {
             http_client: default_http_client()?,
         };
 
         // we get a new crypto config if we were asked for it
-        let c = get_crypto_config(
-            &permanent,
-            round_settings.task_id,
-            locations.clone(),
-        )
-        .await?;
+        let c = get_crypto_config(&permanent, round_settings.task_id, locations.clone()).await?;
 
         // get a parametrization from locations
-        let parametrization: CommonState_Parametrization = get_parametrization(round_settings.task_id, locations.clone()).await?;
+        let parametrization: CommonState_Parametrization =
+            get_parametrization(round_settings.task_id, locations.clone()).await?;
 
         Ok(ClientState {
             parametrization,
@@ -227,11 +228,13 @@ impl ClientState {
     async fn get__next_round_config(
         &self,
         round_settings: RoundSettings,
-    ) -> anyhow::Result<RoundConfig> {
+    ) -> anyhow::Result<RoundConfig>
+    {
         // NOTE: We assume that the vdaf parameters don't change between tasks of the same session
         //       If they could, we would have to get the current vdaf parameters here.
 
-        if round_settings.should_request_hpke_config {
+        if round_settings.should_request_hpke_config
+        {
             // we get a new crypto config if we were asked for it
             let c = get_crypto_config(
                 &self.permanent,
@@ -243,7 +246,9 @@ impl ClientState {
                 settings: round_settings,
                 crypto: c,
             })
-        } else {
+        }
+        else
+        {
             // Copy the old config from the state to the new config.
             // Just change the task_id to the new one from the round_settings.
             Ok(RoundConfig {
@@ -256,7 +261,8 @@ impl ClientState {
     async fn update__to_next_round_config(
         &mut self,
         round_settings: RoundSettings,
-    ) -> anyhow::Result<()> {
+    ) -> anyhow::Result<()>
+    {
         self.round.config = self.get__next_round_config(round_settings).await?;
         Ok(())
     }
@@ -273,11 +279,14 @@ impl ClientState {
         }
     }
 
-    async fn get__submission_result_impl<Fx : Fixed>(&self, measurement: &Vec<Fx>) -> anyhow::Result<()>
-        where
-          Fx : CompatibleFloat<Field128>,
-          Fx : IsTagInstance<FixedTypeTag>,
-          Fx : FixedBase,
+    async fn get__submission_result_impl<Fx: Fixed>(
+        &self,
+        measurement: &Vec<Fx>,
+    ) -> anyhow::Result<()>
+    where
+        Fx: CompatibleFloat<Field128>,
+        Fx: IsTagInstance<FixedTypeTag>,
+        Fx: FixedBase,
     {
         ////////////////////////
         // check length
@@ -285,16 +294,18 @@ impl ClientState {
         let expected_len = self.parametrization.vdaf_parameter.gradient_len;
         if actual_len != expected_len
         {
-            return Err(anyhow!("Expected data to be have length {expected_len} but it was {actual_len}"));
+            return Err(anyhow!(
+                "Expected data to be have length {expected_len} but it was {actual_len}"
+            ));
         }
-
 
         ////////////////////////
         // check type
         let aggregator_tag = &self.parametrization.vdaf_parameter.submission_type;
 
         // assert that the compile time type `Fx` matches with the type tag for this round
-        if &Fx::get_tag() != aggregator_tag {
+        if &Fx::get_tag() != aggregator_tag
+        {
             return Err(anyhow!("Tried to submit gradient with fixed type {:?}, but the task has been registered for fixed type {:?}", Fx::get_tag(), aggregator_tag));
         }
 
@@ -344,7 +355,10 @@ pub fn api__new_client_state(p: Locations) -> ClientStatePU
     ClientStatePU::InitState(p)
 }
 
-pub async fn api__update_client_round_settings(s: &mut ClientStatePU, round_settings: RoundSettings) -> Result<()>
+pub async fn api__update_client_round_settings(
+    s: &mut ClientStatePU,
+    round_settings: RoundSettings,
+) -> Result<()>
 {
     match s
     {
@@ -353,7 +367,8 @@ pub async fn api__update_client_round_settings(s: &mut ClientStatePU, round_sett
             let client_state = ClientState::new(parametrization.clone(), round_settings).await?;
             *s = ClientStatePU::ValidState(client_state);
         }
-        ClientStatePU::ValidState(ref mut client_state) => {
+        ClientStatePU::ValidState(ref mut client_state) =>
+        {
             client_state
                 .update__to_next_round_config(round_settings)
                 .await?;
@@ -365,7 +380,11 @@ pub async fn api__update_client_round_settings(s: &mut ClientStatePU, round_sett
 //
 // Submitting
 //
-pub async fn api__submit(s: &mut ClientStatePU, round_settings: RoundSettings, data: &VecFixedAny) -> anyhow::Result<()>
+pub async fn api__submit(
+    s: &mut ClientStatePU,
+    round_settings: RoundSettings,
+    data: &VecFixedAny,
+) -> anyhow::Result<()>
 {
     api__update_client_round_settings(s, round_settings).await?;
 
@@ -383,8 +402,11 @@ pub async fn api__submit(s: &mut ClientStatePU, round_settings: RoundSettings, d
     Ok(())
 }
 
-
-pub async fn api__submit_with<f : FnOnce(&CommonState_Parametrization) -> VecFixedAny>(s: &mut ClientStatePU, round_settings: RoundSettings, get_data: f) -> anyhow::Result<()>
+pub async fn api__submit_with<f: FnOnce(&CommonState_Parametrization) -> VecFixedAny>(
+    s: &mut ClientStatePU,
+    round_settings: RoundSettings,
+    get_data: f,
+) -> anyhow::Result<()>
 {
     api__update_client_round_settings(s, round_settings).await?;
 

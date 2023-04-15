@@ -1,7 +1,10 @@
 pub use dpsa4fl_janus_tasks::core::Locations;
-use dpsa4fl_janus_tasks::{core::VdafParameter, fixed::{Fixed16, Fixed32, Fixed64}};
 pub use dpsa4fl_janus_tasks::fixed::FixedAny;
 use dpsa4fl_janus_tasks::fixed::FixedTypeTag;
+use dpsa4fl_janus_tasks::{
+    core::VdafParameter,
+    fixed::{Fixed16, Fixed32, Fixed64},
+};
 // use fixed::{types::extra::U31, FixedI32};
 
 // use janus_client::{ClientParameters, aggregator_hpke_config, default_http_client, Client};
@@ -88,22 +91,19 @@ impl FixedBase for Fixed64 {}
 
 */
 
-
-
 ////////////////////////////////////////////////////
 // State
 
 #[derive(Clone)]
-pub struct CommonState_Parametrization {
+pub struct CommonState_Parametrization
+{
     pub location: Locations,
     pub vdaf_parameter: VdafParameter,
     // pub submission_type: FixedTypeTag,
 }
 
-
 ////////////////////////////////////////////////////
 // existential type simulation for gradients
-
 
 // impl VecFixedAny
 // {
@@ -118,7 +118,3 @@ pub struct CommonState_Parametrization {
 //     }
 
 // }
-
-
-
-

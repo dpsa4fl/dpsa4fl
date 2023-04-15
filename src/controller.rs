@@ -23,31 +23,37 @@ use janus_messages::TaskId;
 ////////////////////////////////////////////////////
 // State
 
-pub struct ControllerState_Permanent {
+pub struct ControllerState_Permanent
+{
     // http_client: reqwest::Client,
     janus_tasks_client: JanusTasksClient,
 }
 
 #[derive(Clone)]
-pub struct ControllerState_Round {
+pub struct ControllerState_Round
+{
     // config: RoundConfig,
     pub task_id: Option<TaskId>,
     pub training_session_id: Option<TrainingSessionId>,
 }
 
-pub struct ControllerState_Immut {
+pub struct ControllerState_Immut
+{
     pub parametrization: CommonState_Parametrization,
     pub permanent: ControllerState_Permanent,
 }
 
-pub struct ControllerState_Mut {
+pub struct ControllerState_Mut
+{
     pub round: ControllerState_Round,
 }
 
 ////////////////////////////////////////////////////
 // Implementation
-impl ControllerState_Immut {
-    pub fn new(p: CommonState_Parametrization) -> Self {
+impl ControllerState_Immut
+{
+    pub fn new(p: CommonState_Parametrization) -> Self
+    {
         // janus tasks
         let janus_tasks_client =
             JanusTasksClient::new(p.location.clone(), p.vdaf_parameter.clone());
@@ -69,14 +75,16 @@ impl ControllerState_Immut {
 /////////////////////////////////////////////////////////////////////////
 // api
 
-pub fn api__new_controller_state(p: CommonState_Parametrization) -> ControllerState_Immut {
+pub fn api__new_controller_state(p: CommonState_Parametrization) -> ControllerState_Immut
+{
     ControllerState_Immut::new(p)
 }
 
 pub async fn api__create_session(
     istate: &ControllerState_Immut,
     mstate: &mut ControllerState_Mut,
-) -> Result<u16> {
+) -> Result<u16>
+{
     let training_session_id = istate.permanent.janus_tasks_client.create_session().await?;
 
     // set our current training session id
@@ -88,10 +96,15 @@ pub async fn api__create_session(
 pub async fn api__end_session(
     istate: &ControllerState_Immut,
     mstate: &mut ControllerState_Mut,
-) -> Result<()> {
+) -> Result<()>
+{
     if let Some(training_session_id) = mstate.round.training_session_id
     {
-        istate.permanent.janus_tasks_client.end_session(training_session_id).await?;
+        istate
+            .permanent
+            .janus_tasks_client
+            .end_session(training_session_id)
+            .await?;
 
         // reset the current training session id
         mstate.round.training_session_id = None;
@@ -107,7 +120,8 @@ pub async fn api__end_session(
 pub async fn api__start_round(
     istate: &ControllerState_Immut,
     mstate: &mut ControllerState_Mut,
-) -> Result<String> {
+) -> Result<String>
+{
     let training_session_id = mstate.round.training_session_id.ok_or(anyhow!(
         "Cannot start round because no session was created."
     ))?;
@@ -128,7 +142,8 @@ pub async fn api__start_round(
 pub async fn api__collect(
     istate: &ControllerState_Immut,
     mstate: &mut ControllerState_Mut,
-) -> Result<Collection<Vec<f64>, TimeInterval>> {
+) -> Result<Collection<Vec<f64>, TimeInterval>>
+{
     let task_id = mstate
         .round
         .task_id
