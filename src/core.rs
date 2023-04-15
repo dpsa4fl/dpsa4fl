@@ -104,26 +104,20 @@ pub struct CommonState_Parametrization {
 ////////////////////////////////////////////////////
 // existential type simulation for gradients
 
-pub enum VecFixedAny
-{
-    VecFixed16(Vec<Fixed16>),
-    VecFixed32(Vec<Fixed32>),
-    VecFixed64(Vec<Fixed64>),
-}
 
-impl VecFixedAny
-{
-    pub fn map_out<A, f : Fn(FixedAny) -> A>(self, f : f) -> Vec<A>
-    {
-        match self
-        {
-            VecFixedAny::VecFixed16(v) => v.iter().map(|x| f(FixedAny::Fixed16(*x))).collect(),
-            VecFixedAny::VecFixed32(v) => v.iter().map(|x| f(FixedAny::Fixed32(*x))).collect(),
-            VecFixedAny::VecFixed64(v) => v.iter().map(|x| f(FixedAny::Fixed64(*x))).collect(),
-        }
-    }
+// impl VecFixedAny
+// {
+//     pub fn map_out<A, f : Fn(FixedAny) -> A>(self, f : f) -> Vec<A>
+//     {
+//         match self
+//         {
+//             VecFixedAny::VecFixed16(v) => v.iter().map(|x| f(FixedAny::Fixed16(*x))).collect(),
+//             VecFixedAny::VecFixed32(v) => v.iter().map(|x| f(FixedAny::Fixed32(*x))).collect(),
+//             VecFixedAny::VecFixed64(v) => v.iter().map(|x| f(FixedAny::Fixed64(*x))).collect(),
+//         }
+//     }
 
-}
+// }
 
 
 
