@@ -402,10 +402,10 @@ pub async fn api__submit(
     Ok(())
 }
 
-pub async fn api__submit_with<f: FnOnce(&CommonState_Parametrization) -> VecFixedAny>(
+pub async fn api__submit_with<F: FnOnce(&CommonState_Parametrization) -> VecFixedAny>(
     s: &mut ClientStatePU,
     round_settings: RoundSettings,
-    get_data: f,
+    get_data: F,
 ) -> anyhow::Result<()>
 {
     api__update_client_round_settings(s, round_settings).await?;
