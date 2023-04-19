@@ -348,9 +348,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.2.2"
+version = "4.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9b802d85aaf3a1cdb02b224ba472ebdea62014fccfcb269b95a4d76443b5ee5a"
+checksum = "49f9152d70e42172fdb87de2efd7327160beee37886027cf86f30a233d5b30b4"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -359,9 +359,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.2.2"
+version = "4.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14a1a858f532119338887a4b8e1af9c60de8249cd7bafd68036a489e261e37b6"
+checksum = "e067b220911598876eb55d52725ddcc201ffe3f0904018195973bc5b012ea2ca"
 dependencies = [
  "anstream",
  "anstyle",
@@ -797,7 +797,7 @@ dependencies = [
 [[package]]
 name = "dpsa4fl_janus_tasks"
 version = "0.1.0"
-source = "git+https://github.com/dpsa-project/dpsa4fl-janus-tasks.git?branch=main#eff775670a8a835252cc44e71e131d7095ccc61a"
+source = "git+https://github.com/dpsa-project/dpsa4fl-janus-tasks.git?branch=main#0620a150a4a430a55ff6e6ff3a5193f38dc993cc"
 dependencies = [
  "anyhow",
  "async-std",
@@ -1184,9 +1184,9 @@ dependencies = [
 
 [[package]]
 name = "h2"
-version = "0.3.17"
+version = "0.3.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "66b91535aa35fea1523ad1b86cb6b53c28e0ae566ba4a460f4457e936cad7c6f"
+checksum = "17f8a914c2987b688368b5138aa05321db91f4090cf26118185672ad588bce21"
 dependencies = [
  "bytes",
  "fnv",
@@ -1565,7 +1565,7 @@ checksum = "453ad9f582a441959e5f0d088b02ce04cfe8d51a8eaf077f12ac6d3e94164ca6"
 [[package]]
 name = "janus_aggregator"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#4599b59b0c0d8e80022abaa7880afd6e8325c8ef"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#33b8bbf14970c4e54d334cf70fdb2b790dfb2d15"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1620,7 +1620,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#4599b59b0c0d8e80022abaa7880afd6e8325c8ef"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#33b8bbf14970c4e54d334cf70fdb2b790dfb2d15"
 dependencies = [
  "backoff",
  "derivative",
@@ -1640,7 +1640,7 @@ dependencies = [
 [[package]]
 name = "janus_collector"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#4599b59b0c0d8e80022abaa7880afd6e8325c8ef"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#33b8bbf14970c4e54d334cf70fdb2b790dfb2d15"
 dependencies = [
  "backoff",
  "base64 0.21.0",
@@ -1663,7 +1663,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#4599b59b0c0d8e80022abaa7880afd6e8325c8ef"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#33b8bbf14970c4e54d334cf70fdb2b790dfb2d15"
 dependencies = [
  "backoff",
  "base64 0.21.0",
@@ -1688,7 +1688,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.3.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#4599b59b0c0d8e80022abaa7880afd6e8325c8ef"
+source = "git+https://github.com/dpsa-project/janus.git?branch=dpsa-m6-dev#33b8bbf14970c4e54d334cf70fdb2b790dfb2d15"
 dependencies = [
  "anyhow",
  "base64 0.21.0",
@@ -1849,9 +1849,9 @@ checksum = "0717cef1bc8b636c6e1c1bbdefc09e6322da8a9321966e8928ef80d20f7f770f"
 
 [[package]]
 name = "linux-raw-sys"
-version = "0.3.1"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d59d8c75012853d2e872fb56bc8a2e53718e2cafe1a4c823143141c6d90c322f"
+checksum = "3f508063cc7bb32987c71511216bd5a32be15bccb6a80b52df8b9d7f01fc3aa2"
 
 [[package]]
 name = "lock_api"
@@ -2417,7 +2417,7 @@ checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 [[package]]
 name = "prio"
 version = "0.10.0"
-source = "git+https://github.com/dpsa-project/libprio-rs.git?branch=feature-simple-dp#d938fd70ec4b8fbe8291d08b9c4abe8f41f6d51c"
+source = "git+https://github.com/dpsa-project/libprio-rs.git?branch=feature-simple-dp#0fa28fed7f111307b8ef5c3e103594a012c0ef01"
 dependencies = [
  "aes",
  "base64 0.21.0",
@@ -2690,9 +2690,9 @@ dependencies = [
 
 [[package]]
 name = "rustix"
-version = "0.37.11"
+version = "0.37.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85597d61f83914ddeba6a47b3b8ffe7365107221c2e557ed94426489fefb5f77"
+checksum = "722529a737f5a942fdbac3a46cee213053196737c5eaa3386d52e85b786f2659"
 dependencies = [
  "bitflags",
  "errno",
