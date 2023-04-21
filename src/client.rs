@@ -32,10 +32,10 @@ const TIME_PRECISION: u64 = 3600;
 ////////////////////////////////////////////////////
 // Settings
 
-//
-// The settings are transmitted from the controller to the clients.
-// The clients generate a `RoundConfig` from them.
-//
+/// Settings for a single round.
+///
+/// The `task_id` identifies the task
+/// on both aggregators where the gradient is going to be submitted.
 #[derive(Clone)]
 pub struct RoundSettings
 {
@@ -46,6 +46,7 @@ pub struct RoundSettings
 
 impl RoundSettings
 {
+    /// Create a default round settings from a task id.
     pub fn new(task_id_base64: String) -> Result<Self>
     {
         let res = RoundSettings {
@@ -60,6 +61,7 @@ impl RoundSettings
 ////////////////////////////////////////////////////
 // Config
 
+/// Stores the hpke keys of both aggregators required for submitting gradients.
 #[derive(Clone)]
 pub struct CryptoConfig
 {
@@ -67,10 +69,7 @@ pub struct CryptoConfig
     helper_hpke_config: HpkeConfig,
 }
 
-//
-// All that is needed to know such that this client
-// can submit its results.
-//
+/// Full configuration for a round, consisting of settings and crypto config.
 #[derive(Clone)]
 pub struct RoundConfig
 {
@@ -81,17 +80,20 @@ pub struct RoundConfig
 ////////////////////////////////////////////////////
 // State
 
+/// State which persists from round to round.
 pub struct ClientStatePermanent
 {
     http_client: reqwest::Client,
 }
 
+/// State relevant for a single round.
 #[derive(Clone)]
 pub struct ClientStateRound
 {
     pub config: RoundConfig,
 }
 
+/// All client state.
 pub struct ClientState
 {
     pub parametrization: CommonStateParametrization,
@@ -99,7 +101,7 @@ pub struct ClientState
     pub round: ClientStateRound,
 }
 
-// Possibly Uninitialized client state
+/// Client state which is possibly uninitialized until now.
 pub enum ClientStatePU
 {
     ValidState(ClientState),
@@ -108,6 +110,7 @@ pub enum ClientStatePU
 
 impl ClientStatePU
 {
+    /// Return the initialized client state if available, otherwise fail.
     pub fn get_valid_state(&self) -> Option<&ClientState>
     {
         match self
