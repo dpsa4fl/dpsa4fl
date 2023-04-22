@@ -102,5 +102,8 @@ pub mod client;
 /// gradients.
 pub mod controller;
 
-mod core;
-mod helpers;
+/// Definitions of core datastructures.
+pub mod core;
+
+/// Helper functions useful for binding crates.
+pub mod helpers;
