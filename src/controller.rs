@@ -21,26 +21,28 @@ use janus_messages::TaskId;
 ////////////////////////////////////////////////////
 // State
 
+/// State that is preserved between rounds.
 pub struct ControllerStatePermanent
 {
-    // http_client: reqwest::Client,
     janus_tasks_client: JanusTasksClient,
 }
 
+/// State that is required only for a single round.
 #[derive(Clone)]
 pub struct ControllerStateRound
 {
-    // config: RoundConfig,
     pub task_id: Option<TaskId>,
     pub training_session_id: Option<TrainingSessionId>,
 }
 
+/// State that does not change once the controller is initialized.
 pub struct ControllerStateImmut
 {
     pub parametrization: CommonStateParametrization,
     pub permanent: ControllerStatePermanent,
 }
 
+/// State that changes during the controller lifetime.
 pub struct ControllerStateMut
 {
     pub round: ControllerStateRound,
@@ -50,7 +52,7 @@ pub struct ControllerStateMut
 // Implementation
 impl ControllerStateImmut
 {
-    pub fn new(p: CommonStateParametrization) -> Self
+    fn new(p: CommonStateParametrization) -> Self
     {
         // janus tasks
         let janus_tasks_client =
@@ -68,11 +70,16 @@ impl ControllerStateImmut
 /////////////////////////////////////////////////////////////////////////
 // api
 
+/// Create a new immutable controller state from a given set of parameters.
 pub fn api_new_controller_state(p: CommonStateParametrization) -> ControllerStateImmut
 {
     ControllerStateImmut::new(p)
 }
 
+/// Create a new training session.
+///
+/// Calls both janus-tasks instances (i.e., on both aggregators), and
+/// requests the creation of a new session. The session id is returned.
 pub async fn api_create_session(
     istate: &ControllerStateImmut,
     mstate: &mut ControllerStateMut,
@@ -86,6 +93,9 @@ pub async fn api_create_session(
     Ok(training_session_id.into())
 }
 
+/// Ends a training session.
+///
+/// Ends the current training session on both aggregators. If no session is active, fail.
 pub async fn api_end_session(
     istate: &ControllerStateImmut,
     mstate: &mut ControllerStateMut,
@@ -110,6 +120,10 @@ pub async fn api_end_session(
     }
 }
 
+/// Start a new training round.
+///
+/// This requires an active training session. Returns the task id of the
+/// tasks belonging to this training round.
 pub async fn api_start_round(
     istate: &ControllerStateImmut,
     mstate: &mut ControllerStateMut,
@@ -132,6 +146,10 @@ pub async fn api_start_round(
     Ok(task_id.to_string())
 }
 
+/// Collect aggregated gradients.
+///
+/// This calls the leader aggregator and requests the aggregated
+/// gradient vector, associated to the currently active training round.
 pub async fn api_collect(
     istate: &ControllerStateImmut,
     mstate: &mut ControllerStateMut,
