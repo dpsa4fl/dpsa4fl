@@ -1,0 +1,49 @@
+name: Docs
+
+on:
+  # schedule:
+  #   - cron: '0 * * * *'
+  push:
+    branches:
+      -  main
+
+jobs:
+  rustdoc:
+    name: Rustdoc
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install rsync 📚
+        run: |
+          apt-get update && apt-get install -y rsync
+
+      - uses: actions/checkout@v3
+        with:
+          repository: 'dpsa-project/dpsa4fl'
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+
+      - name: Create rustdoc
+        run: cargo doc --all
+        # --features ecma_plugin_transform --features ecma_loader --features ecma_utils --features ecma_quote --features ecma_visit --features ecma_transforms --features __testing_transform --features css_compat --features css_codegen --features css_minifier --features css_prefixer --features css_parser --features common_tty
+
+      - name: Create CNAME
+        run: |
+          echo 'dpsa-project.github.io' > target/doc/CNAME
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@4.1.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: target/doc
+          clean: true
+          git-config-email: bot@dpsa-project.github.io
+          repository-name: dpsa-project/dpsa-project.github.io
+          commit-message: "Update"
+          single-commit: true
+
