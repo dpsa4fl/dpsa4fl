@@ -6,8 +6,8 @@ use dpsa4fl_janus_tasks::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
 use fixed::traits::Fixed;
 use anyhow::{anyhow, Result};
 use async_std::future::try_join;
-use dpsa4fl_janus_tasks::core::Locations;
-use dpsa4fl_janus_tasks::janus_tasks_client::get_vdaf_parameter_from_task;
+use dpsa4fl_janus_tasks::core::{Locations, TasksLocations};
+use dpsa4fl_janus_tasks::janus_tasks_client::{get_vdaf_parameter_from_task, get_main_locations};
 use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
 use janus_core::time::RealClock;
 use janus_messages::{Duration, HpkeConfig, Role, TaskId};
@@ -105,7 +105,7 @@ pub struct ClientState
 pub enum ClientStatePU
 {
     ValidState(ClientState),
-    InitState(Locations),
+    InitState(TasksLocations),
 }
 
 impl ClientStatePU
@@ -156,9 +156,9 @@ async fn get_crypto_config(
 async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStateParametrization>
 {
     let leader_param =
-        get_vdaf_parameter_from_task(l.external_leader_tasks.clone(), task_id).await?;
+        get_vdaf_parameter_from_task(l.tasks.external_leader.clone(), task_id).await?;
     let helper_param =
-        get_vdaf_parameter_from_task(l.external_helper_tasks.clone(), task_id).await?;
+        get_vdaf_parameter_from_task(l.tasks.external_helper.clone(), task_id).await?;
 
     // make sure that the information matchs
     //
@@ -181,11 +181,19 @@ async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStat
 //
 impl ClientState
 {
-    async fn new(locations: Locations, round_settings: RoundSettings)
+    async fn new(task_locations: TasksLocations, round_settings: RoundSettings)
         -> anyhow::Result<ClientState>
     {
         let permanent = ClientStatePermanent {
             http_client: default_http_client()?,
+        };
+
+        // we get the main locations from the tasks servers
+        let main_locations = get_main_locations(task_locations.clone()).await?;
+
+        let locations = Locations {
+            main: main_locations,
+            tasks: task_locations,
         };
 
         // we get a new crypto config if we were asked for it
@@ -343,7 +351,7 @@ impl ClientState
 /// Note that the state does not contain all information required for submitting gradients,
 /// as this information can only be gotten on a round-by-round basis, once the task id
 /// for a given round is known.
-pub fn api_new_client_state(p: Locations) -> ClientStatePU
+pub fn api_new_client_state(p: TasksLocations) -> ClientStatePU
 {
     ClientStatePU::InitState(p)
 }

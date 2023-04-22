@@ -58,11 +58,6 @@ impl ControllerStateImmut
 
         let permanent = ControllerStatePermanent { janus_tasks_client };
 
-        // let round = ControllerState_Round {
-        //     training_session_id: None,
-        //     task_id: None,
-        // };
-
         ControllerStateImmut {
             parametrization: p,
             permanent,
