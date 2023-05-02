@@ -104,6 +104,3 @@ pub mod controller;
 
 /// Definitions of core datastructures.
 pub mod core;
-
-/// Helper functions useful for binding crates.
-pub mod helpers;
