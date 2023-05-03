@@ -1,5 +1,5 @@
 FROM rust:1.67.1-alpine as builder
-ARG BINARY=dpsa4fl-janus-tasks
+ARG BINARY=dpsa4fl-janus-manager
 ARG GIT_REVISION=unknown
 RUN apk add libc-dev protobuf-dev protoc git
 WORKDIR /src
@@ -17,7 +17,7 @@ COPY src /src/src
 # COPY messages /src/messages
 ENV GIT_REVISION ${GIT_REVISION}
 ENV CARGO_NET_GIT_FETCH_WITH_CLI true
-RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,target=/src/target cargo build --release && cp /src/target/release/$BINARY /$BINARY
+RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,target=/src/target cargo build --release --bin $BINARY && cp /src/target/release/$BINARY /$BINARY
 
 FROM alpine:3.17.2
 ARG BINARY=dpsa4fl-janus-manager
