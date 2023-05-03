@@ -104,3 +104,6 @@ pub mod controller;
 
 /// Definitions of core datastructures.
 pub mod core;
+
+/// Implementation and API of the janus manager.
+pub mod janus_manager;

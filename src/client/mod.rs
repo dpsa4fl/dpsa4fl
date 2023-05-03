@@ -1,13 +1,16 @@
-use crate::helpers::task_id_from_string;
+use crate::core::fixed::{VecFixedAny, IsTagInstance, FixedTypeTag};
+use crate::core::helpers::task_id_from_string;
 
-use crate::core::CommonStateParametrization;
+use crate::core::types::CommonStateParametrization;
+use crate::core::types::{TasksLocations, Locations};
+use crate::janus_manager::interface::network::consumer::{get_vdaf_parameter_from_task, get_main_locations};
 
-use dpsa4fl_janus_tasks::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
+// use dpsa4fl_janus_tasks::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
 use fixed::traits::Fixed;
 use anyhow::{anyhow, Result};
 use async_std::future::try_join;
-use dpsa4fl_janus_tasks::core::{Locations, TasksLocations};
-use dpsa4fl_janus_tasks::janus_tasks_client::{get_vdaf_parameter_from_task, get_main_locations};
+// use dpsa4fl_janus_tasks::core::{Locations, TasksLocations};
+// use dpsa4fl_janus_tasks::janus_tasks_client::{get_vdaf_parameter_from_task, get_main_locations};
 use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
 use janus_core::time::RealClock;
 use janus_messages::{Duration, HpkeConfig, Role, TaskId};
