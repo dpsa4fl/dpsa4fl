@@ -20,7 +20,7 @@ ENV CARGO_NET_GIT_FETCH_WITH_CLI true
 RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,target=/src/target cargo build --release && cp /src/target/release/$BINARY /$BINARY
 
 FROM alpine:3.17.2
-ARG BINARY=dpsa4fl-janus-tasks
+ARG BINARY=dpsa4fl-janus-manager
 ARG CONFIG
 ARG GIT_REVISION=unknown
 LABEL revision ${GIT_REVISION}
