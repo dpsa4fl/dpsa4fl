@@ -1,4 +1,4 @@
-use crate::client::implementation::{ClientState, ClientStatePU};
+// use crate::client::implementation::{ClientState, ClientStatePU};
 use crate::core::fixed::VecFixedAny;
 
 use crate::core::types::CommonStateParametrization;
@@ -8,6 +8,8 @@ use crate::core::types::TasksLocations;
 
 use anyhow::{anyhow, Result};
 
+use super::types::ClientState;
+use super::types::ClientStatePU;
 use super::types::RoundSettings;
 
 // use dpsa4fl_janus_tasks::core::{Locations, TasksLocations};

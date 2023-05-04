@@ -1,9 +1,76 @@
 use anyhow::Result;
-use janus_messages::{Duration, TaskId};
+use janus_messages::{Duration, HpkeConfig, TaskId};
 
 use crate::{
-    core::helpers::task_id_from_string, janus_manager::interface::network::consumer::TIME_PRECISION,
+    core::{
+        helpers::task_id_from_string,
+        types::{CommonStateParametrization, TasksLocations},
+    },
+    janus_manager::interface::network::consumer::TIME_PRECISION,
 };
+
+////////////////////////////////////////////////////
+// Config
+
+/// Stores the hpke keys of both aggregators required for submitting gradients.
+#[derive(Clone)]
+pub struct CryptoConfig
+{
+    pub leader_hpke_config: HpkeConfig,
+    pub helper_hpke_config: HpkeConfig,
+}
+
+/// Full configuration for a round, consisting of settings and crypto config.
+#[derive(Clone)]
+pub struct RoundConfig
+{
+    pub settings: RoundSettings,
+    pub crypto: CryptoConfig,
+}
+
+////////////////////////////////////////////////////
+// State
+
+/// State which persists from round to round.
+pub struct ClientStatePermanent
+{
+    pub http_client: reqwest::Client,
+}
+
+/// State relevant for a single round.
+#[derive(Clone)]
+pub struct ClientStateRound
+{
+    pub config: RoundConfig,
+}
+
+/// All client state.
+pub struct ClientState
+{
+    pub parametrization: CommonStateParametrization,
+    pub permanent: ClientStatePermanent,
+    pub round: ClientStateRound,
+}
+
+/// Client state which is possibly uninitialized until now.
+pub enum ClientStatePU
+{
+    ValidState(ClientState),
+    InitState(TasksLocations),
+}
+
+impl ClientStatePU
+{
+    /// Return the initialized client state if available, otherwise fail.
+    pub fn get_valid_state(&self) -> Option<&ClientState>
+    {
+        match self
+        {
+            ClientStatePU::ValidState(s) => Some(s),
+            ClientStatePU::InitState(_) => None,
+        }
+    }
+}
 
 ////////////////////////////////////////////////////
 // Settings

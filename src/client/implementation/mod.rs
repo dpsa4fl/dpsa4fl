@@ -19,7 +19,9 @@ use prio::field::Field128;
 use prio::flp::types::fixedpoint_l2::compatible_float::CompatibleFloat;
 use prio::vdaf::prio3::Prio3Aes128FixedPointBoundedL2VecSum;
 
-use super::interface::types::RoundSettings;
+use super::interface::types::{
+    ClientState, ClientStatePermanent, ClientStateRound, CryptoConfig, RoundConfig, RoundSettings,
+};
 
 pub const TIME_PRECISION: u64 = 3600;
 
@@ -34,69 +36,6 @@ pub const TIME_PRECISION: u64 = 3600;
 // 4. Using the RoundSettings, we can get the RoundConfig from the aggregators.
 //    The RoundConfig allows us to submit our results to the aggregators.
 // 5. RoundData we also get from the controller.
-
-////////////////////////////////////////////////////
-// Config
-
-/// Stores the hpke keys of both aggregators required for submitting gradients.
-#[derive(Clone)]
-pub struct CryptoConfig
-{
-    leader_hpke_config: HpkeConfig,
-    helper_hpke_config: HpkeConfig,
-}
-
-/// Full configuration for a round, consisting of settings and crypto config.
-#[derive(Clone)]
-pub struct RoundConfig
-{
-    pub settings: RoundSettings,
-    pub crypto: CryptoConfig,
-}
-
-////////////////////////////////////////////////////
-// State
-
-/// State which persists from round to round.
-pub struct ClientStatePermanent
-{
-    http_client: reqwest::Client,
-}
-
-/// State relevant for a single round.
-#[derive(Clone)]
-pub struct ClientStateRound
-{
-    pub config: RoundConfig,
-}
-
-/// All client state.
-pub struct ClientState
-{
-    pub parametrization: CommonStateParametrization,
-    pub permanent: ClientStatePermanent,
-    pub round: ClientStateRound,
-}
-
-/// Client state which is possibly uninitialized until now.
-pub enum ClientStatePU
-{
-    ValidState(ClientState),
-    InitState(TasksLocations),
-}
-
-impl ClientStatePU
-{
-    /// Return the initialized client state if available, otherwise fail.
-    pub fn get_valid_state(&self) -> Option<&ClientState>
-    {
-        match self
-        {
-            ClientStatePU::ValidState(s) => Some(s),
-            ClientStatePU::InitState(_) => None,
-        }
-    }
-}
 
 /////////////////////////////////////////////////////////////////////////
 // Step 1, initialization
