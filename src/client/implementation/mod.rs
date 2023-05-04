@@ -1,6 +1,5 @@
 use crate::core::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
 
-
 use crate::core::types::CommonStateParametrization;
 use crate::core::types::{Locations, TasksLocations};
 use crate::janus_manager::interface::network::consumer::{
@@ -35,7 +34,6 @@ pub const TIME_PRECISION: u64 = 3600;
 // 4. Using the RoundSettings, we can get the RoundConfig from the aggregators.
 //    The RoundConfig allows us to submit our results to the aggregators.
 // 5. RoundData we also get from the controller.
-
 
 ////////////////////////////////////////////////////
 // Config

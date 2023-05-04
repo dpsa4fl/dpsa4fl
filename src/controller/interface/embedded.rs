@@ -1,4 +1,4 @@
-use crate::controller::implementation::{ControllerStateImmut, ControllerStateMut};
+use crate::controller::interface::types::{ControllerStateImmut, ControllerStateMut};
 use crate::core::types::CommonStateParametrization;
 
 use anyhow::{anyhow, Result};

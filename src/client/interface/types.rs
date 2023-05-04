@@ -1,9 +1,9 @@
-
-use janus_messages::{TaskId, Duration};
 use anyhow::Result;
+use janus_messages::{Duration, TaskId};
 
-use crate::{core::helpers::task_id_from_string, janus_manager::interface::network::consumer::TIME_PRECISION};
-
+use crate::{
+    core::helpers::task_id_from_string, janus_manager::interface::network::consumer::TIME_PRECISION,
+};
 
 ////////////////////////////////////////////////////
 // Settings
