@@ -1,19 +1,21 @@
+use std::time::UNIX_EPOCH;
 
-use std::{
-    time::{UNIX_EPOCH},
-};
-
-use crate::{janus_manager::interface::{
-    types::{
-        CreateTrainingSessionRequest, GetVdafParameterRequest, HpkeConfigRegistry, StartRoundRequest,
-        TrainingSessionId,
+use crate::{
+    core::{
+        fixed::FixedTypeTag,
+        types::{MainLocations, VdafParameter},
     },
-    network::consumer::TIME_PRECISION,
-}, core::{types::{MainLocations, VdafParameter}, fixed::FixedTypeTag}};
+    janus_manager::interface::{
+        network::consumer::TIME_PRECISION,
+        types::{
+            CreateTrainingSessionRequest, GetVdafParameterRequest, HpkeConfigRegistry,
+            StartRoundRequest, TrainingSessionId,
+        },
+    },
+};
 
 use anyhow::{anyhow, Context, Error, Result};
 use base64::{engine::general_purpose, Engine};
-
 
 use janus_aggregator::{
     datastore::{self, Datastore},
@@ -23,23 +25,19 @@ use janus_aggregator::{
 use janus_core::{
     hpke::HpkeKeypair,
     task::{AuthenticationToken, VdafInstance},
-    time::{Clock},
+    time::Clock,
 };
 use janus_messages::{Duration, HpkeConfig, Role, TaskId, Time};
 
 use prio::codec::Decode;
 use rand::random;
 
-
-
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::sync::Arc;
-use std::{collections::HashMap};
 use tokio::sync::Mutex;
 
 use url::Url;
-
-
 
 //////////////////////////////////////////////////
 // self:

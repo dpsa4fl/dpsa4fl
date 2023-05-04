@@ -1,4 +1,3 @@
-
 ////////////////////////////////////////////////////
 // State
 
@@ -64,4 +63,3 @@ pub struct VdafParameter
 
     pub submission_type: FixedTypeTag,
 }
-

@@ -1,4 +1,3 @@
-
 //! This crate allows developers to utilize our differentially private secure aggregation
 //! of gradient vectors to build federated machine learning systems.
 //! For an overview of the functionality see [here](https://github.com/dpsa-project/overview).

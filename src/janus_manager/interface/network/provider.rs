@@ -1,16 +1,12 @@
+use std::{net::SocketAddr, time::Instant};
 
-use std::{
-    net::SocketAddr,
-    time::{Instant},
-};
-
-use crate::{janus_manager::{interface::{
-    types::{
+use crate::janus_manager::{
+    implementation::TaskProvisionerConfig,
+    interface::types::{
         CreateTrainingSessionRequest, CreateTrainingSessionResponse, GetVdafParameterRequest,
-        GetVdafParameterResponse, StartRoundRequest, StartRoundResponse,
-        TrainingSessionId,
+        GetVdafParameterResponse, StartRoundRequest, StartRoundResponse, TrainingSessionId,
     },
-}, implementation::TaskProvisionerConfig}};
+};
 
 use anyhow::{Context, Error, Result};
 
@@ -18,14 +14,11 @@ use http::{HeaderMap, StatusCode};
 use janus_aggregator::{
     binary_utils::{janus_main, setup_signal_handler, BinaryOptions, CommonBinaryOptions},
     config::{BinaryConfig, CommonConfig},
-    datastore::{Datastore},
+    datastore::Datastore,
 };
-use janus_core::{
-    time::{Clock, RealClock},
-};
-use janus_messages::{TaskId};
+use janus_core::time::{Clock, RealClock};
+use janus_messages::TaskId;
 use opentelemetry::metrics::{Histogram, Unit};
-
 
 use serde_json::json;
 
@@ -118,9 +111,6 @@ pub async fn main() -> anyhow::Result<()>
     })
     .await
 }
-
-
-
 
 /// Construct a DAP aggregator server, listening on the provided [`SocketAddr`].
 /// If the `SocketAddr`'s `port` is 0, an ephemeral port is used. Returns a
@@ -337,14 +327,12 @@ pub fn taskprovision_filter<C: Clock>(
     let get_main_locations_routing = warp::path("get_main_locations");
     let get_main_locations_responding = warp::get()
         .and(with_cloned_value(Arc::clone(&aggregator)))
-        .then(
-            |aggregator: Arc<TaskProvisioner<C>>| async move {
-                let response = aggregator.config.main_locations.clone();
-                let response = warp::reply::with_status(warp::reply::json(&response), StatusCode::OK)
-                                .into_response();
-                Ok(response)
-            }
-        );
+        .then(|aggregator: Arc<TaskProvisioner<C>>| async move {
+            let response = aggregator.config.main_locations.clone();
+            let response = warp::reply::with_status(warp::reply::json(&response), StatusCode::OK)
+                .into_response();
+            Ok(response)
+        });
     let get_main_locations_endpoint = compose_common_wrappers(
         get_main_locations_routing,
         get_main_locations_responding,
@@ -420,7 +408,6 @@ impl BinaryConfig for Config
         &mut self.common_config
     }
 }
-
 
 //////////////////////////////////////////////////////
 // helpers:

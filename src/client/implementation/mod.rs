@@ -1,15 +1,16 @@
-
-use crate::core::fixed::{VecFixedAny, IsTagInstance, FixedTypeTag};
+use crate::core::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
 use crate::core::helpers::task_id_from_string;
 
 use crate::core::types::CommonStateParametrization;
-use crate::core::types::{TasksLocations, Locations};
-use crate::janus_manager::interface::network::consumer::{get_vdaf_parameter_from_task, get_main_locations};
+use crate::core::types::{Locations, TasksLocations};
+use crate::janus_manager::interface::network::consumer::{
+    get_main_locations, get_vdaf_parameter_from_task,
+};
 
 // use dpsa4fl_janus_tasks::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
-use fixed::traits::Fixed;
 use anyhow::{anyhow, Result};
 use async_std::future::try_join;
+use fixed::traits::Fixed;
 // use dpsa4fl_janus_tasks::core::{Locations, TasksLocations};
 // use dpsa4fl_janus_tasks::janus_tasks_client::{get_vdaf_parameter_from_task, get_main_locations};
 use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
@@ -185,8 +186,10 @@ async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStat
 //
 impl ClientState
 {
-    pub async fn new(task_locations: TasksLocations, round_settings: RoundSettings)
-        -> anyhow::Result<ClientState>
+    pub async fn new(
+        task_locations: TasksLocations,
+        round_settings: RoundSettings,
+    ) -> anyhow::Result<ClientState>
     {
         let permanent = ClientStatePermanent {
             http_client: default_http_client()?,

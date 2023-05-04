@@ -3,8 +3,6 @@
 
 // use dpsa4fl_janus_tasks::core::VdafParameter;
 
+pub mod fixed;
 pub mod helpers;
 pub mod types;
-pub mod fixed;
-
-

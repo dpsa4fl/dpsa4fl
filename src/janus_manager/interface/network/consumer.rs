@@ -21,7 +21,13 @@ use rand::random;
 use janus_aggregator::task::PRIO3_AES128_VERIFY_KEY_LENGTH;
 use reqwest::Url;
 
-use crate::{core::types::{Locations, VdafParameter, TasksLocations, MainLocations}, janus_manager::interface::types::{TrainingSessionId, CreateTrainingSessionRequest, CreateTrainingSessionResponse, StartRoundRequest, GetVdafParameterRequest, GetVdafParameterResponse}};
+use crate::{
+    core::types::{Locations, MainLocations, TasksLocations, VdafParameter},
+    janus_manager::interface::types::{
+        CreateTrainingSessionRequest, CreateTrainingSessionResponse, GetVdafParameterRequest,
+        GetVdafParameterResponse, StartRoundRequest, TrainingSessionId,
+    },
+};
 
 // use crate::core::{GetVdafParameterResponse, VdafParameter, MainLocations, TasksLocations};
 // use crate::core::GetVdafParameterRequest;
@@ -95,7 +101,8 @@ impl JanusTasksClient
             .http_client
             .post(
                 self.location
-                    .tasks.external_leader
+                    .tasks
+                    .external_leader
                     .join("/create_session")
                     .unwrap(),
             )
@@ -119,7 +126,8 @@ impl JanusTasksClient
             .http_client
             .post(
                 self.location
-                    .tasks.external_helper
+                    .tasks
+                    .external_helper
                     .join("/create_session")
                     .unwrap(),
             )
@@ -158,7 +166,8 @@ impl JanusTasksClient
             .http_client
             .post(
                 self.location
-                    .tasks.external_leader
+                    .tasks
+                    .external_leader
                     .join("/end_session")
                     .unwrap(),
             )
@@ -170,7 +179,8 @@ impl JanusTasksClient
             .http_client
             .post(
                 self.location
-                    .tasks.external_helper
+                    .tasks
+                    .external_helper
                     .join("/end_session")
                     .unwrap(),
             )
@@ -202,7 +212,8 @@ impl JanusTasksClient
             .http_client
             .post(
                 self.location
-                    .tasks.external_leader
+                    .tasks
+                    .external_leader
                     .join("/start_round")
                     .unwrap(),
             )
@@ -214,7 +225,8 @@ impl JanusTasksClient
             .http_client
             .post(
                 self.location
-                    .tasks.external_helper
+                    .tasks
+                    .external_helper
                     .join("/start_round")
                     .unwrap(),
             )
@@ -264,12 +276,14 @@ impl JanusTasksClient
 
         let host = self
             .location
-            .main.external_leader
+            .main
+            .external_leader
             .host()
             .ok_or(anyhow!("Couldnt get hostname"))?;
         let port = self
             .location
-            .main.external_leader
+            .main
+            .external_leader
             .port()
             .ok_or(anyhow!("Couldnt get port"))?;
 
@@ -314,36 +328,46 @@ pub async fn get_vdaf_parameter_from_task(
     param.map(|x| x.vdaf_parameter)
 }
 
-
-pub async fn get_main_locations(
-    tasks_servers: TasksLocations,
-) -> Result<MainLocations>
+pub async fn get_main_locations(tasks_servers: TasksLocations) -> Result<MainLocations>
 {
     let response_leader = reqwest::Client::new()
-        .get(tasks_servers.external_leader.join("/get_main_locations").unwrap())
+        .get(
+            tasks_servers
+                .external_leader
+                .join("/get_main_locations")
+                .unwrap(),
+        )
         .send()
         .await?;
 
     let response_helper = reqwest::Client::new()
-        .get(tasks_servers.external_helper.join("/get_main_locations").unwrap())
+        .get(
+            tasks_servers
+                .external_helper
+                .join("/get_main_locations")
+                .unwrap(),
+        )
         .send()
         .await?;
 
-    let result_leader : Result<MainLocations, _> = response_leader.json().await;
-    let result_helper : Result<MainLocations, _> = response_helper.json().await;
+    let result_leader: Result<MainLocations, _> = response_leader.json().await;
+    let result_helper: Result<MainLocations, _> = response_helper.json().await;
 
     match (result_leader, result_helper)
     {
-        (Ok(a), Ok(b)) => {
+        (Ok(a), Ok(b)) =>
+        {
             if a == b
             {
                 Ok(a)
             }
             else
             {
-                Err(anyhow!("The aggregators returned different main locations ({a:?} and {b:?})"))
+                Err(anyhow!(
+                    "The aggregators returned different main locations ({a:?} and {b:?})"
+                ))
             }
-        },
+        }
         (res1, res2) => Err(anyhow!(
             "Getting main locations not successful, results are: \n{res1:?}\n\n{res2:?}"
         )),

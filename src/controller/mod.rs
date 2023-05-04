@@ -1,3 +1,2 @@
-
-pub mod interface;
 mod implementation;
+pub mod interface;
