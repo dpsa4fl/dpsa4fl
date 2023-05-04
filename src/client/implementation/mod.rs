@@ -20,6 +20,8 @@ use prio::field::Field128;
 use prio::flp::types::fixedpoint_l2::compatible_float::CompatibleFloat;
 use prio::vdaf::prio3::Prio3Aes128FixedPointBoundedL2VecSum;
 
+use super::interface::types::RoundSettings;
+
 const TIME_PRECISION: u64 = 3600;
 
 /////////////////////////////////////////////////////////////////////////
@@ -34,34 +36,6 @@ const TIME_PRECISION: u64 = 3600;
 //    The RoundConfig allows us to submit our results to the aggregators.
 // 5. RoundData we also get from the controller.
 
-////////////////////////////////////////////////////
-// Settings
-
-/// Settings for a single round.
-///
-/// The `task_id` identifies the task
-/// on both aggregators where the gradient is going to be submitted.
-#[derive(Clone)]
-pub struct RoundSettings
-{
-    pub task_id: TaskId,
-    pub time_precision: Duration,
-    pub should_request_hpke_config: bool,
-}
-
-impl RoundSettings
-{
-    /// Create a default round settings from a task id.
-    pub fn new(task_id_base64: String) -> Result<Self>
-    {
-        let res = RoundSettings {
-            task_id: task_id_from_string(task_id_base64)?,
-            time_precision: Duration::from_seconds(TIME_PRECISION),
-            should_request_hpke_config: false,
-        };
-        Ok(res)
-    }
-}
 
 ////////////////////////////////////////////////////
 // Config
