@@ -1,13 +1,11 @@
 
 use std::{
-    net::SocketAddr,
-    time::{Instant, UNIX_EPOCH},
+    time::{UNIX_EPOCH},
 };
 
 use crate::{janus_manager::interface::{
     types::{
-        CreateTrainingSessionRequest, CreateTrainingSessionResponse, GetVdafParameterRequest,
-        GetVdafParameterResponse, HpkeConfigRegistry, StartRoundRequest, StartRoundResponse,
+        CreateTrainingSessionRequest, GetVdafParameterRequest, HpkeConfigRegistry, StartRoundRequest,
         TrainingSessionId,
     },
     network::consumer::TIME_PRECISION,
@@ -16,10 +14,8 @@ use crate::{janus_manager::interface::{
 use anyhow::{anyhow, Context, Error, Result};
 use base64::{engine::general_purpose, Engine};
 
-use http::{HeaderMap, StatusCode};
+
 use janus_aggregator::{
-    binary_utils::{janus_main, setup_signal_handler, BinaryOptions, CommonBinaryOptions},
-    config::{BinaryConfig, CommonConfig},
     datastore::{self, Datastore},
     task::{QueryType, Task},
     SecretBytes,
@@ -27,22 +23,22 @@ use janus_aggregator::{
 use janus_core::{
     hpke::HpkeKeypair,
     task::{AuthenticationToken, VdafInstance},
-    time::{Clock, RealClock},
+    time::{Clock},
 };
 use janus_messages::{Duration, HpkeConfig, Role, TaskId, Time};
-use opentelemetry::metrics::{Histogram, Unit};
+
 use prio::codec::Decode;
 use rand::random;
-use serde_json::json;
 
-use clap::Parser;
+
+
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use std::{collections::HashMap, convert::Infallible, future::Future};
+use std::{collections::HashMap};
 use tokio::sync::Mutex;
-use tracing::warn;
+
 use url::Url;
-use warp::{cors::Cors, filters::BoxedFilter, reply::Response, trace, Filter, Rejection, Reply};
+
 
 
 //////////////////////////////////////////////////

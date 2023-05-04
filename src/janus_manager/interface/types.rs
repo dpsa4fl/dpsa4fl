@@ -1,16 +1,15 @@
 use std::{collections::HashMap, fmt::Display, io::Cursor};
 
-use crate::core::{fixed::FixedTypeTag, types::VdafParameter};
+use crate::core::{types::VdafParameter};
 
 use janus_core::hpke::{generate_hpke_config_and_private_key, HpkeKeypair};
 use janus_messages::{HpkeAeadId, HpkeConfig, HpkeConfigId, HpkeKdfId, HpkeKemId, Role};
 use prio::{
     codec::{CodecError, Decode, Encode},
-    flp::types::fixedpoint_l2::PrivacyParameterType,
 };
 use rand::random;
 use serde::{Deserialize, Serialize};
-use url::Url;
+
 
 
 /////////////////////////////
