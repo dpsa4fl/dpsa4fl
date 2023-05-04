@@ -1,5 +1,5 @@
 use crate::core::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
-use crate::core::helpers::task_id_from_string;
+
 
 use crate::core::types::CommonStateParametrization;
 use crate::core::types::{Locations, TasksLocations};
@@ -22,7 +22,7 @@ use prio::vdaf::prio3::Prio3Aes128FixedPointBoundedL2VecSum;
 
 use super::interface::types::RoundSettings;
 
-const TIME_PRECISION: u64 = 3600;
+pub const TIME_PRECISION: u64 = 3600;
 
 /////////////////////////////////////////////////////////////////////////
 // DPSA Client
