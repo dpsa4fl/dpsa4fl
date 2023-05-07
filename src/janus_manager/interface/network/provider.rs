@@ -35,6 +35,10 @@ use crate::janus_manager::implementation::TaskProvisioner;
 
 //////////////////////////////////////////////////
 // main:
+
+/// Start a janus manager server.
+///
+/// 
 pub async fn main() -> anyhow::Result<()>
 {
     const CLIENT_USER_AGENT: &str = concat!(

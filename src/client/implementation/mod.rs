@@ -14,7 +14,7 @@ use fixed::traits::Fixed;
 // use dpsa4fl_janus_tasks::janus_tasks_client::{get_vdaf_parameter_from_task, get_main_locations};
 use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
 use janus_core::time::RealClock;
-use janus_messages::{Duration, HpkeConfig, Role, TaskId};
+use janus_messages::{Duration, Role, TaskId};
 use prio::field::Field128;
 use prio::flp::types::fixedpoint_l2::compatible_float::CompatibleFloat;
 use prio::vdaf::prio3::Prio3Aes128FixedPointBoundedL2VecSum;

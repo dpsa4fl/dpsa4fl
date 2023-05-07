@@ -20,7 +20,7 @@
 //! # Components
 //! Our aggregation mechanism requires multiple components:
 //!  - Two aggregators, responsible for the aggregation and noising of gradients. The code for these
-//!    is our [janus fork](https://github.com/dpsa-project/janus), as well as an accompanying [executable](https://github.com/dpsa-project/dpsa4fl-janus-tasks). To setup a local instance of two configured aggregator servers, see [this repo](https://github.com/dpsa-project/dpsa4fl-testing-infrastructure).
+//!    is our [janus fork](https://github.com/dpsa-project/janus), as well as an accompanying [janus manager executable][crate::janus_manager::interface::network::provider]. To setup a local instance of two configured aggregator servers, see the [infrastructure repo](https://github.com/dpsa-project/dpsa4fl-infrastructure).
 //!  - Code for the controller to talk with the aggregators, found in [crate::controller].
 //!  - Code for the clients to talk with the aggregators, found in [crate::client].
 //!
@@ -104,5 +104,5 @@ pub mod controller;
 /// Definitions of core datastructures.
 pub mod core;
 
-/// Implementation and API of the janus manager.
+/// API of the janus manager.
 pub mod janus_manager;

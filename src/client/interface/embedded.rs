@@ -1,19 +1,13 @@
-// use crate::client::implementation::{ClientState, ClientStatePU};
 use crate::core::fixed::VecFixedAny;
-
 use crate::core::types::CommonStateParametrization;
 use crate::core::types::TasksLocations;
-
-// use dpsa4fl_janus_tasks::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
-
-use anyhow::{anyhow, Result};
 
 use super::types::ClientState;
 use super::types::ClientStatePU;
 use super::types::RoundSettings;
 
-// use dpsa4fl_janus_tasks::core::{Locations, TasksLocations};
-// use dpsa4fl_janus_tasks::janus_tasks_client::{get_vdaf_parameter_from_task, get_main_locations};
+use anyhow::{anyhow, Result};
+
 
 /////////////////////////////////////////////////////////////////////////
 // The api to be called from python code.
