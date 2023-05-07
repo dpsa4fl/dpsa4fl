@@ -95,14 +95,20 @@
 
 /// API for clients. This is for getting configuration from the aggregation servers and submitting
 /// gradients.
+///
+/// See [client::interface::embedded] for the API.
 pub mod client;
 
 /// API for the controller. This is for managing dpsa4fl-janus sessions, and collecting aggregated
 /// gradients.
+///
+/// See [controller::interface::embedded] for the API.
 pub mod controller;
 
 /// Definitions of core datastructures.
 pub mod core;
 
 /// API of the janus manager.
+///
+/// See [janus_manager::interface::network::consumer] for the API.
 pub mod janus_manager;
