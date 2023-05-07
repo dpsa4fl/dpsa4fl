@@ -36,91 +36,48 @@ use crate::janus_manager::implementation::TaskProvisioner;
 //////////////////////////////////////////////////
 // main:
 
-/// Start a janus manager server.
+/// Start a janus_manager server.
 ///
-/// 
+/// You can start the server like this
+/// ```
+/// dpsa4fl-janus-manager --config-file $CONFIG --datastore-keys $KEY
+/// ```
+/// where `$CONFIG` is the path to the configuration file, and `$KEY` is the key to be used for the datastore.
 pub async fn main() -> anyhow::Result<()>
 {
     const CLIENT_USER_AGENT: &str = concat!(
         env!("CARGO_PKG_NAME"),
         "/",
         env!("CARGO_PKG_VERSION"),
-        "/dpsafl-janus-tasks"
+        "/dpsafl-janus-manager"
     );
 
     janus_main::<_, Options, Config, _, _>(RealClock::default(), |ctx| async move {
         let _meter = opentelemetry::global::meter("collect_job_driver");
-        // let datastore = Arc::new(ctx.datastore);
 
         let shutdown_signal =
             setup_signal_handler().context("failed to register SIGTERM signal handler")?;
 
-        let (_bound_address, server) = taskprovision_server(
+        let (_bound_address, server) = janus_manager_server(
             Arc::new(ctx.datastore),
             ctx.clock,
             ctx.config.task_provisioner_config,
             ctx.config.listen_address,
             HeaderMap::new(),
-            // ctx.config
-            //     .response_header_map()
-            //     .context("failed to parse response headers")?,
             shutdown_signal,
         )
-        .context("failed to create aggregator server")?;
-        // info!(?bound_address, "Running aggregator");
-        println!("Running taskprovision server (2023-03-16)");
+        .context("failed to create janus_manager server")?;
 
         server.await;
 
-        println!("taskprovision server stopped");
+        println!("janus_manager server stopped");
         Ok(())
-
-        // let collect_job_driver = Arc::new(CollectJobDriver::new(
-        //     reqwest::Client::builder()
-        //         .user_agent(CLIENT_USER_AGENT)
-        //         .build()
-        //         .context("couldn't create HTTP client")?,
-        //     &meter,
-        // ));
-        // let lease_duration =
-        //     Duration::from_seconds(ctx.config.job_driver_config.worker_lease_duration_secs);
-        // let shutdown_signal =
-        //     setup_signal_handler().context("failed to register SIGTERM signal handler")?;
-
-        // // Start running.
-        // let job_driver = Arc::new(JobDriver::new(
-        //     ctx.clock,
-        //     TokioRuntime,
-        //     meter,
-        //     Duration::from_seconds(ctx.config.job_driver_config.min_job_discovery_delay_secs),
-        //     Duration::from_seconds(ctx.config.job_driver_config.max_job_discovery_delay_secs),
-        //     ctx.config.job_driver_config.max_concurrent_job_workers,
-        //     Duration::from_seconds(
-        //         ctx.config
-        //             .job_driver_config
-        //             .worker_lease_clock_skew_allowance_secs,
-        //     ),
-        //     collect_job_driver
-        //         .make_incomplete_job_acquirer_callback(Arc::clone(&datastore), lease_duration),
-        //     collect_job_driver.make_job_stepper_callback(
-        //         Arc::clone(&datastore),
-        //         ctx.config.job_driver_config.maximum_attempts_before_failure,
-        //     ),
-        // ));
-        // select! {
-        //     _ = job_driver.run() => {}
-        //     _ = shutdown_signal => {}
-        // };
-        // Ok(())
     })
     .await
 }
 
-/// Construct a DAP aggregator server, listening on the provided [`SocketAddr`].
-/// If the `SocketAddr`'s `port` is 0, an ephemeral port is used. Returns a
-/// `SocketAddr` representing the address and port the server are listening on
-/// and a future that can be `await`ed to begin serving requests.
-pub fn taskprovision_server<C: Clock>(
+/// Construct a janus manager server, listening on the provided [`SocketAddr`].
+fn janus_manager_server<C: Clock>(
     datastore: Arc<Datastore<C>>,
     clock: C,
     config: TaskProvisionerConfig,
@@ -129,13 +86,13 @@ pub fn taskprovision_server<C: Clock>(
     shutdown_signal: impl Future<Output = ()> + Send + 'static,
 ) -> Result<(SocketAddr, impl Future<Output = ()> + 'static), Error>
 {
-    let filter = taskprovision_filter(datastore, clock, config)?;
+    let filter = janus_manager_filter(datastore, clock, config)?;
     let wrapped_filter = filter.with(warp::filters::reply::headers(response_headers));
     let server = warp::serve(wrapped_filter);
     Ok(server.bind_with_graceful_shutdown(listen_address, shutdown_signal))
 }
 
-pub fn taskprovision_filter<C: Clock>(
+fn janus_manager_filter<C: Clock>(
     datastore: Arc<Datastore<C>>,
     _clock: C,
     config: TaskProvisionerConfig,
@@ -506,91 +463,11 @@ where
                     "".to_owned()
                 };
 
-                // response_time_histogram.record(
-                //     &Context::current(),
-                //     start.elapsed().as_secs_f64(),
-                //     &[
-                //         KeyValue::new("endpoint", name),
-                //         KeyValue::new("error_code", error_code),
-                //     ],
-                // );
-
                 match result
                 {
                     Ok(reply) => reply.into_response(),
                     Err(_e) => build_problem_details_response(error_code, None),
                 }
-                //     Err(Error::InvalidConfiguration(_)) => {
-                //         StatusCode::INTERNAL_SERVER_ERROR.into_response()
-                //     }
-                //     Err(Error::MessageDecode(_)) => StatusCode::BAD_REQUEST.into_response(),
-                //     Err(Error::ReportTooLate(task_id, _, _)) => {
-                //         build_problem_details_response(DapProblemType::ReportTooLate, Some(task_id))
-                //     }
-                //     Err(Error::UnrecognizedMessage(task_id, _)) => {
-                //         build_problem_details_response(DapProblemType::UnrecognizedMessage, task_id)
-                //     }
-                //     Err(Error::UnrecognizedTask(task_id)) => {
-                //         // TODO(#237): ensure that a helper returns HTTP 404 or 403 when this happens.
-                //         build_problem_details_response(
-                //             DapProblemType::UnrecognizedTask,
-                //             Some(task_id),
-                //         )
-                //     }
-                //     Err(Error::MissingTaskId) => {
-                //         build_problem_details_response(DapProblemType::MissingTaskId, None)
-                //     }
-                //     Err(Error::UnrecognizedAggregationJob(task_id, _)) => {
-                //         build_problem_details_response(
-                //             DapProblemType::UnrecognizedAggregationJob,
-                //             Some(task_id),
-                //         )
-                //     }
-                //     Err(Error::DeletedCollectJob(_)) => StatusCode::NO_CONTENT.into_response(),
-                //     Err(Error::UnrecognizedCollectJob(_)) => StatusCode::NOT_FOUND.into_response(),
-                //     Err(Error::OutdatedHpkeConfig(task_id, _)) => build_problem_details_response(
-                //         DapProblemType::OutdatedConfig,
-                //         Some(task_id),
-                //     ),
-                //     Err(Error::ReportTooEarly(task_id, _, _)) => build_problem_details_response(
-                //         DapProblemType::ReportTooEarly,
-                //         Some(task_id),
-                //     ),
-                //     Err(Error::UnauthorizedRequest(task_id)) => build_problem_details_response(
-                //         DapProblemType::UnauthorizedRequest,
-                //         Some(task_id),
-                //     ),
-                //     Err(Error::InvalidBatchSize(task_id, _)) => build_problem_details_response(
-                //         DapProblemType::InvalidBatchSize,
-                //         Some(task_id),
-                //     ),
-                //     Err(Error::BatchInvalid(task_id, _)) => {
-                //         build_problem_details_response(DapProblemType::BatchInvalid, Some(task_id))
-                //     }
-                //     Err(Error::BatchOverlap(task_id, _)) => {
-                //         build_problem_details_response(DapProblemType::BatchOverlap, Some(task_id))
-                //     }
-                //     Err(Error::BatchMismatch { task_id, .. }) => {
-                //         build_problem_details_response(DapProblemType::BatchMismatch, Some(task_id))
-                //     }
-                //     Err(Error::BatchQueriedTooManyTimes(task_id, ..)) => {
-                //         build_problem_details_response(
-                //             DapProblemType::BatchQueriedTooManyTimes,
-                //             Some(task_id),
-                //         )
-                //     }
-                //     Err(Error::Hpke(_)) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
-                //     Err(Error::Datastore(_)) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
-                //     Err(Error::Vdaf(_)) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
-                //     Err(Error::Internal(_)) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
-                //     Err(Error::Url(_)) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
-                //     Err(Error::Message(_)) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
-                //     Err(Error::HttpClient(_)) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
-                //     Err(Error::Http { .. }) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
-                //     Err(Error::TaskParameters(_)) => {
-                //         StatusCode::INTERNAL_SERVER_ERROR.into_response()
-                //     }
-                // }
             })
             .boxed()
     }
@@ -601,15 +478,11 @@ where
 // title, detail, and taskid fields are subject to change.
 fn build_problem_details_response(error_type: String, task_id: Option<TaskId>) -> Response
 {
-    // let status = error_type.http_status();
     let status = StatusCode::SEE_OTHER;
 
     warp::reply::with_status(
         warp::reply::with_header(
             warp::reply::json(&json!({
-                // "type": error_type.type_uri(),
-                // "title": error_type.description(),
-                // "status": status.as_u16(),
                 "detail": error_type,
                 // The base URI is either "[leader]/upload", "[aggregator]/aggregate",
                 // "[helper]/aggregate_share", or "[leader]/collect". Relative URLs are allowed in
