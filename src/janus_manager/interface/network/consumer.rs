@@ -1,10 +1,16 @@
-use std::time::UNIX_EPOCH;
-
+use crate::{
+    core::types::{Locations, MainLocations, TasksLocations, VdafParameter},
+    janus_manager::interface::types::{
+        CreateTrainingSessionRequest, CreateTrainingSessionResponse, GetVdafParameterRequest,
+        GetVdafParameterResponse, StartRoundRequest, TrainingSessionId,
+    },
+};
 use anyhow::{anyhow, Result};
 use base64::{engine::general_purpose, Engine};
 use fixed::types::extra::U31;
 use fixed::FixedI32;
 use http::StatusCode;
+use janus_aggregator::task::PRIO3_AES128_VERIFY_KEY_LENGTH;
 use janus_collector::{Collection, Collector, CollectorParameters};
 use janus_core::{
     hpke::{generate_hpke_config_and_private_key, HpkeKeypair},
@@ -17,25 +23,8 @@ use janus_messages::{
 use prio::flp::types::fixedpoint_l2::zero_privacy_parameter;
 use prio::{codec::Encode, vdaf::prio3::Prio3Aes128FixedPointBoundedL2VecSum};
 use rand::random;
-
-use janus_aggregator::task::PRIO3_AES128_VERIFY_KEY_LENGTH;
 use reqwest::Url;
-
-use crate::{
-    core::types::{Locations, MainLocations, TasksLocations, VdafParameter},
-    janus_manager::interface::types::{
-        CreateTrainingSessionRequest, CreateTrainingSessionResponse, GetVdafParameterRequest,
-        GetVdafParameterResponse, StartRoundRequest, TrainingSessionId,
-    },
-};
-
-// use crate::core::{GetVdafParameterResponse, VdafParameter, MainLocations, TasksLocations};
-// use crate::core::GetVdafParameterRequest;
-
-// use super::core::{
-//     CreateTrainingSessionRequest, CreateTrainingSessionResponse, Locations, StartRoundRequest,
-//     TrainingSessionId,
-// };
+use std::time::UNIX_EPOCH;
 
 pub type Fx = FixedI32<U31>;
 pub const TIME_PRECISION: u64 = 3600;

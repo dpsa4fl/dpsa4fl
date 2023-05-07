@@ -8,7 +8,6 @@ use super::types::RoundSettings;
 
 use anyhow::{anyhow, Result};
 
-
 /////////////////////////////////////////////////////////////////////////
 // The api to be called from python code.
 //

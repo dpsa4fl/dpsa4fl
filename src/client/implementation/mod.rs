@@ -1,17 +1,13 @@
 use crate::core::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
-
 use crate::core::types::CommonStateParametrization;
 use crate::core::types::{Locations, TasksLocations};
 use crate::janus_manager::interface::network::consumer::{
     get_main_locations, get_vdaf_parameter_from_task,
 };
 
-// use dpsa4fl_janus_tasks::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
 use anyhow::{anyhow, Result};
 use async_std::future::try_join;
 use fixed::traits::Fixed;
-// use dpsa4fl_janus_tasks::core::{Locations, TasksLocations};
-// use dpsa4fl_janus_tasks::janus_tasks_client::{get_vdaf_parameter_from_task, get_main_locations};
 use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
 use janus_core::time::RealClock;
 use janus_messages::{Duration, Role, TaskId};
@@ -22,8 +18,6 @@ use prio::vdaf::prio3::Prio3Aes128FixedPointBoundedL2VecSum;
 use super::interface::types::{
     ClientState, ClientStatePermanent, ClientStateRound, CryptoConfig, RoundConfig, RoundSettings,
 };
-
-pub const TIME_PRECISION: u64 = 3600;
 
 /////////////////////////////////////////////////////////////////////////
 // DPSA Client

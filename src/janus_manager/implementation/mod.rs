@@ -16,7 +16,6 @@ use crate::{
 
 use anyhow::{anyhow, Context, Error, Result};
 use base64::{engine::general_purpose, Engine};
-
 use janus_aggregator::{
     datastore::{self, Datastore},
     task::{QueryType, Task},
@@ -28,15 +27,12 @@ use janus_core::{
     time::Clock,
 };
 use janus_messages::{Duration, HpkeConfig, Role, TaskId, Time};
-
 use prio::codec::Decode;
 use rand::random;
-
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::Mutex;
-
 use url::Url;
 
 //////////////////////////////////////////////////
