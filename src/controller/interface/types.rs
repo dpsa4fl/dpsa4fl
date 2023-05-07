@@ -1,5 +1,5 @@
 use crate::core::types::CommonStateParametrization;
-use crate::janus_manager::interface::network::consumer::JanusTasksClient;
+use crate::janus_manager::interface::network::consumer::JanusManagerClient;
 use crate::janus_manager::interface::types::TrainingSessionId;
 
 use janus_messages::TaskId;
@@ -22,7 +22,7 @@ use janus_messages::TaskId;
 /// State that is preserved between rounds.
 pub struct ControllerStatePermanent
 {
-    pub janus_tasks_client: JanusTasksClient,
+    pub janus_tasks_client: JanusManagerClient,
 }
 
 /// State that is required only for a single round.
@@ -54,7 +54,7 @@ impl ControllerStateImmut
     {
         // janus tasks
         let janus_tasks_client =
-            JanusTasksClient::new(p.location.clone(), p.vdaf_parameter.clone());
+            JanusManagerClient::new(p.location.clone(), p.vdaf_parameter.clone());
 
         let permanent = ControllerStatePermanent { janus_tasks_client };
 

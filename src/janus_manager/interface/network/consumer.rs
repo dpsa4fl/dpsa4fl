@@ -29,7 +29,7 @@ use std::time::UNIX_EPOCH;
 pub type Fx = FixedI32<U31>;
 pub const TIME_PRECISION: u64 = 3600;
 
-pub struct JanusTasksClient
+pub struct JanusManagerClient
 {
     http_client: reqwest::Client,
     location: Locations,
@@ -39,7 +39,7 @@ pub struct JanusTasksClient
     vdaf_parameter: VdafParameter,
 }
 
-impl JanusTasksClient
+impl JanusManagerClient
 {
     pub fn new(location: Locations, vdaf_parameter: VdafParameter) -> Self
     {
@@ -55,7 +55,7 @@ impl JanusTasksClient
             HpkeKdfId::HkdfSha256,
             HpkeAeadId::Aes128Gcm,
         );
-        JanusTasksClient {
+        JanusManagerClient {
             http_client: reqwest::Client::new(),
             location,
             hpke_keypair,
