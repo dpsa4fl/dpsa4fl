@@ -1,5 +1,5 @@
 use crate::{
-    core::types::{Locations, MainLocations, TasksLocations, VdafParameter},
+    core::types::{Locations, MainLocations, ManagerLocations, VdafParameter},
     janus_manager::interface::types::{
         CreateTrainingSessionRequest, CreateTrainingSessionResponse, GetVdafParameterRequest,
         GetVdafParameterResponse, StartRoundRequest, TrainingSessionId,
@@ -29,6 +29,7 @@ use std::time::UNIX_EPOCH;
 pub type Fx = FixedI32<U31>;
 pub const TIME_PRECISION: u64 = 3600;
 
+/// Provides access to janus manager API calls for the dpsa controller.
 pub struct JanusManagerClient
 {
     http_client: reqwest::Client,
@@ -41,6 +42,11 @@ pub struct JanusManagerClient
 
 impl JanusManagerClient
 {
+    /// Create a janus manager client with the given configuration.
+    ///
+    /// Here, `location` contains the addresses of all aggregator servers,
+    /// and `vdaf_parameter` provides the configuration to be used for the
+    /// janus aggregation tasks provisioned from this client.
     pub fn new(location: Locations, vdaf_parameter: VdafParameter) -> Self
     {
         let leader_auth_token = rand::random::<[u8; 16]>().to_vec().into();
@@ -65,6 +71,9 @@ impl JanusManagerClient
         }
     }
 
+    /// Sends a request to both aggregators to create a new training session.
+    ///
+    /// If successful, returns a (randomly generated) training session id.
     pub async fn create_session(&self) -> Result<TrainingSessionId>
     {
         let leader_auth_token_encoded =
@@ -90,7 +99,7 @@ impl JanusManagerClient
             .http_client
             .post(
                 self.location
-                    .tasks
+                    .manager
                     .external_leader
                     .join("/create_session")
                     .unwrap(),
@@ -115,7 +124,7 @@ impl JanusManagerClient
             .http_client
             .post(
                 self.location
-                    .tasks
+                    .manager
                     .external_helper
                     .join("/create_session")
                     .unwrap(),
@@ -155,7 +164,7 @@ impl JanusManagerClient
             .http_client
             .post(
                 self.location
-                    .tasks
+                    .manager
                     .external_leader
                     .join("/end_session")
                     .unwrap(),
@@ -168,7 +177,7 @@ impl JanusManagerClient
             .http_client
             .post(
                 self.location
-                    .tasks
+                    .manager
                     .external_helper
                     .join("/end_session")
                     .unwrap(),
@@ -201,7 +210,7 @@ impl JanusManagerClient
             .http_client
             .post(
                 self.location
-                    .tasks
+                    .manager
                     .external_leader
                     .join("/start_round")
                     .unwrap(),
@@ -214,7 +223,7 @@ impl JanusManagerClient
             .http_client
             .post(
                 self.location
-                    .tasks
+                    .manager
                     .external_helper
                     .join("/start_round")
                     .unwrap(),
@@ -296,8 +305,9 @@ impl JanusManagerClient
 //////////////////////////////////////////////////////
 // client functionality for dpas4fl clients
 
+/// Get the vdaf parameters used for a given task from a single janus manager instance
 pub async fn get_vdaf_parameter_from_task(
-    tasks_server: Url,
+    manager_server: Url,
     task_id: TaskId,
 ) -> Result<VdafParameter>
 {
@@ -306,7 +316,7 @@ pub async fn get_vdaf_parameter_from_task(
     let request = GetVdafParameterRequest { task_id_encoded };
 
     let response = reqwest::Client::new()
-        .post(tasks_server.join("/get_vdaf_parameter").unwrap())
+        .post(manager_server.join("/get_vdaf_parameter").unwrap())
         .json(&request)
         .send()
         .await?;
@@ -317,11 +327,12 @@ pub async fn get_vdaf_parameter_from_task(
     param.map(|x| x.vdaf_parameter)
 }
 
-pub async fn get_main_locations(tasks_servers: TasksLocations) -> Result<MainLocations>
+/// Get the janus aggregator locations associated to the given manager servers.
+pub async fn get_main_locations(manager_servers: ManagerLocations) -> Result<MainLocations>
 {
     let response_leader = reqwest::Client::new()
         .get(
-            tasks_servers
+            manager_servers
                 .external_leader
                 .join("/get_main_locations")
                 .unwrap(),
@@ -331,7 +342,7 @@ pub async fn get_main_locations(tasks_servers: TasksLocations) -> Result<MainLoc
 
     let response_helper = reqwest::Client::new()
         .get(
-            tasks_servers
+            manager_servers
                 .external_helper
                 .join("/get_main_locations")
                 .unwrap(),

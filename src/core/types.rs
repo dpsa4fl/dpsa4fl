@@ -23,7 +23,7 @@ use super::fixed::FixedTypeTag;
 pub struct Locations
 {
     pub main: MainLocations,
-    pub tasks: TasksLocations,
+    pub manager: ManagerLocations,
 }
 
 impl Locations
@@ -38,7 +38,7 @@ impl Locations
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-pub struct TasksLocations
+pub struct ManagerLocations
 {
     pub external_leader: Url,
     pub external_helper: Url,

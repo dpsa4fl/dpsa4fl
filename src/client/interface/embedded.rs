@@ -1,6 +1,6 @@
 use crate::core::fixed::VecFixedAny;
 use crate::core::types::CommonStateParametrization;
-use crate::core::types::TasksLocations;
+use crate::core::types::ManagerLocations;
 
 use super::types::ClientState;
 use super::types::ClientStatePU;
@@ -19,7 +19,7 @@ use anyhow::{anyhow, Result};
 /// Note that the state does not contain all information required for submitting gradients,
 /// as this information can only be gotten on a round-by-round basis, once the task id
 /// for a given round is known.
-pub fn api_new_client_state(p: TasksLocations) -> ClientStatePU
+pub fn api_new_client_state(p: ManagerLocations) -> ClientStatePU
 {
     ClientStatePU::InitState(p)
 }

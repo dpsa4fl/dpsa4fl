@@ -1,6 +1,6 @@
 use crate::core::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
 use crate::core::types::CommonStateParametrization;
-use crate::core::types::{Locations, TasksLocations};
+use crate::core::types::{Locations, ManagerLocations};
 use crate::janus_manager::interface::network::consumer::{
     get_main_locations, get_vdaf_parameter_from_task,
 };
@@ -66,9 +66,9 @@ async fn get_crypto_config(
 async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStateParametrization>
 {
     let leader_param =
-        get_vdaf_parameter_from_task(l.tasks.external_leader.clone(), task_id).await?;
+        get_vdaf_parameter_from_task(l.manager.external_leader.clone(), task_id).await?;
     let helper_param =
-        get_vdaf_parameter_from_task(l.tasks.external_helper.clone(), task_id).await?;
+        get_vdaf_parameter_from_task(l.manager.external_helper.clone(), task_id).await?;
 
     // make sure that the information matchs
     //
@@ -92,7 +92,7 @@ async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStat
 impl ClientState
 {
     pub async fn new(
-        task_locations: TasksLocations,
+        manager_locations: ManagerLocations,
         round_settings: RoundSettings,
     ) -> anyhow::Result<ClientState>
     {
@@ -101,11 +101,11 @@ impl ClientState
         };
 
         // we get the main locations from the tasks servers
-        let main_locations = get_main_locations(task_locations.clone()).await?;
+        let main_locations = get_main_locations(manager_locations.clone()).await?;
 
         let locations = Locations {
             main: main_locations,
-            tasks: task_locations,
+            manager: manager_locations,
         };
 
         // we get a new crypto config if we were asked for it

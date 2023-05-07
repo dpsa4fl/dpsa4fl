@@ -4,7 +4,7 @@ use janus_messages::{Duration, HpkeConfig, TaskId};
 use crate::{
     core::{
         helpers::task_id_from_string,
-        types::{CommonStateParametrization, TasksLocations},
+        types::{CommonStateParametrization, ManagerLocations},
     },
     janus_manager::interface::network::consumer::TIME_PRECISION,
 };
@@ -56,7 +56,7 @@ pub struct ClientState
 pub enum ClientStatePU
 {
     ValidState(ClientState),
-    InitState(TasksLocations),
+    InitState(ManagerLocations),
 }
 
 impl ClientStatePU
