@@ -101,8 +101,6 @@ where
     Fx::Bits: num_traits::NumCast + Debug,
     Fun: FnOnce(Fl) -> Fl,
 {
-    println!("Before converting float: {x:?}, type: {:?}", x.classify());
-
     // the number of bits of our fixed type representation
     let n = Fx::Signed::FRAC_NBITS + Fx::Signed::INT_NBITS;
 
@@ -118,12 +116,6 @@ where
     //   this could be floor or ceil, in order to remove the fractional part
     let x = f(x);
 
-    println!(
-        "trying to convert {x:?} ({} to {})",
-        std::any::type_name::<Fl>(),
-        std::any::type_name::<Fx::Bits>()
-    );
-
     // - convert to integer
     let x = <Fx::Bits as NumCast>::from(x).ok_or(anyhow!("Could not convert {x:?} to integer."))?;
 
@@ -134,6 +126,7 @@ where
 }
 
 #[cfg(test)]
+#[allow(clippy::excessive_precision)]
 mod tests
 {
     use super::*;
