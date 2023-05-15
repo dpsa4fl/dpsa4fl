@@ -8,9 +8,8 @@ of gradients in federated machine learning. For more information see the [projec
 
 The [janus](https://github.com/divviup/janus) framework is used for secure aggregation. The dpsa4fl library
 provides functionality for controller and clients to interact with a janus server instance. The janus server needs to be setup in a customized way,
-see [here](https://github.com/dpsa-project/dpsa4fl-infrastructure).
-An example project and description of how to setup an end-to-end test is
-[here](https://github.com/dpsa-project/dpsa4fl-example-project).
+see the [dpsa4fl infrastructure repo](https://github.com/dpsa-project/dpsa4fl-infrastructure) for instructions.
+See our [example project](https://github.com/dpsa-project/dpsa4fl-example-project) for a description of how to setup an end-to-end test.
 
 
 ## Changelog
