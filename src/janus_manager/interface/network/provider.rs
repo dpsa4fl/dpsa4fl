@@ -14,8 +14,8 @@ use http::{HeaderMap, StatusCode};
 use janus_aggregator::{
     binary_utils::{janus_main, setup_signal_handler, BinaryOptions, CommonBinaryOptions},
     config::{BinaryConfig, CommonConfig},
-    datastore::Datastore,
 };
+use janus_aggregator_core::datastore::Datastore;
 use janus_core::time::{Clock, RealClock};
 use janus_messages::TaskId;
 use opentelemetry::metrics::{Histogram, Unit};

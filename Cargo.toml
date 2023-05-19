@@ -4,21 +4,22 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-janus_client = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa-m6-dev", features = []}
-janus_core = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa-m6-dev", features = ["fpvec_bounded_l2"] }
-janus_messages = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa-m6-dev", features = [] }
-janus_aggregator = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa-m6-dev", features = ["fpvec_bounded_l2"] }
-janus_collector = { git = "https://github.com/dpsa-project/janus.git", branch = "dpsa-m6-dev", features = ["fpvec_bounded_l2"] }
+janus_client = { git = "https://github.com/dpsa-project/janus.git", branch = "feature-fixedvec-dp-proto", features = []}
+janus_core = { git = "https://github.com/dpsa-project/janus.git", branch = "feature-fixedvec-dp-proto", features = ["fpvec_bounded_l2"] }
+janus_messages = { git = "https://github.com/dpsa-project/janus.git", branch = "feature-fixedvec-dp-proto", features = [] }
+janus_aggregator = { git = "https://github.com/dpsa-project/janus.git", branch = "feature-fixedvec-dp-proto", features = ["fpvec_bounded_l2"] }
+janus_aggregator_core = { git = "https://github.com/dpsa-project/janus.git", branch = "feature-fixedvec-dp-proto", features = [] }
+janus_collector = { git = "https://github.com/dpsa-project/janus.git", branch = "feature-fixedvec-dp-proto", features = ["fpvec_bounded_l2"] }
 # dpsa4fl_janus_tasks = { git = "https://github.com/dpsa-project/dpsa4fl-janus-tasks.git", branch = "main" }
 # prio = { version = "0.10.0", features = ["multithreaded"] }
 # prio = {git = "https://github.com/dpsa-project/libprio-rs.git", branch ="fixedpoint-backported-bugfix", features = ["multithreaded", "experimental"]}
 # prio = {git = "https://github.com/dpsa-project/libprio-rs.git", branch ="release/0.10-hotfix-normvector-bugfix", features = ["multithreaded"]}
-prio = {git = "https://github.com/dpsa-project/libprio-rs.git", branch ="feature-simple-dp", features = ["multithreaded"]}
+prio = {git = "https://github.com/dpsa-project/libprio-rs.git", branch ="feature-fixedvec-dp", features = ["multithreaded"]}
 url = { version = "2.3.1" }
 anyhow = "1.0"
 # reqwest = "0.11.12"
 async-std = "0.99.12"
-fixed = "1.23"
+fixed = { version = "1.23", features = ["serde"] }
 
 
 tokio = { version = "1.25", features = ["full", "tracing"] }

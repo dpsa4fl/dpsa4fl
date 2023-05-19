@@ -10,19 +10,19 @@ use base64::{engine::general_purpose, Engine};
 use fixed::types::extra::U31;
 use fixed::FixedI32;
 use http::StatusCode;
-use janus_aggregator::task::PRIO3_AES128_VERIFY_KEY_LENGTH;
+// use janus_aggregator_core::task::PRIO3_AES128_VERIFY_KEY_LENGTH;
 use janus_collector::{Collection, Collector, CollectorParameters};
 use janus_core::{
     hpke::{generate_hpke_config_and_private_key, HpkeKeypair},
-    task::AuthenticationToken,
+    task::{AuthenticationToken, VdafInstance},
 };
 use janus_messages::{
     query_type::TimeInterval, Duration, HpkeAeadId, HpkeKdfId, HpkeKemId, Interval, Query, Role,
     TaskId, Time,
 };
 use prio::flp::types::fixedpoint_l2::zero_privacy_parameter;
-use prio::{codec::Encode, vdaf::prio3::Prio3Aes128FixedPointBoundedL2VecSum};
-use rand::random;
+use prio::{codec::Encode, vdaf::prio3::Prio3FixedPointBoundedL2VecSum};
+use rand::{random, thread_rng, distributions::Standard, Rng};
 use reqwest::Url;
 use std::time::UNIX_EPOCH;
 
@@ -49,8 +49,10 @@ impl JanusManagerClient
     /// janus aggregation tasks provisioned from this client.
     pub fn new(location: Locations, vdaf_parameter: VdafParameter) -> Self
     {
-        let leader_auth_token = rand::random::<[u8; 16]>().to_vec().into();
-        let collector_auth_token = rand::random::<[u8; 16]>().to_vec().into();
+        let leader_auth_token = random::<AuthenticationToken>();
+            // rand::random::<[u8; 16]>().to_vec().try_into()?;
+        let collector_auth_token = random::<AuthenticationToken>();
+            // rand::random::<[u8; 16]>().to_vec().into();
 
         let hpke_id = random::<u8>().into();
         let hpke_keypair = generate_hpke_config_and_private_key(
@@ -59,7 +61,8 @@ impl JanusManagerClient
             // are required by section 6 of draft-ietf-ppm-dap-02.
             HpkeKemId::X25519HkdfSha256,
             HpkeKdfId::HkdfSha256,
-            HpkeAeadId::Aes128Gcm,
+            HpkeAeadId::Aes256Gcm,
+            // HpkeAeadId::Gcm,
         );
         JanusManagerClient {
             http_client: reqwest::Client::new(),
@@ -76,11 +79,18 @@ impl JanusManagerClient
     /// If successful, returns a (randomly generated) training session id.
     pub async fn create_session(&self) -> Result<TrainingSessionId>
     {
+        let vdaf_inst = self.vdaf_parameter.to_vdaf_instance();
+
         let leader_auth_token_encoded =
-            general_purpose::URL_SAFE_NO_PAD.encode(self.leader_auth_token.as_bytes());
+            general_purpose::URL_SAFE_NO_PAD.encode(self.leader_auth_token.clone());
         let collector_auth_token_encoded =
-            general_purpose::URL_SAFE_NO_PAD.encode(self.collector_auth_token.as_bytes());
-        let verify_key = rand::random::<[u8; PRIO3_AES128_VERIFY_KEY_LENGTH]>();
+            general_purpose::URL_SAFE_NO_PAD.encode(self.collector_auth_token.clone());
+        let verify_key : Vec<u8> =
+            thread_rng()
+            .sample_iter(Standard)
+            .take(vdaf_inst.verify_key_length())
+            .collect();
+            // rand::random::<[u8; vdaf_inst.verify_length()]>();
         let verify_key_encoded = general_purpose::URL_SAFE_NO_PAD.encode(&verify_key);
 
         let make_request = |role, id| CreateTrainingSessionRequest {
@@ -244,16 +254,16 @@ impl JanusManagerClient
     /// Collect results
     pub async fn collect(&self, task_id: TaskId) -> Result<Collection<Vec<f64>, TimeInterval>>
     {
-        let params = CollectorParameters::new(
+        let params = CollectorParameters::new_with_authentication(
             task_id,
             self.location.main.external_leader.clone(),
-            self.collector_auth_token.clone(),
+            janus_collector::Authentication::DapAuthToken(self.collector_auth_token.clone()),
             self.hpke_keypair.config().clone(),
             self.hpke_keypair.private_key().clone(),
         );
 
         let vdaf_collector =
-            Prio3Aes128FixedPointBoundedL2VecSum::<Fx>::new_aes128_fixedpoint_boundedl2_vec_sum(
+            Prio3FixedPointBoundedL2VecSum::<Fx>::new_fixedpoint_boundedl2_vec_sum(
                 2,
                 self.vdaf_parameter.gradient_len,
                 zero_privacy_parameter(),
@@ -289,12 +299,21 @@ impl JanusManagerClient
 
         println!("collecting result now");
 
+        // let result = collector_client
+        //     .collect_with_rewritten_url(
+        //         Query::new(Interval::new(real_start, duration)?),
+        //         &aggregation_parameter,
+        //         &host.to_string(),
+        //         port,
+        //     )
+        //     .await?;
+
         let result = collector_client
-            .collect_with_rewritten_url(
+            .collect(
                 Query::new(Interval::new(real_start, duration)?),
                 &aggregation_parameter,
-                &host.to_string(),
-                port,
+                // &host.to_string(),
+                // port,
             )
             .await?;
 

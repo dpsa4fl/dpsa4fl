@@ -16,11 +16,9 @@ use crate::{
 
 use anyhow::{anyhow, Context, Error, Result};
 use base64::{engine::general_purpose, Engine};
-use janus_aggregator::{
-    datastore::{self, Datastore},
-    task::{QueryType, Task},
-    SecretBytes,
-};
+use janus_aggregator_core::datastore::{self, Datastore};
+use janus_aggregator_core::task::{Task, QueryType};
+use janus_aggregator_core::SecretBytes;
 use janus_core::{
     hpke::HpkeKeypair,
     task::{AuthenticationToken, VdafInstance},
@@ -132,30 +130,7 @@ impl<C: Clock> TaskProvisioner<C>
         };
 
         // choose vdafinstance
-        let vdafinst = match training_session.vdaf_parameter.submission_type
-        {
-            FixedTypeTag::FixedType16Bit =>
-            {
-                VdafInstance::Prio3Aes128FixedPoint16BitBoundedL2VecSum {
-                    length: training_session.vdaf_parameter.gradient_len,
-                    noise_param: training_session.vdaf_parameter.privacy_parameter,
-                }
-            }
-            FixedTypeTag::FixedType32Bit =>
-            {
-                VdafInstance::Prio3Aes128FixedPoint32BitBoundedL2VecSum {
-                    length: training_session.vdaf_parameter.gradient_len,
-                    noise_param: training_session.vdaf_parameter.privacy_parameter,
-                }
-            }
-            FixedTypeTag::FixedType64Bit =>
-            {
-                VdafInstance::Prio3Aes128FixedPoint64BitBoundedL2VecSum {
-                    length: training_session.vdaf_parameter.gradient_len,
-                    noise_param: training_session.vdaf_parameter.privacy_parameter,
-                }
-            }
-        };
+        let vdafinst = training_session.vdaf_parameter.to_vdaf_instance();
 
         // create the task
         let task = Task::new(
@@ -169,7 +144,7 @@ impl<C: Clock> TaskProvisioner<C>
             training_session.role,
             vec![training_session.verify_key.clone()],
             10,                                       // max_batch_query_count
-            Time::from_seconds_since_epoch(deadline), // task_expiration
+            Some(Time::from_seconds_since_epoch(deadline)), // task_expiration
             None,                                     // report_expiry_age
             2,                                        // min_batch_size
             Duration::from_seconds(TIME_PRECISION),   // time_precision
@@ -224,8 +199,8 @@ impl<C: Clock> TaskProvisioner<C>
         };
 
         let collector_auth_token =
-            AuthenticationToken::from(collector_auth_token_encoded.into_bytes());
-        let leader_auth_token = AuthenticationToken::from(leader_auth_token_encoded.into_bytes());
+            AuthenticationToken::try_from(collector_auth_token_encoded.into_bytes())?;
+        let leader_auth_token = AuthenticationToken::try_from(leader_auth_token_encoded.into_bytes())?;
         let verify_key = SecretBytes::new(
             general_purpose::URL_SAFE_NO_PAD
                 .decode(verify_key_encoded)

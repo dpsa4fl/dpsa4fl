@@ -13,7 +13,7 @@ use janus_core::time::RealClock;
 use janus_messages::{Duration, Role, TaskId};
 use prio::field::Field128;
 use prio::flp::types::fixedpoint_l2::compatible_float::CompatibleFloat;
-use prio::vdaf::prio3::Prio3Aes128FixedPointBoundedL2VecSum;
+use prio::vdaf::prio3::Prio3FixedPointBoundedL2VecSum;
 
 use super::interface::types::{
     ClientState, ClientStatePermanent, ClientStateRound, CryptoConfig, RoundConfig, RoundSettings,
@@ -222,8 +222,8 @@ impl ClientState
         let num_aggregators = 2;
         let len = self.parametrization.vdaf_parameter.gradient_len;
         let privacy_parameter = self.parametrization.vdaf_parameter.privacy_parameter;
-        let vdaf_client: Prio3Aes128FixedPointBoundedL2VecSum<Fx> =
-            Prio3Aes128FixedPointBoundedL2VecSum::new_aes128_fixedpoint_boundedl2_vec_sum(
+        let vdaf_client: Prio3FixedPointBoundedL2VecSum<Fx> =
+            Prio3FixedPointBoundedL2VecSum::new_fixedpoint_boundedl2_vec_sum(
                 num_aggregators,
                 len,
                 privacy_parameter, // actually this does not matter for the client

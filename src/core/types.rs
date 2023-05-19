@@ -13,6 +13,7 @@ pub struct CommonStateParametrization
 /////////////////////////////
 // Locations
 
+use janus_core::task::VdafInstance;
 use prio::flp::types::fixedpoint_l2::PrivacyParameterType;
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
@@ -62,4 +63,35 @@ pub struct VdafParameter
     pub privacy_parameter: PrivacyParameterType,
 
     pub submission_type: FixedTypeTag,
+}
+
+impl VdafParameter
+{
+    pub fn to_vdaf_instance(&self) -> VdafInstance
+    {
+        match self.submission_type
+        {
+            FixedTypeTag::FixedType16Bit =>
+            {
+                VdafInstance::Prio3FixedPoint16BitBoundedL2VecSum {
+                    length: self.gradient_len,
+                    noise_param: self.privacy_parameter,
+                }
+            }
+            FixedTypeTag::FixedType32Bit =>
+            {
+                VdafInstance::Prio3FixedPoint32BitBoundedL2VecSum {
+                    length: self.gradient_len,
+                    noise_param: self.privacy_parameter,
+                }
+            }
+            FixedTypeTag::FixedType64Bit =>
+            {
+                VdafInstance::Prio3FixedPoint64BitBoundedL2VecSum {
+                    length: self.gradient_len,
+                    noise_param: self.privacy_parameter,
+                }
+            }
+        }
+    }
 }
