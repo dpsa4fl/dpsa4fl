@@ -118,7 +118,7 @@ impl<C: Clock> TaskProvisioner<C>
         let task_id = TaskId::get_decoded(&task_id_bytes)?;
 
         // -------------------- create new task -----------------------------
-        let deadline = UNIX_EPOCH.elapsed()?.as_secs() + 10 * 60;
+        let deadline = UNIX_EPOCH.elapsed()?.as_secs() + 10000 * 60;
 
         let collector_auth_tokens = if training_session.role == Role::Leader
         {
@@ -131,6 +131,9 @@ impl<C: Clock> TaskProvisioner<C>
 
         // choose vdafinstance
         let vdafinst = training_session.vdaf_parameter.to_vdaf_instance();
+
+        // [TEMP] debug
+        println!("Got training session request with auth token for aggregator: {:?}, collector: {:?}", training_session.leader_auth_token.as_ref().to_vec(), training_session.collector_auth_token.as_ref().to_vec());
 
         // create the task
         let task = Task::new(
@@ -198,8 +201,13 @@ impl<C: Clock> TaskProvisioner<C>
             id.into()
         };
 
-        let collector_auth_token =
-            AuthenticationToken::try_from(collector_auth_token_encoded.into_bytes())?;
+        let collector_auth_token_decoded = general_purpose::URL_SAFE_NO_PAD
+                .decode(collector_auth_token_encoded)
+                .context("invalid base64url content in \"verifyKey\"")?;
+        let collector_auth_token = AuthenticationToken::try_from(collector_auth_token_decoded)?;
+
+        // let collector_auth_token = AuthenticationToken::try_from(collector)
+            // AuthenticationToken::try_from(collector_auth_token_encoded.into_bytes())?;
         let leader_auth_token = AuthenticationToken::try_from(leader_auth_token_encoded.into_bytes())?;
         let verify_key = SecretBytes::new(
             general_purpose::URL_SAFE_NO_PAD
