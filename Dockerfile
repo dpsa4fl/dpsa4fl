@@ -1,34 +1,33 @@
-FROM rust:1.67.1-alpine as builder
+FROM rust:1.69.0-alpine AS chef
+RUN apk add --no-cache libc-dev
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
+RUN cargo install cargo-chef --version 0.1.60 && \
+    rm -r $CARGO_HOME/registry
+WORKDIR /src
+
+FROM chef AS planner
+COPY Cargo.toml /src/Cargo.toml
+COPY Cargo.lock /src/Cargo.lock
+COPY src /src/src
+RUN cargo chef prepare --recipe-path recipe.json
+
+FROM chef AS builder
+COPY --from=planner /src/recipe.json /src/recipe.json
+RUN cargo chef cook --release
+COPY Cargo.toml /src/Cargo.toml
+COPY Cargo.lock /src/Cargo.lock
+COPY src /src/src
 ARG BINARY=dpsa4fl-janus-manager
 ARG GIT_REVISION=unknown
-RUN apk add libc-dev protobuf-dev protoc git
-WORKDIR /src
-COPY Cargo.toml /src/Cargo.toml
-COPY src /src/src
-# COPY Cargo.lock /src/Cargo.lock
-# COPY aggregator /src/aggregator
-# COPY build_script_utils /src/build_script_utils
-# COPY client /src/client
-# COPY collector /src/collector
-# COPY core /src/core
-# COPY db /src/db
-# COPY integration_tests /src/integration_tests
-# COPY interop_binaries /src/interop_binaries
-# COPY messages /src/messages
 ENV GIT_REVISION ${GIT_REVISION}
-ENV CARGO_NET_GIT_FETCH_WITH_CLI true
-RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,target=/src/target cargo build --release --bin $BINARY && cp /src/target/release/$BINARY /$BINARY
+RUN cargo build --release
 
-FROM alpine:3.17.2
+FROM alpine:3.18.0 AS final
 ARG BINARY=dpsa4fl-janus-manager
-ARG CONFIG
 ARG GIT_REVISION=unknown
 LABEL revision ${GIT_REVISION}
-RUN echo "config file: $CONFIG"
-# COPY --from=builder /src/db/schema.sql /db/schema.sql
-COPY --from=builder /$BINARY /$BINARY
+COPY --from=builder /src/target/release/$BINARY /$BINARY
 # Store the build argument in an environment variable so we can reference it
 # from the ENTRYPOINT at runtime.
 ENV BINARY=$BINARY
-ENV CONFIG=$CONFIG
-ENTRYPOINT ["/bin/sh", "-c", "exec /$BINARY --config-file $CONFIG --datastore-keys vWoEFA7F+ojcF+HohGLn/Q"]
+ENTRYPOINT ["/bin/sh", "-c", "exec /$BINARY \"$0\" \"$@\""]
