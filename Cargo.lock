@@ -1636,7 +1636,7 @@ checksum = "453ad9f582a441959e5f0d088b02ce04cfe8d51a8eaf077f12ac6d3e94164ca6"
 [[package]]
 name = "janus_aggregator"
 version = "0.5.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#8569562256c27a5991c8f702962f2d07e47854be"
+source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#f34a023bca81cdeda03469aed1f690d74b655b32"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1701,7 +1701,7 @@ dependencies = [
 [[package]]
 name = "janus_aggregator_api"
 version = "0.5.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#8569562256c27a5991c8f702962f2d07e47854be"
+source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#f34a023bca81cdeda03469aed1f690d74b655b32"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1728,7 +1728,7 @@ dependencies = [
 [[package]]
 name = "janus_aggregator_core"
 version = "0.5.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#8569562256c27a5991c8f702962f2d07e47854be"
+source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#f34a023bca81cdeda03469aed1f690d74b655b32"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1771,7 +1771,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.5.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#8569562256c27a5991c8f702962f2d07e47854be"
+source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#f34a023bca81cdeda03469aed1f690d74b655b32"
 dependencies = [
  "backoff",
  "derivative",
@@ -1791,7 +1791,7 @@ dependencies = [
 [[package]]
 name = "janus_collector"
 version = "0.5.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#8569562256c27a5991c8f702962f2d07e47854be"
+source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#f34a023bca81cdeda03469aed1f690d74b655b32"
 dependencies = [
  "backoff",
  "chrono",
@@ -1814,7 +1814,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.5.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#8569562256c27a5991c8f702962f2d07e47854be"
+source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#f34a023bca81cdeda03469aed1f690d74b655b32"
 dependencies = [
  "anyhow",
  "backoff",
@@ -1842,7 +1842,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.5.0"
-source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#8569562256c27a5991c8f702962f2d07e47854be"
+source = "git+https://github.com/dpsa-project/janus.git?branch=feature-fixedvec-dp-proto#f34a023bca81cdeda03469aed1f690d74b655b32"
 dependencies = [
  "anyhow",
  "base64 0.21.2",

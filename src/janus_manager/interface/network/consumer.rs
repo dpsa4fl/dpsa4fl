@@ -14,7 +14,7 @@ use http::StatusCode;
 use janus_collector::{Collection, Collector, CollectorParameters};
 use janus_core::{
     hpke::{generate_hpke_config_and_private_key, HpkeKeypair},
-    task::{AuthenticationToken, VdafInstance},
+    task::{AuthenticationToken},
 };
 use janus_messages::{
     query_type::TimeInterval, Duration, HpkeAeadId, HpkeKdfId, HpkeKemId, Interval, Query, Role,
@@ -254,10 +254,10 @@ impl JanusManagerClient
     /// Collect results
     pub async fn collect(&self, task_id: TaskId) -> Result<Collection<Vec<f64>, TimeInterval>>
     {
-        let params = CollectorParameters::new_with_authentication(
+        let params = CollectorParameters::new(
             task_id,
             self.location.main.external_leader.clone(),
-            janus_collector::Authentication::DapAuthToken(self.collector_auth_token.clone()),
+            self.collector_auth_token.clone(),
             self.hpke_keypair.config().clone(),
             self.hpke_keypair.private_key().clone(),
         );
