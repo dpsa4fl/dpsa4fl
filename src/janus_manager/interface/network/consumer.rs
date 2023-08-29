@@ -20,7 +20,6 @@ use janus_messages::{
     query_type::TimeInterval, Duration, HpkeAeadId, HpkeKdfId, HpkeKemId, Interval, Query, Role,
     TaskId, Time,
 };
-use prio::flp::types::fixedpoint_l2::zero_privacy_parameter;
 use prio::{codec::Encode, vdaf::prio3::Prio3FixedPointBoundedL2VecSum};
 use rand::{random, thread_rng, distributions::Standard, Rng};
 use reqwest::Url;
@@ -266,7 +265,6 @@ impl JanusManagerClient
             Prio3FixedPointBoundedL2VecSum::<Fx>::new_fixedpoint_boundedl2_vec_sum(
                 2,
                 self.vdaf_parameter.gradient_len,
-                zero_privacy_parameter(),
             )?;
 
         let collector_http_client = reqwest::Client::builder()

@@ -21,9 +21,10 @@ use janus_aggregator_core::task::{Task, QueryType};
 use janus_aggregator_core::SecretBytes;
 use janus_core::{
     hpke::HpkeKeypair,
-    task::{AuthenticationToken, VdafInstance, DapAuthToken},
+    task::{AuthenticationToken},
     time::Clock,
 };
+use janus_aggregator_core::datastore::models::AuthenticationTokenType::DapAuthToken;
 use janus_messages::{Duration, HpkeConfig, Role, TaskId, Time};
 use prio::codec::Decode;
 use rand::random;
@@ -138,10 +139,8 @@ impl<C: Clock> TaskProvisioner<C>
         // create the task
         let task = Task::new(
             task_id,
-            vec![
-                self.config.leader_endpoint.clone(),
-                self.config.helper_endpoint.clone(),
-            ],
+            self.config.leader_endpoint.clone(),
+            self.config.helper_endpoint.clone(),
             QueryType::TimeInterval,
             vdafinst,
             training_session.role,
@@ -204,11 +203,11 @@ impl<C: Clock> TaskProvisioner<C>
         let collector_auth_token_decoded = general_purpose::URL_SAFE_NO_PAD
                 .decode(collector_auth_token_encoded)
                 .context("invalid base64url content in \"verifyKey\"")?;
-        let collector_auth_token = DapAuthToken::try_from(collector_auth_token_decoded)?;
+        let collector_auth_token = AuthenticationToken::new_dap_auth_token_from_bytes(collector_auth_token_decoded)?;
+            // DapAuthToken::try_from(collector_auth_token_decoded)?;
 
-        // let collector_auth_token = AuthenticationToken::try_from(collector)
-            // AuthenticationToken::try_from(collector_auth_token_encoded.into_bytes())?;
-        let leader_auth_token = DapAuthToken::try_from(leader_auth_token_encoded.into_bytes())?;
+        let leader_auth_token = AuthenticationToken::new_dap_auth_token_from_bytes(leader_auth_token_encoded.into_bytes())?;
+            // DapAuthToken::try_from(leader_auth_token_encoded.into_bytes())?;
         let verify_key = SecretBytes::new(
             general_purpose::URL_SAFE_NO_PAD
                 .decode(verify_key_encoded)
@@ -223,8 +222,8 @@ impl<C: Clock> TaskProvisioner<C>
             role,
             verify_key,
             collector_hpke_config,
-            collector_auth_token: AuthenticationToken::DapAuth(collector_auth_token),
-            leader_auth_token: AuthenticationToken::DapAuth(leader_auth_token),
+            collector_auth_token, // AuthenticationToken::DapAuth(collector_auth_token),
+            leader_auth_token, // AuthenticationToken::DapAuth(leader_auth_token),
             hpke_config_and_key,
             vdaf_parameter,
             tasks: vec![],

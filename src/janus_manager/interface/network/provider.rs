@@ -12,7 +12,7 @@ use anyhow::{Context, Error, Result};
 
 use http::{HeaderMap, StatusCode};
 use janus_aggregator::{
-    binary_utils::{janus_main, setup_signal_handler, BinaryOptions, CommonBinaryOptions},
+    binary_utils::{janus_main, BinaryOptions, CommonBinaryOptions},
     config::{BinaryConfig, CommonConfig},
 };
 use janus_aggregator_core::datastore::Datastore;
@@ -28,6 +28,7 @@ use std::sync::Arc;
 use std::{convert::Infallible, future::Future};
 
 use tracing::warn;
+
 
 use warp::{cors::Cors, filters::BoxedFilter, reply::Response, trace, Filter, Rejection, Reply};
 
@@ -55,8 +56,10 @@ pub async fn main() -> anyhow::Result<()>
     janus_main::<_, Options, Config, _, _>(RealClock::default(), |ctx| async move {
         let _meter = opentelemetry::global::meter("collect_job_driver");
 
-        let shutdown_signal =
-            setup_signal_handler().context("failed to register SIGTERM signal handler")?;
+        // let stopper = Stopper::new();
+
+        // let shutdown_signal =
+        //     setup_signal_handler().context("failed to register SIGTERM signal handler")?;
 
         let (_bound_address, server) = janus_manager_server(
             Arc::new(ctx.datastore),
@@ -64,7 +67,7 @@ pub async fn main() -> anyhow::Result<()>
             ctx.config.task_provisioner_config,
             ctx.config.listen_address,
             HeaderMap::new(),
-            shutdown_signal,
+            // shutdown_signal,
         )
         .context("failed to create janus_manager server")?;
 
@@ -76,6 +79,33 @@ pub async fn main() -> anyhow::Result<()>
     .await
 }
 
+// pub fn setup_signal_handler() -> Result<impl Future<Output = ()>, std::io::Error> {
+//     let mut signal_stream = signal_hook_tokio::Signals::new([signal_hook::consts::SIGTERM])?;
+//     let handle = signal_stream.handle();
+//     let (sender, receiver) = futures::channel::oneshot::channel();
+//     let mut sender = Some(sender);
+//     tokio::spawn(async move {
+//         while let Some(signal) = signal_stream.next().await {
+//             if signal == signal_hook::consts::SIGTERM {
+//                 if let Some(sender) = sender.take() {
+//                     // This may return Err(()) if the receiver has been dropped already. If
+//                     // that is the case, the consumer must be shut down already, so we can
+//                     // safely ignore the error case.
+//                     let _ = sender.send(());
+//                     handle.close();
+//                     break;
+//                 }
+//             }
+//         }
+//     });
+//     Ok(async move {
+//         // The receiver may return Err(Canceled) if the sender has been dropped. By inspection, the
+//         // sender always has a message sent across it before it is dropped, and the async task it
+//         // is owned by will not terminate before that happens.
+//         receiver.await.unwrap_or_default()
+//     })
+// }
+
 /// Construct a janus manager server, listening on the provided [`SocketAddr`].
 fn janus_manager_server<C: Clock>(
     datastore: Arc<Datastore<C>>,
@@ -83,13 +113,15 @@ fn janus_manager_server<C: Clock>(
     config: TaskProvisionerConfig,
     listen_address: SocketAddr,
     response_headers: HeaderMap,
-    shutdown_signal: impl Future<Output = ()> + Send + 'static,
+    // shutdown_signal: impl Future<Output = ()> + Send + 'static,
 ) -> Result<(SocketAddr, impl Future<Output = ()> + 'static), Error>
+// ) -> Result<(impl Future<Output = ()> + 'static), Error>
 {
     let filter = janus_manager_filter(datastore, clock, config)?;
     let wrapped_filter = filter.with(warp::filters::reply::headers(response_headers));
     let server = warp::serve(wrapped_filter);
-    Ok(server.bind_with_graceful_shutdown(listen_address, shutdown_signal))
+    Ok(server.bind_ephemeral(listen_address))
+    // Ok(server.bind_with_graceful_shutdown(listen_address, shutdown_signal))
 }
 
 fn janus_manager_filter<C: Clock>(

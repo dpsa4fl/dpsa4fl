@@ -49,7 +49,8 @@ async fn get_crypto_config(
 {
     let c: ClientParameters = ClientParameters::new(
         task_id,
-        l.get_external_aggregator_endpoints(),
+        l.main.external_leader,
+        l.main.external_helper,
         Duration::from_seconds(1),
     );
     let f_leader = aggregator_hpke_config(&c, &Role::Leader, &task_id, &permanent.http_client);
@@ -193,7 +194,7 @@ impl ClientState
         measurement: &Vec<Fx>,
     ) -> anyhow::Result<()>
     where
-        Fx: CompatibleFloat<Field128>,
+        Fx: CompatibleFloat,
         Fx: IsTagInstance<FixedTypeTag>,
         // Fx: FixedBase,
     {
@@ -221,19 +222,21 @@ impl ClientState
         // create vdaf instance
         let num_aggregators = 2;
         let len = self.parametrization.vdaf_parameter.gradient_len;
-        let privacy_parameter = self.parametrization.vdaf_parameter.privacy_parameter;
+        // let privacy_parameter = self.parametrization.vdaf_parameter.privacy_parameter.clone();
         let vdaf_client: Prio3FixedPointBoundedL2VecSum<Fx> =
             Prio3FixedPointBoundedL2VecSum::new_fixedpoint_boundedl2_vec_sum(
                 num_aggregators,
                 len,
-                privacy_parameter, // actually this does not matter for the client
+                // privacy_parameter, // actually this does not matter for the client
             )?;
 
         let parameters = ClientParameters::new(
             self.round.config.settings.task_id,
             self.parametrization
-                .location
-                .get_external_aggregator_endpoints(),
+                .location.main.external_leader.clone(),
+            self.parametrization
+                .location.main.external_helper.clone(),
+                // .get_external_aggregator_endpoints(),
             self.round.config.settings.time_precision,
         );
 
