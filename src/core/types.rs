@@ -13,7 +13,7 @@ pub struct CommonStateParametrization
 /////////////////////////////
 // Locations
 
-use janus_core::task::VdafInstance;
+use janus_core::{task::{VdafInstance, Prio3FixedPointBoundedL2VecSumBitSize}, dp::NoDifferentialPrivacy};
 use prio::dp::Rational;
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
@@ -71,29 +71,17 @@ impl VdafParameter
 {
     pub fn to_vdaf_instance(&self) -> VdafInstance
     {
-        match self.submission_type
+        let bitsize = match self.submission_type
         {
-            FixedTypeTag::FixedType16Bit =>
-            {
-                VdafInstance::Prio3FixedPoint16BitBoundedL2VecSum {
-                    length: self.gradient_len,
-                    // noise_param: self.privacy_parameter,
-                }
-            }
-            FixedTypeTag::FixedType32Bit =>
-            {
-                VdafInstance::Prio3FixedPoint32BitBoundedL2VecSum {
-                    length: self.gradient_len,
-                    // noise_param: self.privacy_parameter,
-                }
-            }
-            FixedTypeTag::FixedType64Bit =>
-            {
-                VdafInstance::Prio3FixedPoint64BitBoundedL2VecSum {
-                    length: self.gradient_len,
-                    // noise_param: self.privacy_parameter,
-                }
-            }
+            FixedTypeTag::FixedType16Bit => Prio3FixedPointBoundedL2VecSumBitSize::BitSize16,
+            FixedTypeTag::FixedType32Bit => Prio3FixedPointBoundedL2VecSumBitSize::BitSize32,
+            FixedTypeTag::FixedType64Bit => Prio3FixedPointBoundedL2VecSumBitSize::BitSize64,
+        };
+
+        VdafInstance::Prio3FixedPointBoundedL2VecSum {
+            length: self.gradient_len,
+            bitsize,
+            dp_strategy: janus_core::task::vdaf_instance_strategies::Prio3FixedPointBoundedL2VecSum::NoDifferentialPrivacy(NoDifferentialPrivacy {}),
         }
     }
 }

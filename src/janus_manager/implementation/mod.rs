@@ -203,10 +203,11 @@ impl<C: Clock> TaskProvisioner<C>
         let collector_auth_token_decoded = general_purpose::URL_SAFE_NO_PAD
                 .decode(collector_auth_token_encoded)
                 .context("invalid base64url content in \"verifyKey\"")?;
-        let collector_auth_token = AuthenticationToken::new_dap_auth_token_from_bytes(collector_auth_token_decoded)?;
+        let collector_auth_token = AuthenticationToken::new_bearer_token_from_bytes(collector_auth_token_decoded)?;
+        // let collector_auth_token = AuthenticationToken::new_dap_auth_token_from_bytes(collector_auth_token_decoded)?;
             // DapAuthToken::try_from(collector_auth_token_decoded)?;
 
-        let leader_auth_token = AuthenticationToken::new_dap_auth_token_from_bytes(leader_auth_token_encoded.into_bytes())?;
+        let leader_auth_token = AuthenticationToken::new_bearer_token_from_bytes(leader_auth_token_encoded.into_bytes())?;
             // DapAuthToken::try_from(leader_auth_token_encoded.into_bytes())?;
         let verify_key = SecretBytes::new(
             general_purpose::URL_SAFE_NO_PAD
