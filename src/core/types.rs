@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 
 use super::fixed::FixedTypeTag;
 
-type PrivacyParameterType = Rational;
+type PrivacyParameterType = (); // Ratio<BigUint>;
 
 #[derive(Clone)]
 pub struct Locations {
@@ -74,7 +74,7 @@ impl VdafParameter {
         VdafInstance::Prio3FixedPointBoundedL2VecSum {
             length: self.gradient_len,
             bitsize,
-            dp_strategy: janus_core::task::vdaf_instance_strategies::Prio3FixedPointBoundedL2VecSum::NoDifferentialPrivacy(NoDifferentialPrivacy {}),
+            dp_strategy: janus_core::task::vdaf_instance_strategies::Prio3FixedPointBoundedL2VecSum::NoDifferentialPrivacy,
         }
     }
 }

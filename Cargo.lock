@@ -231,7 +231,7 @@ checksum = "16e62a023e7c117e27523144c5d2459f4397fcc3cab0085af8e2224f643a0193"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -252,7 +252,7 @@ checksum = "bc00ceb34980c03614e35a3a4e218276a0a824e911d07651cd0d858a51e8c0f0"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -260,17 +260,6 @@ name = "async_cell"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "834eee9ce518130a3b4d5af09ecc43e9d6b57ee76613f227a1ddd6b77c7a62bc"
-
-[[package]]
-name = "atty"
-version = "0.2.14"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9b39be18770d11421cdb1b9947a45dd3f37e93092cbf377614828a319d5fee8"
-dependencies = [
- "hermit-abi 0.1.19",
- "libc",
- "winapi 0.3.9",
-]
 
 [[package]]
 name = "autocfg"
@@ -417,9 +406,9 @@ dependencies = [
 
 [[package]]
 name = "bumpalo"
-version = "3.13.0"
+version = "3.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a3e2c3daef883ecc1b5d58c15adae93470a91d425f3532ba1695849656af3fc1"
+checksum = "7f30e7476521f6f8af1a1c4c0b8cc94f0bee37d91763d0ca2665f299b6cd8aec"
 
 [[package]]
 name = "bytemuck"
@@ -486,9 +475,9 @@ dependencies = [
 
 [[package]]
 name = "chrono"
-version = "0.4.30"
+version = "0.4.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "defd4e7873dbddba6c7c91e199c7fcb946abc4a6a4ac3195400bcfb01b5de877"
+checksum = "7f2c685bad3eb3d45a01354cedb7d5faa66194d1d58ba6e267a8de788f79db38"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
@@ -541,7 +530,7 @@ dependencies = [
  "heck",
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -549,17 +538,6 @@ name = "clap_lex"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cd7cc57abe963c6d3b9d8be5b06ba7c8957a930305ca90304f24ef040aa6f961"
-
-[[package]]
-name = "cmac"
-version = "0.7.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8543454e3c3f5126effff9cd44d562af4e31fb8ce1cc0d3dcd8f084515dbc1aa"
-dependencies = [
- "cipher",
- "dbl",
- "digest 0.10.7",
-]
 
 [[package]]
 name = "colorchoice"
@@ -759,15 +737,6 @@ dependencies = [
  "lock_api",
  "once_cell",
  "parking_lot_core",
-]
-
-[[package]]
-name = "dbl"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bd2735a791158376708f9347fe8faba9667589d82427ef3aed6794a8981de3d9"
-dependencies = [
- "generic-array",
 ]
 
 [[package]]
@@ -1033,9 +1002,9 @@ dependencies = [
 
 [[package]]
 name = "fiat-crypto"
-version = "0.1.20"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e825f6987101665dea6ec934c09ec6d721de7bc1bf92248e1d5810c8cd636b77"
+checksum = "d0870c84016d4b481be5c9f323c24f65e31e901ae618f0e80f4308fb00de1d2d"
 
 [[package]]
 name = "finl_unicode"
@@ -1211,7 +1180,7 @@ checksum = "89ca545a94061b6365f2c7355b4b32bd20df3ff95f02da9329b34ccc3bd6ee72"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -1403,15 +1372,6 @@ checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
 name = "hermit-abi"
-version = "0.1.19"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62b467343b94ba476dcb2500d242dadbb39557df889310ac77c5d99100aaac33"
-dependencies = [
- "libc",
-]
-
-[[package]]
-name = "hermit-abi"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "443144c8cdadd93ebf52ddb4056d257f5b52c04d3c804e657d19eb73fc33668b"
@@ -1482,6 +1442,7 @@ dependencies = [
  "hpke",
  "num_enum",
  "rand",
+ "serde",
  "wasm-bindgen",
  "zeroize",
 ]
@@ -1698,12 +1659,11 @@ checksum = "af150ab688ff2122fcef229be89cb50dd66af9e01a4ff320cc137eecc9bacc38"
 
 [[package]]
 name = "janus_aggregator"
-version = "0.5.14"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=janus-m5-v2#8934f0198d8789e67da5c40f93c736bdd9af866e"
+version = "0.6.0"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
 dependencies = [
  "anyhow",
  "async-trait",
- "atty",
  "backoff",
  "base64 0.21.4",
  "bytes",
@@ -1725,7 +1685,6 @@ dependencies = [
  "janus_messages",
  "k8s-openapi",
  "kube",
- "once_cell",
  "opentelemetry 0.20.0",
  "postgres-protocol",
  "postgres-types",
@@ -1764,8 +1723,8 @@ dependencies = [
 
 [[package]]
 name = "janus_aggregator_api"
-version = "0.5.14"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=janus-m5-v2#8934f0198d8789e67da5c40f93c736bdd9af866e"
+version = "0.6.0"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1791,8 +1750,8 @@ dependencies = [
 
 [[package]]
 name = "janus_aggregator_core"
-version = "0.5.14"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=janus-m5-v2#8934f0198d8789e67da5c40f93c736bdd9af866e"
+version = "0.6.0"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1811,7 +1770,6 @@ dependencies = [
  "janus_messages",
  "k8s-openapi",
  "kube",
- "lazy_static",
  "opentelemetry 0.20.0",
  "postgres-protocol",
  "postgres-types",
@@ -1838,8 +1796,8 @@ dependencies = [
 
 [[package]]
 name = "janus_client"
-version = "0.5.14"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=janus-m5-v2#8934f0198d8789e67da5c40f93c736bdd9af866e"
+version = "0.6.0"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
 dependencies = [
  "backoff",
  "derivative",
@@ -1859,8 +1817,8 @@ dependencies = [
 
 [[package]]
 name = "janus_collector"
-version = "0.5.14"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=janus-m5-v2#8934f0198d8789e67da5c40f93c736bdd9af866e"
+version = "0.6.0"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
 dependencies = [
  "backoff",
  "chrono",
@@ -1882,8 +1840,8 @@ dependencies = [
 
 [[package]]
 name = "janus_core"
-version = "0.5.14"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=janus-m5-v2#8934f0198d8789e67da5c40f93c736bdd9af866e"
+version = "0.6.0"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
 dependencies = [
  "anyhow",
  "backoff",
@@ -1912,8 +1870,8 @@ dependencies = [
 
 [[package]]
 name = "janus_messages"
-version = "0.5.14"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=janus-m5-v2#8934f0198d8789e67da5c40f93c736bdd9af866e"
+version = "0.6.0"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
 dependencies = [
  "anyhow",
  "base64 0.21.4",
@@ -2337,7 +2295,7 @@ version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4161fcb6d602d4d2081af7c3a45852d875a03dd337a6bfdd6e06407b61342a43"
 dependencies = [
- "hermit-abi 0.3.2",
+ "hermit-abi",
  "libc",
 ]
 
@@ -2359,7 +2317,7 @@ dependencies = [
  "proc-macro-crate",
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -2691,7 +2649,7 @@ checksum = "4359fd9c9171ec6e8c62926d6faaf553a8dc3f64e1507e76da7911b4f6a04405"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -2744,7 +2702,7 @@ dependencies = [
  "heck",
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -2800,14 +2758,12 @@ dependencies = [
 
 [[package]]
 name = "prio"
-version = "0.14.0"
-source = "git+https://github.com/dpsa4fl/libprio-rs.git?branch=dp-update-for-janus#73f70b31f041f90ab67758b4b8e9f5d6537b1f76"
+version = "0.15.1"
+source = "git+https://github.com/dpsa4fl/libprio-rs.git?branch=dp-update-for-janus-rebased#3aa7892719f5f36857169db3df5931189657c188"
 dependencies = [
  "aes",
- "base64 0.21.4",
  "bitvec",
  "byteorder",
- "cmac",
  "ctr",
  "fiat-crypto",
  "fixed",
@@ -3397,7 +3353,7 @@ checksum = "4eca7ac642d82aa35b60049a6eccb4be6be75e599bd2e9adb5f875a737654af2"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -3660,9 +3616,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.33"
+version = "2.0.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9caece70c63bfba29ec2fed841a09851b14a235c60010fa4de58089b6c025668"
+checksum = "7303ef2c05cd654186cb250d29049a24840ca25d2747c25c0381c8d9e2f582e8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3711,7 +3667,7 @@ checksum = "49922ecae66cc8a249b77e68d1d0623c1b2c514f0060c27cdc68bd62a1219d35"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -3827,7 +3783,7 @@ checksum = "630bdcf245f78637c13ec01ffae6187cca34625e8c63150d424b59e55af2675e"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -4050,7 +4006,7 @@ checksum = "5f4f31f56159e98206da9efd823404b79b6ef3143b4a7ab76e67b1751b25a4ab"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -4247,7 +4203,7 @@ checksum = "6d19bf7f37bc3e66beae9792c0f7a0e3500465cf431da63fdb6af593b0e353a4"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
 
 [[package]]
@@ -4345,9 +4301,9 @@ dependencies = [
 
 [[package]]
 name = "typenum"
-version = "1.16.0"
+version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "497961ef93d974e23eb6f433eb5fe1b7930b659f06d12dec6fc44a8f554c0bba"
+checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 
 [[package]]
 name = "unicase"
@@ -4542,7 +4498,7 @@ dependencies = [
  "once_cell",
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
  "wasm-bindgen-shared",
 ]
 
@@ -4576,7 +4532,7 @@ checksum = "54681b18a46765f095758388f2d0cf16eb8d4169b639ab575a8f5693af210c7b"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]
@@ -4816,5 +4772,5 @@ checksum = "ce36e65b0d2999d2aafac989fb249189a141aee1f53c612c1f37d72631959f69"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.33",
+ "syn 2.0.37",
 ]
