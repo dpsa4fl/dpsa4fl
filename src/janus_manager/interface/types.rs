@@ -15,42 +15,32 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct TrainingSessionId(u16);
 
-impl Display for TrainingSessionId
-{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
-    {
+impl Display for TrainingSessionId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
     }
 }
 
-impl Encode for TrainingSessionId
-{
-    fn encode(&self, bytes: &mut Vec<u8>)
-    {
+impl Encode for TrainingSessionId {
+    fn encode(&self, bytes: &mut Vec<u8>) {
         self.0.encode(bytes);
     }
 }
 
-impl Decode for TrainingSessionId
-{
-    fn decode(bytes: &mut Cursor<&[u8]>) -> Result<Self, CodecError>
-    {
+impl Decode for TrainingSessionId {
+    fn decode(bytes: &mut Cursor<&[u8]>) -> Result<Self, CodecError> {
         Ok(Self(u16::decode(bytes)?))
     }
 }
 
-impl From<u16> for TrainingSessionId
-{
-    fn from(value: u16) -> TrainingSessionId
-    {
+impl From<u16> for TrainingSessionId {
+    fn from(value: u16) -> TrainingSessionId {
         TrainingSessionId(value)
     }
 }
 
-impl From<TrainingSessionId> for u16
-{
-    fn from(id: TrainingSessionId) -> u16
-    {
+impl From<TrainingSessionId> for u16 {
+    fn from(id: TrainingSessionId) -> u16 {
         id.0
     }
 }
@@ -58,21 +48,17 @@ impl From<TrainingSessionId> for u16
 /// This registry lazily generates up to 256 HPKE key pairs, one with each possible
 /// [`HpkeConfigId`].
 #[derive(Default)]
-pub struct HpkeConfigRegistry
-{
+pub struct HpkeConfigRegistry {
     keypairs: HashMap<HpkeConfigId, HpkeKeypair>,
 }
 
-impl HpkeConfigRegistry
-{
-    pub fn new() -> HpkeConfigRegistry
-    {
+impl HpkeConfigRegistry {
+    pub fn new() -> HpkeConfigRegistry {
         Default::default()
     }
 
     /// Get the keypair associated with a given ID.
-    pub fn fetch_keypair(&mut self, id: HpkeConfigId) -> HpkeKeypair
-    {
+    pub fn fetch_keypair(&mut self, id: HpkeConfigId) -> HpkeKeypair {
         self.keypairs
             .entry(id)
             .or_insert_with(|| {
@@ -89,8 +75,7 @@ impl HpkeConfigRegistry
     }
 
     /// Choose a random [`HpkeConfigId`], and then get the keypair associated with that ID.
-    pub fn get_random_keypair(&mut self) -> HpkeKeypair
-    {
+    pub fn get_random_keypair(&mut self) -> HpkeKeypair {
         self.fetch_keypair(random::<u8>().into())
     }
 }
@@ -102,8 +87,7 @@ impl HpkeConfigRegistry
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct CreateTrainingSessionRequest
-{
+pub struct CreateTrainingSessionRequest {
     // id if known
     pub training_session_id: Option<TrainingSessionId>,
 
@@ -124,8 +108,7 @@ pub struct CreateTrainingSessionRequest
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct CreateTrainingSessionResponse
-{
+pub struct CreateTrainingSessionResponse {
     pub training_session_id: TrainingSessionId,
 }
 
@@ -133,8 +116,7 @@ pub struct CreateTrainingSessionResponse
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct StartRoundRequest
-{
+pub struct StartRoundRequest {
     pub training_session_id: TrainingSessionId,
     pub task_id_encoded: String,
 }
@@ -149,14 +131,12 @@ pub struct StartRoundResponse {
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct GetVdafParameterRequest
-{
+pub struct GetVdafParameterRequest {
     pub task_id_encoded: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct GetVdafParameterResponse
-{
+pub struct GetVdafParameterResponse {
     pub vdaf_parameter: VdafParameter,
 }

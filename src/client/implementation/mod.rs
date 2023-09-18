@@ -45,8 +45,7 @@ async fn get_crypto_config(
     permanent: &ClientStatePermanent,
     task_id: TaskId,
     l: Locations,
-) -> anyhow::Result<CryptoConfig>
-{
+) -> anyhow::Result<CryptoConfig> {
     let c: ClientParameters = ClientParameters::new(
         task_id,
         l.main.external_leader,
@@ -64,8 +63,7 @@ async fn get_crypto_config(
     })
 }
 
-async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStateParametrization>
-{
+async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStateParametrization> {
     let leader_param =
         get_vdaf_parameter_from_task(l.manager.external_leader.clone(), task_id).await?;
     let helper_param =
@@ -74,15 +72,12 @@ async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStat
     // make sure that the information matchs
     //
     // TODO: For the noise parameter we COULD take the minimum instead
-    if leader_param == helper_param
-    {
+    if leader_param == helper_param {
         Ok(CommonStateParametrization {
             location: l,
             vdaf_parameter: leader_param,
         })
-    }
-    else
-    {
+    } else {
         Err(anyhow!("The leader and helper have different vdaf params:\nleader:\n{leader_param:?}\nhelper:\n{helper_param:?}"))
     }
 }
@@ -90,13 +85,11 @@ async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStat
 //
 // Functions that take client state as parameter.
 //
-impl ClientState
-{
+impl ClientState {
     pub async fn new(
         manager_locations: ManagerLocations,
         round_settings: RoundSettings,
-    ) -> anyhow::Result<ClientState>
-    {
+    ) -> anyhow::Result<ClientState> {
         let permanent = ClientStatePermanent {
             http_client: default_http_client()?,
         };
@@ -138,13 +131,11 @@ impl ClientState
     async fn get_next_round_config(
         &self,
         round_settings: RoundSettings,
-    ) -> anyhow::Result<RoundConfig>
-    {
+    ) -> anyhow::Result<RoundConfig> {
         // NOTE: We assume that the vdaf parameters don't change between tasks of the same session
         //       If they could, we would have to get the current vdaf parameters here.
 
-        if round_settings.should_request_hpke_config
-        {
+        if round_settings.should_request_hpke_config {
             // we get a new crypto config if we were asked for it
             let c = get_crypto_config(
                 &self.permanent,
@@ -156,9 +147,7 @@ impl ClientState
                 settings: round_settings,
                 crypto: c,
             })
-        }
-        else
-        {
+        } else {
             // Copy the old config from the state to the new config.
             // Just change the task_id to the new one from the round_settings.
             Ok(RoundConfig {
@@ -171,18 +160,15 @@ impl ClientState
     pub async fn update_to_next_round_config(
         &mut self,
         round_settings: RoundSettings,
-    ) -> anyhow::Result<()>
-    {
+    ) -> anyhow::Result<()> {
         self.round.config = self.get_next_round_config(round_settings).await?;
         Ok(())
     }
 
     ///////////////////////////////////////
     // Submission
-    pub async fn get_submission_result(&self, measurement: &VecFixedAny) -> anyhow::Result<()>
-    {
-        match measurement
-        {
+    pub async fn get_submission_result(&self, measurement: &VecFixedAny) -> anyhow::Result<()> {
+        match measurement {
             VecFixedAny::VecFixed16(v) => self.get_submission_result_impl(v).await,
             VecFixedAny::VecFixed32(v) => self.get_submission_result_impl(v).await,
             VecFixedAny::VecFixed64(v) => self.get_submission_result_impl(v).await,
@@ -198,12 +184,13 @@ impl ClientState
         Fx: IsTagInstance<FixedTypeTag>,
         // Fx: FixedBase,
     {
+        println!("dpsa4fl/client: submitting the following vector: {:?}", measurement);
+
         ////////////////////////
         // check length
         let actual_len = measurement.len();
         let expected_len = self.parametrization.vdaf_parameter.gradient_len;
-        if actual_len != expected_len
-        {
+        if actual_len != expected_len {
             return Err(anyhow!(
                 "Expected data to be have length {expected_len} but it was {actual_len}"
             ));
@@ -214,8 +201,7 @@ impl ClientState
         let aggregator_tag = &self.parametrization.vdaf_parameter.submission_type;
 
         // assert that the compile time type `Fx` matches with the type tag for this round
-        if &Fx::get_tag() != aggregator_tag
-        {
+        if &Fx::get_tag() != aggregator_tag {
             return Err(anyhow!("Tried to submit gradient with fixed type {:?}, but the task has been registered for fixed type {:?}", Fx::get_tag(), aggregator_tag));
         }
 
@@ -232,11 +218,9 @@ impl ClientState
 
         let parameters = ClientParameters::new(
             self.round.config.settings.task_id,
-            self.parametrization
-                .location.main.external_leader.clone(),
-            self.parametrization
-                .location.main.external_helper.clone(),
-                // .get_external_aggregator_endpoints(),
+            self.parametrization.location.main.external_leader.clone(),
+            self.parametrization.location.main.external_helper.clone(),
+            // .get_external_aggregator_endpoints(),
             self.round.config.settings.time_precision,
         );
 

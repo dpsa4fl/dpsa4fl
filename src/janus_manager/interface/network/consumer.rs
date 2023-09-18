@@ -14,14 +14,14 @@ use http::StatusCode;
 use janus_collector::{Collection, Collector, CollectorParameters};
 use janus_core::{
     hpke::{generate_hpke_config_and_private_key, HpkeKeypair},
-    task::{AuthenticationToken},
+    task::AuthenticationToken,
 };
 use janus_messages::{
     query_type::TimeInterval, Duration, HpkeAeadId, HpkeKdfId, HpkeKemId, Interval, Query, Role,
     TaskId, Time,
 };
 use prio::{codec::Encode, vdaf::prio3::Prio3FixedPointBoundedL2VecSum};
-use rand::{random, thread_rng, distributions::Standard, Rng};
+use rand::{distributions::Standard, random, thread_rng, Rng};
 use reqwest::Url;
 use std::time::UNIX_EPOCH;
 
@@ -29,8 +29,7 @@ pub type Fx = FixedI32<U31>;
 pub const TIME_PRECISION: u64 = 3600;
 
 /// Provides access to janus manager API calls for the dpsa controller.
-pub struct JanusManagerClient
-{
+pub struct JanusManagerClient {
     http_client: reqwest::Client,
     location: Locations,
     hpke_keypair: HpkeKeypair,
@@ -39,19 +38,17 @@ pub struct JanusManagerClient
     vdaf_parameter: VdafParameter,
 }
 
-impl JanusManagerClient
-{
+impl JanusManagerClient {
     /// Create a janus manager client with the given configuration.
     ///
     /// Here, `location` contains the addresses of all aggregator servers,
     /// and `vdaf_parameter` provides the configuration to be used for the
     /// janus aggregation tasks provisioned from this client.
-    pub fn new(location: Locations, vdaf_parameter: VdafParameter) -> Self
-    {
+    pub fn new(location: Locations, vdaf_parameter: VdafParameter) -> Self {
         let leader_auth_token = random::<AuthenticationToken>();
-            // rand::random::<[u8; 16]>().to_vec().try_into()?;
+        // rand::random::<[u8; 16]>().to_vec().try_into()?;
         let collector_auth_token = random::<AuthenticationToken>();
-            // rand::random::<[u8; 16]>().to_vec().into();
+        // rand::random::<[u8; 16]>().to_vec().into();
 
         let hpke_id = random::<u8>().into();
         let hpke_keypair = generate_hpke_config_and_private_key(
@@ -76,20 +73,18 @@ impl JanusManagerClient
     /// Sends a request to both aggregators to create a new training session.
     ///
     /// If successful, returns a (randomly generated) training session id.
-    pub async fn create_session(&self) -> Result<TrainingSessionId>
-    {
+    pub async fn create_session(&self) -> Result<TrainingSessionId> {
         let vdaf_inst = self.vdaf_parameter.to_vdaf_instance();
 
         let leader_auth_token_encoded =
             general_purpose::URL_SAFE_NO_PAD.encode(self.leader_auth_token.clone());
         let collector_auth_token_encoded =
             general_purpose::URL_SAFE_NO_PAD.encode(self.collector_auth_token.clone());
-        let verify_key : Vec<u8> =
-            thread_rng()
+        let verify_key: Vec<u8> = thread_rng()
             .sample_iter(Standard)
             .take(vdaf_inst.verify_key_length())
             .collect();
-            // rand::random::<[u8; vdaf_inst.verify_length()]>();
+        // rand::random::<[u8; vdaf_inst.verify_length()]>();
         let verify_key_encoded = general_purpose::URL_SAFE_NO_PAD.encode(&verify_key);
 
         let make_request = |role, id| CreateTrainingSessionRequest {
@@ -116,15 +111,12 @@ impl JanusManagerClient
             .json(&make_request(Role::Leader, None))
             .send()
             .await?;
-        let leader_response = match leader_response.status()
-        {
-            StatusCode::OK =>
-            {
+        let leader_response = match leader_response.status() {
+            StatusCode::OK => {
                 let response: CreateTrainingSessionResponse = leader_response.json().await?;
                 response
             }
-            res =>
-            {
+            res => {
                 return Err(anyhow!("Got error from leader: {res}"));
             }
         };
@@ -145,15 +137,12 @@ impl JanusManagerClient
             .send()
             .await?;
 
-        let helper_response = match helper_response.status()
-        {
-            StatusCode::OK =>
-            {
+        let helper_response = match helper_response.status() {
+            StatusCode::OK => {
                 let response: CreateTrainingSessionResponse = helper_response.json().await?;
                 response
             }
-            res =>
-            {
+            res => {
                 return Err(anyhow!("Got error from helper: {res}"));
             }
         };
@@ -167,8 +156,7 @@ impl JanusManagerClient
     }
 
     /// Send requests to the aggregators to end a new round and delete the associated data.
-    pub async fn end_session(&self, training_session_id: TrainingSessionId) -> Result<()>
-    {
+    pub async fn end_session(&self, training_session_id: TrainingSessionId) -> Result<()> {
         let leader_response = self
             .http_client
             .post(
@@ -195,8 +183,7 @@ impl JanusManagerClient
             .send()
             .await?;
 
-        match (leader_response.status(), helper_response.status())
-        {
+        match (leader_response.status(), helper_response.status()) {
             (StatusCode::OK, StatusCode::OK) => Ok(()),
             (res1, res2) => Err(anyhow!(
                 "Ending session not successful, results are: \n{res1}\n\n{res2}"
@@ -207,8 +194,7 @@ impl JanusManagerClient
     /// Send requests to the aggregators to start a new round.
     ///
     /// We return the task id with which the task can be collected.
-    pub async fn start_round(&self, training_session_id: TrainingSessionId) -> Result<TaskId>
-    {
+    pub async fn start_round(&self, training_session_id: TrainingSessionId) -> Result<TaskId> {
         let task_id: TaskId = random();
         let task_id_encoded = general_purpose::URL_SAFE_NO_PAD.encode(&task_id.get_encoded());
         let request: StartRoundRequest = StartRoundRequest {
@@ -241,8 +227,7 @@ impl JanusManagerClient
             .send()
             .await?;
 
-        match (leader_response.status(), helper_response.status())
-        {
+        match (leader_response.status(), helper_response.status()) {
             (StatusCode::OK, StatusCode::OK) => Ok(task_id),
             (res1, res2) => Err(anyhow!(
                 "Starting round not successful, results are: \n{res1}\n\n{res2}"
@@ -251,8 +236,7 @@ impl JanusManagerClient
     }
 
     /// Collect results
-    pub async fn collect(&self, task_id: TaskId) -> Result<Collection<Vec<f64>, TimeInterval>>
-    {
+    pub async fn collect(&self, task_id: TaskId) -> Result<Collection<Vec<f64>, TimeInterval>> {
         let params = CollectorParameters::new(
             task_id,
             self.location.main.external_leader.clone(),
@@ -326,8 +310,7 @@ impl JanusManagerClient
 pub async fn get_vdaf_parameter_from_task(
     manager_server: Url,
     task_id: TaskId,
-) -> Result<VdafParameter>
-{
+) -> Result<VdafParameter> {
     let task_id_encoded = general_purpose::URL_SAFE_NO_PAD.encode(&task_id.get_encoded());
 
     let request = GetVdafParameterRequest { task_id_encoded };
@@ -345,8 +328,7 @@ pub async fn get_vdaf_parameter_from_task(
 }
 
 /// Get the janus aggregator locations associated to the given manager servers.
-pub async fn get_main_locations(manager_servers: ManagerLocations) -> Result<MainLocations>
-{
+pub async fn get_main_locations(manager_servers: ManagerLocations) -> Result<MainLocations> {
     let response_leader = reqwest::Client::new()
         .get(
             manager_servers
@@ -370,16 +352,11 @@ pub async fn get_main_locations(manager_servers: ManagerLocations) -> Result<Mai
     let result_leader: Result<MainLocations, _> = response_leader.json().await;
     let result_helper: Result<MainLocations, _> = response_helper.json().await;
 
-    match (result_leader, result_helper)
-    {
-        (Ok(a), Ok(b)) =>
-        {
-            if a == b
-            {
+    match (result_leader, result_helper) {
+        (Ok(a), Ok(b)) => {
+            if a == b {
                 Ok(a)
-            }
-            else
-            {
+            } else {
                 Err(anyhow!(
                     "The aggregators returned different main locations ({a:?} and {b:?})"
                 ))

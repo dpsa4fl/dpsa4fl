@@ -19,8 +19,7 @@ use anyhow::{anyhow, Result};
 /// Note that the state does not contain all information required for submitting gradients,
 /// as this information can only be gotten on a round-by-round basis, once the task id
 /// for a given round is known.
-pub fn api_new_client_state(p: ManagerLocations) -> ClientStatePU
-{
+pub fn api_new_client_state(p: ManagerLocations) -> ClientStatePU {
     ClientStatePU::InitState(p)
 }
 
@@ -30,17 +29,13 @@ pub fn api_new_client_state(p: ManagerLocations) -> ClientStatePU
 pub async fn api_update_client_round_settings(
     s: &mut ClientStatePU,
     round_settings: RoundSettings,
-) -> Result<()>
-{
-    match s
-    {
-        ClientStatePU::InitState(ref parametrization) =>
-        {
+) -> Result<()> {
+    match s {
+        ClientStatePU::InitState(ref parametrization) => {
             let client_state = ClientState::new(parametrization.clone(), round_settings).await?;
             *s = ClientStatePU::ValidState(client_state);
         }
-        ClientStatePU::ValidState(ref mut client_state) =>
-        {
+        ClientStatePU::ValidState(ref mut client_state) => {
             client_state
                 .update_to_next_round_config(round_settings)
                 .await?;
@@ -58,18 +53,14 @@ pub async fn api_submit_with<F: FnOnce(&CommonStateParametrization) -> VecFixedA
     s: &mut ClientStatePU,
     round_settings: RoundSettings,
     get_data: F,
-) -> anyhow::Result<()>
-{
+) -> anyhow::Result<()> {
     api_update_client_round_settings(s, round_settings).await?;
 
-    match s
-    {
-        ClientStatePU::InitState(_) =>
-        {
+    match s {
+        ClientStatePU::InitState(_) => {
             Err(anyhow!(""))?;
         }
-        ClientStatePU::ValidState(ref mut client_state) =>
-        {
+        ClientStatePU::ValidState(ref mut client_state) => {
             let data = get_data(&client_state.parametrization);
             client_state.get_submission_result(&data).await?;
         }

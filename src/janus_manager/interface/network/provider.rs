@@ -29,7 +29,6 @@ use std::{convert::Infallible, future::Future};
 
 use tracing::warn;
 
-
 use warp::{cors::Cors, filters::BoxedFilter, reply::Response, trace, Filter, Rejection, Reply};
 
 use crate::janus_manager::implementation::TaskProvisioner;
@@ -44,8 +43,7 @@ use crate::janus_manager::implementation::TaskProvisioner;
 /// dpsa4fl-janus-manager --config-file $CONFIG --datastore-keys $KEY
 /// ```
 /// where `$CONFIG` is the path to the configuration file, and `$KEY` is the key to be used for the datastore.
-pub async fn main() -> anyhow::Result<()>
-{
+pub async fn main() -> anyhow::Result<()> {
     const CLIENT_USER_AGENT: &str = concat!(
         env!("CARGO_PKG_NAME"),
         "/",
@@ -128,8 +126,7 @@ fn janus_manager_filter<C: Clock>(
     datastore: Arc<Datastore<C>>,
     _clock: C,
     config: TaskProvisionerConfig,
-) -> Result<BoxedFilter<(impl Reply,)>, Error>
-{
+) -> Result<BoxedFilter<(impl Reply,)>, Error> {
     let meter = opentelemetry::global::meter("janus_aggregator");
     let response_time_histogram = meter
         .f64_histogram("janus_aggregator_response_time")
@@ -193,18 +190,15 @@ fn janus_manager_filter<C: Clock>(
         .then(
             |aggregator: Arc<TaskProvisioner<C>>, session: TrainingSessionId| async move {
                 let result = aggregator.handle_end_session(session).await;
-                match result
-                {
-                    Ok(_) =>
-                    {
+                match result {
+                    Ok(_) => {
                         let response = ();
                         let response =
                             warp::reply::with_status(warp::reply::json(&response), StatusCode::OK)
                                 .into_response();
                         Ok(response)
                     }
-                    Err(err) =>
-                    {
+                    Err(err) => {
                         let response = warp::reply::with_status(
                             warp::reply::json(&err.to_string()),
                             StatusCode::BAD_REQUEST,
@@ -237,18 +231,15 @@ fn janus_manager_filter<C: Clock>(
         .then(
             |aggregator: Arc<TaskProvisioner<C>>, request: StartRoundRequest| async move {
                 let result = aggregator.handle_start_round(request).await;
-                match result
-                {
-                    Ok(()) =>
-                    {
+                match result {
+                    Ok(()) => {
                         let response = StartRoundResponse {};
                         let response =
                             warp::reply::with_status(warp::reply::json(&response), StatusCode::OK)
                                 .into_response();
                         Ok(response)
                     }
-                    Err(err) =>
-                    {
+                    Err(err) => {
                         let response = warp::reply::with_status(
                             warp::reply::json(&err.to_string()),
                             StatusCode::BAD_REQUEST,
@@ -281,18 +272,15 @@ fn janus_manager_filter<C: Clock>(
         .then(
             |aggregator: Arc<TaskProvisioner<C>>, request: GetVdafParameterRequest| async move {
                 let result = aggregator.handle_get_vdaf_parameter(request).await;
-                match result
-                {
-                    Ok(vdaf_parameter) =>
-                    {
+                match result {
+                    Ok(vdaf_parameter) => {
                         let response = GetVdafParameterResponse { vdaf_parameter };
                         let response =
                             warp::reply::with_status(warp::reply::json(&response), StatusCode::OK)
                                 .into_response();
                         Ok(response)
                     }
-                    Err(err) =>
-                    {
+                    Err(err) => {
                         let response = warp::reply::with_status(
                             warp::reply::json(&err.to_string()),
                             StatusCode::BAD_REQUEST,
@@ -356,16 +344,13 @@ fn janus_manager_filter<C: Clock>(
     rename_all = "kebab-case",
     version = env!("CARGO_PKG_VERSION"),
 )]
-struct Options
-{
+struct Options {
     #[clap(flatten)]
     common: CommonBinaryOptions,
 }
 
-impl BinaryOptions for Options
-{
-    fn common_options(&self) -> &CommonBinaryOptions
-    {
+impl BinaryOptions for Options {
+    fn common_options(&self) -> &CommonBinaryOptions {
         &self.common
     }
 }
@@ -374,8 +359,7 @@ impl BinaryOptions for Options
 // config:
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-struct Config
-{
+struct Config {
     #[serde(flatten)]
     common_config: CommonConfig,
     // #[serde(flatten)]
@@ -389,15 +373,12 @@ struct Config
     task_provisioner_config: TaskProvisionerConfig,
 }
 
-impl BinaryConfig for Config
-{
-    fn common_config(&self) -> &CommonConfig
-    {
+impl BinaryConfig for Config {
+    fn common_config(&self) -> &CommonConfig {
         &self.common_config
     }
 
-    fn common_config_mut(&mut self) -> &mut CommonConfig
-    {
+    fn common_config_mut(&mut self) -> &mut CommonConfig {
         &mut self.common_config
     }
 }
@@ -485,18 +466,14 @@ where
             .map(Instant::now)
             .and(filter)
             .map(move |_start: Instant, result: Result<T, Error>| {
-                let error_code = if let Err(error) = &result
-                {
+                let error_code = if let Err(error) = &result {
                     warn!(?error, endpoint = name, "Error handling endpoint");
                     error.to_string()
-                }
-                else
-                {
+                } else {
                     "".to_owned()
                 };
 
-                match result
-                {
+                match result {
                     Ok(reply) => reply.into_response(),
                     Err(_e) => build_problem_details_response(error_code, None),
                 }
@@ -508,8 +485,7 @@ where
 /// Construct an error response in accordance with §3.2.
 // TODO(https://github.com/ietf-wg-ppm/draft-ietf-ppm-dap/issues/209): The handling of the instance,
 // title, detail, and taskid fields are subject to change.
-fn build_problem_details_response(error_type: String, task_id: Option<TaskId>) -> Response
-{
+fn build_problem_details_response(error_type: String, task_id: Option<TaskId>) -> Response {
     let status = StatusCode::SEE_OTHER;
 
     warp::reply::with_status(

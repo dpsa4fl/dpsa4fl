@@ -20,38 +20,32 @@ use janus_messages::TaskId;
 // State
 
 /// State that is preserved between rounds.
-pub struct ControllerStatePermanent
-{
+pub struct ControllerStatePermanent {
     pub janus_tasks_client: JanusManagerClient,
 }
 
 /// State that is required only for a single round.
 #[derive(Clone)]
-pub struct ControllerStateRound
-{
+pub struct ControllerStateRound {
     pub task_id: Option<TaskId>,
     pub training_session_id: Option<TrainingSessionId>,
 }
 
 /// State that does not change once the controller is initialized.
-pub struct ControllerStateImmut
-{
+pub struct ControllerStateImmut {
     pub parametrization: CommonStateParametrization,
     pub permanent: ControllerStatePermanent,
 }
 
 /// State that changes during the controller lifetime.
-pub struct ControllerStateMut
-{
+pub struct ControllerStateMut {
     pub round: ControllerStateRound,
 }
 
 ////////////////////////////////////////////////////
 // Implementation
-impl ControllerStateImmut
-{
-    pub fn new(p: CommonStateParametrization) -> Self
-    {
+impl ControllerStateImmut {
+    pub fn new(p: CommonStateParametrization) -> Self {
         // janus tasks
         let janus_tasks_client =
             JanusManagerClient::new(p.location.clone(), p.vdaf_parameter.clone());
