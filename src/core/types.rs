@@ -16,13 +16,13 @@ use janus_core::{
     dp::NoDifferentialPrivacy,
     task::{Prio3FixedPointBoundedL2VecSumBitSize, VdafInstance},
 };
-use prio::dp::Rational;
+use prio::dp::{Rational, ZCdpBudget, distributions::ZCdpDiscreteGaussian, DifferentialPrivacyStrategy};
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
 
 use super::fixed::FixedTypeTag;
 
-type PrivacyParameterType = (); // Ratio<BigUint>;
+type PrivacyParameterType = ZCdpBudget;
 
 #[derive(Clone)]
 pub struct Locations {
@@ -74,7 +74,7 @@ impl VdafParameter {
         VdafInstance::Prio3FixedPointBoundedL2VecSum {
             length: self.gradient_len,
             bitsize,
-            dp_strategy: janus_core::task::vdaf_instance_strategies::Prio3FixedPointBoundedL2VecSum::NoDifferentialPrivacy,
+            dp_strategy: janus_core::task::vdaf_instance_strategies::Prio3FixedPointBoundedL2VecSum::ZCdpDiscreteGaussian(ZCdpDiscreteGaussian::from_budget(self.privacy_parameter.clone()))
         }
     }
 }
