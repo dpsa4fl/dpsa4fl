@@ -2759,7 +2759,7 @@ dependencies = [
 [[package]]
 name = "prio"
 version = "0.15.1"
-source = "git+https://github.com/dpsa4fl/libprio-rs.git?branch=bugfix-only-32bit-correct#71a0285475bbaa167b8562b7cc3fa2dccdf537c0"
+source = "git+https://github.com/dpsa4fl/libprio-rs.git?branch=bugfix-only-32bit-correct#2cd6a63bff2788e1f2e72956ddad81bf0d440e3e"
 dependencies = [
  "aes",
  "bitvec",
