@@ -75,9 +75,9 @@ dependencies = [
 
 [[package]]
 name = "aho-corasick"
-version = "1.0.5"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0c378d78423fdad8089616f827526ee33c19f2fddbd5de1629152c9593ba4783"
+checksum = "0f2135563fb5c609d2b2b87c1e8ce7bc41b0b45430fa9661f457981503dd5bf0"
 dependencies = [
  "memchr",
 ]
@@ -501,9 +501,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.4.3"
+version = "4.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "84ed82781cea27b43c9b106a979fe450a13a31aab0500595fb3fc06616de08e6"
+checksum = "b1d7b8d5ec32af0fadc644bf1fd509a688c2103b185644bb1e29d164e0703136"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -511,9 +511,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.4.2"
+version = "4.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2bb9faaa7c2ef94b2743a21f5a29e6f0010dff4caa69ac8e9d6cf8b6fa74da08"
+checksum = "5179bb514e4d7c2051749d8fcefa2ed6d06a9f4e6d69faf3805f5d80b8cf8d56"
 dependencies = [
  "anstream",
  "anstyle",
@@ -893,9 +893,9 @@ dependencies = [
 
 [[package]]
 name = "dyn-clone"
-version = "1.0.13"
+version = "1.0.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbfc4744c1b8f2a09adc0e55242f60b1af195d88596bd8700be74418c056c555"
+checksum = "23d2f3407d9a573d666de4b5bdf10569d73ca9478087346697dcbae6244bfbcd"
 
 [[package]]
 name = "either"
@@ -1014,9 +1014,9 @@ checksum = "8fcfdc7a0362c9f4444381a9e697c79d435fe65b52a37466fc2c1184cee9edc6"
 
 [[package]]
 name = "fixed"
-version = "1.23.1"
+version = "1.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79386fdcec5e0fde91b1a6a5bcd89677d1f9304f7f986b154a1b9109038854d9"
+checksum = "02c69ce7e7c0f17aa18fdd9d0de39727adb9c6281f2ad12f57cbe54ae6e76e7d"
 dependencies = [
  "az",
  "bytemuck",
@@ -1660,7 +1660,7 @@ checksum = "af150ab688ff2122fcef229be89cb50dd66af9e01a4ff320cc137eecc9bacc38"
 [[package]]
 name = "janus_aggregator"
 version = "0.6.0"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=fixing-32bit-bug#517895ed9849799b688f5490a40d8dc33d9e64db"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1724,7 +1724,7 @@ dependencies = [
 [[package]]
 name = "janus_aggregator_api"
 version = "0.6.0"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=fixing-32bit-bug#517895ed9849799b688f5490a40d8dc33d9e64db"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1751,7 +1751,7 @@ dependencies = [
 [[package]]
 name = "janus_aggregator_core"
 version = "0.6.0"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=fixing-32bit-bug#517895ed9849799b688f5490a40d8dc33d9e64db"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1797,7 +1797,7 @@ dependencies = [
 [[package]]
 name = "janus_client"
 version = "0.6.0"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=fixing-32bit-bug#517895ed9849799b688f5490a40d8dc33d9e64db"
 dependencies = [
  "backoff",
  "derivative",
@@ -1818,7 +1818,7 @@ dependencies = [
 [[package]]
 name = "janus_collector"
 version = "0.6.0"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=fixing-32bit-bug#517895ed9849799b688f5490a40d8dc33d9e64db"
 dependencies = [
  "backoff",
  "chrono",
@@ -1841,7 +1841,7 @@ dependencies = [
 [[package]]
 name = "janus_core"
 version = "0.6.0"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=fixing-32bit-bug#517895ed9849799b688f5490a40d8dc33d9e64db"
 dependencies = [
  "anyhow",
  "backoff",
@@ -1871,7 +1871,7 @@ dependencies = [
 [[package]]
 name = "janus_messages"
 version = "0.6.0"
-source = "git+https://github.com/dpsa4fl/janus.git?branch=feature-differential-privacy#cd51caa4d855fad6746f8629601d23cc90e18880"
+source = "git+https://github.com/dpsa4fl/janus.git?branch=fixing-32bit-bug#517895ed9849799b688f5490a40d8dc33d9e64db"
 dependencies = [
  "anyhow",
  "base64 0.21.4",
@@ -2759,7 +2759,7 @@ dependencies = [
 [[package]]
 name = "prio"
 version = "0.15.1"
-source = "git+https://github.com/dpsa4fl/libprio-rs.git?branch=dp-update-for-janus-rebased#3aa7892719f5f36857169db3df5931189657c188"
+source = "git+https://github.com/dpsa4fl/libprio-rs.git?branch=bugfix-only-32bit-correct#71a0285475bbaa167b8562b7cc3fa2dccdf537c0"
 dependencies = [
  "aes",
  "bitvec",
