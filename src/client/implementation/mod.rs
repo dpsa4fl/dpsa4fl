@@ -184,8 +184,6 @@ impl ClientState {
         Fx: IsTagInstance<FixedTypeTag>,
         // Fx: FixedBase,
     {
-        println!("dpsa4fl/client: submitting the following vector: {:?}", measurement);
-
         ////////////////////////
         // check length
         let actual_len = measurement.len();
