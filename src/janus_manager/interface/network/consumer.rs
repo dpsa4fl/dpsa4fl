@@ -7,7 +7,7 @@ use crate::{
 };
 use anyhow::{anyhow, Result};
 use base64::{engine::general_purpose, Engine};
-use fixed::types::extra::U31;
+use fixed::{types::extra::U15, types::extra::U31, types::extra::U63, FixedI64, FixedI16, traits::Fixed};
 use fixed::FixedI32;
 use http::StatusCode;
 // use janus_aggregator_core::task::PRIO3_AES128_VERIFY_KEY_LENGTH;
@@ -20,12 +20,11 @@ use janus_messages::{
     query_type::TimeInterval, Duration, HpkeAeadId, HpkeKdfId, HpkeKemId, Interval, Query, Role,
     TaskId, Time,
 };
-use prio::{codec::Encode, vdaf::prio3::Prio3FixedPointBoundedL2VecSum};
+use prio::{codec::Encode, vdaf::prio3::Prio3FixedPointBoundedL2VecSum, flp::types::fixedpoint_l2::compatible_float::CompatibleFloat};
 use rand::{distributions::Standard, random, thread_rng, Rng};
 use reqwest::Url;
 use std::time::UNIX_EPOCH;
 
-pub type Fx = FixedI32<U31>;
 pub const TIME_PRECISION: u64 = 3600;
 
 /// Provides access to janus manager API calls for the dpsa controller.
@@ -235,8 +234,22 @@ impl JanusManagerClient {
         }
     }
 
-    /// Collect results
     pub async fn collect(&self, task_id: TaskId) -> Result<Collection<Vec<f64>, TimeInterval>> {
+        match self.vdaf_parameter.submission_type {
+            crate::core::fixed::FixedTypeTag::FixedType16Bit => {
+                self.collect_generic::<FixedI16<U15>>(task_id).await
+            },
+            crate::core::fixed::FixedTypeTag::FixedType32Bit => {
+                self.collect_generic::<FixedI32<U31>>(task_id).await
+            },
+            crate::core::fixed::FixedTypeTag::FixedType64Bit => {
+                self.collect_generic::<FixedI64<U63>>(task_id).await
+            },
+        }
+    }
+
+    /// Collect results
+    pub async fn collect_generic<Fx : Fixed + CompatibleFloat>(&self, task_id: TaskId) -> Result<Collection<Vec<f64>, TimeInterval>> {
         let params = CollectorParameters::new(
             task_id,
             self.location.main.external_leader.clone(),
@@ -246,10 +259,10 @@ impl JanusManagerClient {
         );
 
         let vdaf_collector =
-            Prio3FixedPointBoundedL2VecSum::<Fx>::new_fixedpoint_boundedl2_vec_sum(
-                2,
-                self.vdaf_parameter.gradient_len,
-            )?;
+                Prio3FixedPointBoundedL2VecSum::<Fx>::new_fixedpoint_boundedl2_vec_sum(
+                    2,
+                    self.vdaf_parameter.gradient_len,
+                )?;
 
         let collector_http_client = reqwest::Client::builder()
             .redirect(reqwest::redirect::Policy::none())
