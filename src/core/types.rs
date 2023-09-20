@@ -26,6 +26,7 @@ use serde::{Deserialize, Serialize};
 use super::fixed::FixedTypeTag;
 
 pub type PrivacyParameterType = ZCdpBudget;
+pub type EpsilonType = Rational;
 
 #[derive(Clone)]
 pub struct Locations
