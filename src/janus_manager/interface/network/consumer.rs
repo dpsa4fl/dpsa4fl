@@ -18,9 +18,9 @@ use janus_core::{
 };
 use janus_messages::{
     query_type::TimeInterval, Duration, HpkeAeadId, HpkeKdfId, HpkeKemId, Interval, Query, Role,
-    TaskId, Time,
+    TaskId, Time, codec::Encode,
 };
-use prio::{codec::Encode, vdaf::prio3::Prio3FixedPointBoundedL2VecSum, flp::types::fixedpoint_l2::compatible_float::CompatibleFloat};
+use prio::{vdaf::prio3::Prio3FixedPointBoundedL2VecSum, flp::types::fixedpoint_l2::compatible_float::CompatibleFloat};
 use rand::{distributions::Standard, random, thread_rng, Rng};
 use reqwest::Url;
 use std::time::UNIX_EPOCH;
@@ -58,7 +58,7 @@ impl JanusManagerClient {
             HpkeKdfId::HkdfSha256,
             HpkeAeadId::Aes256Gcm,
             // HpkeAeadId::Gcm,
-        );
+        ).unwrap();
         JanusManagerClient {
             http_client: reqwest::Client::new(),
             location,

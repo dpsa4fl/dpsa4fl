@@ -14,7 +14,8 @@ janus_collector = { git = "https://github.com/dpsa4fl/janus.git", branch = "feat
 # prio = { version = "0.10.0", features = ["multithreaded"] }
 # prio = {git = "https://github.com/dpsa4fl/libprio-rs.git", branch ="fixedpoint-backported-bugfix", features = ["multithreaded", "experimental"]}
 # prio = {git = "https://github.com/dpsa4fl/libprio-rs.git", branch ="release/0.10-hotfix-normvector-bugfix", features = ["multithreaded"]}
-prio = {git = "https://github.com/dpsa4fl/libprio-rs.git", branch ="dp-update-for-janus-rebased", features = ["multithreaded", "experimental"]}
+# prio = {git = "https://github.com/dpsa4fl/libprio-rs.git", branch ="dp-update-for-janus-rebased", features = ["multithreaded", "experimental"]}
+prio = { version = "0.15.2", features = ["multithreaded", "experimental"]}
 url = { version = "2.3.1" }
 anyhow = "1.0"
 # reqwest = "0.11.12"

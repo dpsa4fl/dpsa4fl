@@ -69,7 +69,7 @@ impl HpkeConfigRegistry {
                     HpkeKemId::X25519HkdfSha256,
                     HpkeKdfId::HkdfSha256,
                     HpkeAeadId::Aes128Gcm,
-                )
+                ).unwrap()
             })
             .clone()
     }

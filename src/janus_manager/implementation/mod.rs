@@ -112,9 +112,9 @@ impl<C: Clock> TaskProvisioner<C> {
         let deadline = UNIX_EPOCH.elapsed()?.as_secs() + 10000 * 60;
 
         let collector_auth_tokens = if training_session.role == Role::Leader {
-            vec![training_session.collector_auth_token.clone()]
+            Some(training_session.collector_auth_token.clone())
         } else {
-            Vec::new()
+            None
         };
 
         // choose vdafinstance
@@ -135,7 +135,7 @@ impl<C: Clock> TaskProvisioner<C> {
             QueryType::TimeInterval,
             vdafinst,
             training_session.role,
-            vec![training_session.verify_key.clone()],
+            training_session.verify_key.clone(),
             10,                                             // max_batch_query_count
             Some(Time::from_seconds_since_epoch(deadline)), // task_expiration
             None,                                           // report_expiry_age
@@ -143,7 +143,7 @@ impl<C: Clock> TaskProvisioner<C> {
             Duration::from_seconds(TIME_PRECISION),         // time_precision
             Duration::from_seconds(1000),                   // tolerable_clock_skew,
             training_session.collector_hpke_config.clone(),
-            vec![training_session.leader_auth_token.clone()], // leader auth tokens
+            Some(training_session.leader_auth_token.clone()), // leader auth tokens
             collector_auth_tokens,                            // collector auth tokens
             [training_session.hpke_config_and_key.clone()],
         )?;
