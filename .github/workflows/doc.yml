@@ -24,7 +24,7 @@ jobs:
         with:
           profile: minimal
           override: true
-          toolchain: stable-1.72
+          toolchain: stable
 
       - name: Create rustdoc
         run: cargo doc --all
