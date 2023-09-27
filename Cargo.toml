@@ -10,10 +10,6 @@ janus_messages = { git = "https://github.com/dpsa4fl/janus.git", branch = "featu
 janus_aggregator = { git = "https://github.com/dpsa4fl/janus.git", branch = "feature-differential-privacy", features = ["fpvec_bounded_l2"] }
 janus_aggregator_core = { git = "https://github.com/dpsa4fl/janus.git", branch = "feature-differential-privacy", features = [] }
 janus_collector = { git = "https://github.com/dpsa4fl/janus.git", branch = "feature-differential-privacy", features = ["fpvec_bounded_l2"] }
-# dpsa4fl_janus_tasks = { git = "https://github.com/dpsa4fl/dpsa4fl-janus-tasks.git", branch = "main" }
-# prio = { version = "0.10.0", features = ["multithreaded"] }
-# prio = {git = "https://github.com/dpsa4fl/libprio-rs.git", branch ="fixedpoint-backported-bugfix", features = ["multithreaded", "experimental"]}
-# prio = {git = "https://github.com/dpsa4fl/libprio-rs.git", branch ="release/0.10-hotfix-normvector-bugfix", features = ["multithreaded"]}
 # prio = {git = "https://github.com/dpsa4fl/libprio-rs.git", branch ="dp-update-for-janus-rebased", features = ["multithreaded", "experimental"]}
 prio = { version = "0.15.2", features = ["multithreaded", "experimental"]}
 url = { version = "2.3.1" }
@@ -21,10 +17,6 @@ anyhow = "1.0"
 # reqwest = "0.11.12"
 async-std = "0.99.12"
 fixed = { version = "1.23", features = ["serde"] }
-
-
-# trillium = "0.2.9"
-# trillium-tokio = "0.3.1"
 
 # old janus arch
 signal-hook = "0.3.15"
