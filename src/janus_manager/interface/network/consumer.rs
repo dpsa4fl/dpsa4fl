@@ -14,7 +14,7 @@ use http::StatusCode;
 use janus_collector::{Collection, Collector, CollectorParameters};
 use janus_core::{
     hpke::{generate_hpke_config_and_private_key, HpkeKeypair},
-    task::AuthenticationToken,
+    auth_tokens::AuthenticationToken,
 };
 use janus_messages::{
     query_type::TimeInterval, Duration, HpkeAeadId, HpkeKdfId, HpkeKemId, Interval, Query, Role,

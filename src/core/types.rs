@@ -15,7 +15,7 @@ pub struct CommonStateParametrization
 
 use janus_core::{
     dp::NoDifferentialPrivacy,
-    task::{Prio3FixedPointBoundedL2VecSumBitSize, VdafInstance},
+    vdaf::{Prio3FixedPointBoundedL2VecSumBitSize, VdafInstance},
 };
 use prio::dp::{
     distributions::ZCdpDiscreteGaussian, DifferentialPrivacyStrategy, Rational, ZCdpBudget,
@@ -87,7 +87,7 @@ impl VdafParameter
         VdafInstance::Prio3FixedPointBoundedL2VecSum {
             length: self.gradient_len,
             bitsize,
-            dp_strategy: janus_core::task::vdaf_instance_strategies::Prio3FixedPointBoundedL2VecSum::ZCdpDiscreteGaussian(ZCdpDiscreteGaussian::from_budget(self.privacy_parameter.clone()))
+            dp_strategy: janus_core::vdaf::vdaf_instance_strategies::Prio3FixedPointBoundedL2VecSum::ZCdpDiscreteGaussian(ZCdpDiscreteGaussian::from_budget(self.privacy_parameter.clone()))
         }
     }
 }

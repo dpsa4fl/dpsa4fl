@@ -20,7 +20,7 @@ use janus_aggregator_core::datastore::models::AuthenticationTokenType::DapAuthTo
 use janus_aggregator_core::datastore::{self, Datastore};
 use janus_aggregator_core::task::{QueryType, Task};
 use janus_aggregator_core::SecretBytes;
-use janus_core::{hpke::HpkeKeypair, task::AuthenticationToken, time::Clock};
+use janus_core::{hpke::HpkeKeypair, auth_tokens::AuthenticationToken, time::Clock};
 use janus_messages::{Duration, HpkeConfig, Role, TaskId, Time};
 use prio::codec::Decode;
 use rand::random;
