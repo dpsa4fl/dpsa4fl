@@ -20,13 +20,15 @@ pub type Fixed64 = FixedI64<U63>;
 // Existentially quantified fixed type
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-pub enum FixedAny {
+pub enum FixedAny
+{
     Fixed16(Fixed16),
     Fixed32(Fixed32),
     // Fixed64(Fixed64),
 }
 
-pub enum VecFixedAny {
+pub enum VecFixedAny
+{
     VecFixed16(Vec<Fixed16>),
     VecFixed32(Vec<Fixed32>),
     // VecFixed64(Vec<Fixed64>),
@@ -36,24 +38,30 @@ pub enum VecFixedAny {
 // Type tags
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum FixedTypeTag {
+pub enum FixedTypeTag
+{
     FixedType16Bit,
     FixedType32Bit,
     // FixedType64Bit,
 }
 
-pub trait IsTagInstance<Tag> {
+pub trait IsTagInstance<Tag>
+{
     fn get_tag() -> Tag;
 }
 
 // instances
-impl IsTagInstance<FixedTypeTag> for Fixed16 {
-    fn get_tag() -> FixedTypeTag {
+impl IsTagInstance<FixedTypeTag> for Fixed16
+{
+    fn get_tag() -> FixedTypeTag
+    {
         FixedTypeTag::FixedType16Bit
     }
 }
-impl IsTagInstance<FixedTypeTag> for Fixed32 {
-    fn get_tag() -> FixedTypeTag {
+impl IsTagInstance<FixedTypeTag> for Fixed32
+{
+    fn get_tag() -> FixedTypeTag
+    {
         FixedTypeTag::FixedType32Bit
     }
 }
@@ -117,12 +125,14 @@ where
 
 #[cfg(test)]
 #[allow(clippy::excessive_precision)]
-mod tests {
+mod tests
+{
     use super::*;
     use fixed_macro::fixed;
 
     #[test]
-    fn float_to_fixed_floor_test() {
+    fn float_to_fixed_floor_test()
+    {
         // left: 2^(-15)
         // right: 2^(-15)
         assert_eq!(
@@ -158,7 +168,8 @@ mod tests {
     }
 
     #[test]
-    fn float_to_fixed_ceil_test() {
+    fn float_to_fixed_ceil_test()
+    {
         // left: 2^(-15)
         // right: 2^(-15)
         assert_eq!(

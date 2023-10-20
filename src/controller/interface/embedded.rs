@@ -10,7 +10,8 @@ use janus_messages::query_type::TimeInterval;
 // api
 
 /// Create a new immutable controller state from a given set of parameters.
-pub fn api_new_controller_state(p: CommonStateParametrization) -> ControllerStateImmut {
+pub fn api_new_controller_state(p: CommonStateParametrization) -> ControllerStateImmut
+{
     ControllerStateImmut::new(p)
 }
 
@@ -21,7 +22,8 @@ pub fn api_new_controller_state(p: CommonStateParametrization) -> ControllerStat
 pub async fn api_create_session(
     istate: &ControllerStateImmut,
     mstate: &mut ControllerStateMut,
-) -> Result<u16> {
+) -> Result<u16>
+{
     let training_session_id = istate.permanent.janus_tasks_client.create_session().await?;
 
     // set our current training session id
@@ -36,8 +38,10 @@ pub async fn api_create_session(
 pub async fn api_end_session(
     istate: &ControllerStateImmut,
     mstate: &mut ControllerStateMut,
-) -> Result<()> {
-    if let Some(training_session_id) = mstate.round.training_session_id {
+) -> Result<()>
+{
+    if let Some(training_session_id) = mstate.round.training_session_id
+    {
         istate
             .permanent
             .janus_tasks_client
@@ -48,7 +52,9 @@ pub async fn api_end_session(
         mstate.round.training_session_id = None;
 
         Ok(())
-    } else {
+    }
+    else
+    {
         Err(anyhow!("Tried to end a session, but none was started."))
     }
 }
@@ -60,7 +66,8 @@ pub async fn api_end_session(
 pub async fn api_start_round(
     istate: &ControllerStateImmut,
     mstate: &mut ControllerStateMut,
-) -> Result<String> {
+) -> Result<String>
+{
     let training_session_id = mstate.round.training_session_id.ok_or(anyhow!(
         "Cannot start round because no session was created."
     ))?;
@@ -85,7 +92,8 @@ pub async fn api_start_round(
 pub async fn api_collect(
     istate: &ControllerStateImmut,
     mstate: &mut ControllerStateMut,
-) -> Result<Collection<Vec<f64>, TimeInterval>> {
+) -> Result<Collection<Vec<f64>, TimeInterval>>
+{
     let task_id = mstate
         .round
         .task_id

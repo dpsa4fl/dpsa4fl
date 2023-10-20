@@ -7,20 +7,25 @@ use crate::{
 };
 use anyhow::{anyhow, Result};
 use base64::{engine::general_purpose, Engine};
-use fixed::{types::extra::U15, types::extra::U31, types::extra::U63, FixedI64, FixedI16, traits::Fixed};
 use fixed::FixedI32;
+use fixed::{
+    traits::Fixed, types::extra::U15, types::extra::U31, types::extra::U63, FixedI16, FixedI64,
+};
 use http::StatusCode;
 // use janus_aggregator_core::task::PRIO3_AES128_VERIFY_KEY_LENGTH;
 use janus_collector::{Collection, Collector};
 use janus_core::{
-    hpke::{generate_hpke_config_and_private_key, HpkeKeypair},
     auth_tokens::AuthenticationToken,
+    hpke::{generate_hpke_config_and_private_key, HpkeKeypair},
 };
 use janus_messages::{
-    query_type::TimeInterval, Duration, HpkeAeadId, HpkeKdfId, HpkeKemId, Interval, Query, Role,
-    TaskId, Time, codec::Encode,
+    codec::Encode, query_type::TimeInterval, Duration, HpkeAeadId, HpkeKdfId, HpkeKemId, Interval,
+    Query, Role, TaskId, Time,
 };
-use prio::{vdaf::prio3::Prio3FixedPointBoundedL2VecSum, flp::types::fixedpoint_l2::compatible_float::CompatibleFloat};
+use prio::{
+    flp::types::fixedpoint_l2::compatible_float::CompatibleFloat,
+    vdaf::prio3::Prio3FixedPointBoundedL2VecSum,
+};
 use rand::{distributions::Standard, random, thread_rng, Rng};
 use reqwest::Url;
 use std::time::UNIX_EPOCH;
@@ -28,7 +33,8 @@ use std::time::UNIX_EPOCH;
 pub const TIME_PRECISION: u64 = 3600;
 
 /// Provides access to janus manager API calls for the dpsa controller.
-pub struct JanusManagerClient {
+pub struct JanusManagerClient
+{
     http_client: reqwest::Client,
     location: Locations,
     hpke_keypair: HpkeKeypair,
@@ -37,13 +43,15 @@ pub struct JanusManagerClient {
     vdaf_parameter: VdafParameter,
 }
 
-impl JanusManagerClient {
+impl JanusManagerClient
+{
     /// Create a janus manager client with the given configuration.
     ///
     /// Here, `location` contains the addresses of all aggregator servers,
     /// and `vdaf_parameter` provides the configuration to be used for the
     /// janus aggregation tasks provisioned from this client.
-    pub fn new(location: Locations, vdaf_parameter: VdafParameter) -> Self {
+    pub fn new(location: Locations, vdaf_parameter: VdafParameter) -> Self
+    {
         let leader_auth_token = random::<AuthenticationToken>();
         // rand::random::<[u8; 16]>().to_vec().try_into()?;
         let collector_auth_token = random::<AuthenticationToken>();
@@ -58,7 +66,8 @@ impl JanusManagerClient {
             HpkeKdfId::HkdfSha256,
             HpkeAeadId::Aes256Gcm,
             // HpkeAeadId::Gcm,
-        ).unwrap();
+        )
+        .unwrap();
         JanusManagerClient {
             http_client: reqwest::Client::new(),
             location,
@@ -72,7 +81,8 @@ impl JanusManagerClient {
     /// Sends a request to both aggregators to create a new training session.
     ///
     /// If successful, returns a (randomly generated) training session id.
-    pub async fn create_session(&self) -> Result<TrainingSessionId> {
+    pub async fn create_session(&self) -> Result<TrainingSessionId>
+    {
         let vdaf_inst = self.vdaf_parameter.to_vdaf_instance();
 
         let leader_auth_token_encoded =
@@ -110,12 +120,15 @@ impl JanusManagerClient {
             .json(&make_request(Role::Leader, None))
             .send()
             .await?;
-        let leader_response = match leader_response.status() {
-            StatusCode::OK => {
+        let leader_response = match leader_response.status()
+        {
+            StatusCode::OK =>
+            {
                 let response: CreateTrainingSessionResponse = leader_response.json().await?;
                 response
             }
-            res => {
+            res =>
+            {
                 return Err(anyhow!("Got error from leader: {res}"));
             }
         };
@@ -136,12 +149,15 @@ impl JanusManagerClient {
             .send()
             .await?;
 
-        let helper_response = match helper_response.status() {
-            StatusCode::OK => {
+        let helper_response = match helper_response.status()
+        {
+            StatusCode::OK =>
+            {
                 let response: CreateTrainingSessionResponse = helper_response.json().await?;
                 response
             }
-            res => {
+            res =>
+            {
                 return Err(anyhow!("Got error from helper: {res}"));
             }
         };
@@ -155,7 +171,8 @@ impl JanusManagerClient {
     }
 
     /// Send requests to the aggregators to end a new round and delete the associated data.
-    pub async fn end_session(&self, training_session_id: TrainingSessionId) -> Result<()> {
+    pub async fn end_session(&self, training_session_id: TrainingSessionId) -> Result<()>
+    {
         let leader_response = self
             .http_client
             .post(
@@ -182,7 +199,8 @@ impl JanusManagerClient {
             .send()
             .await?;
 
-        match (leader_response.status(), helper_response.status()) {
+        match (leader_response.status(), helper_response.status())
+        {
             (StatusCode::OK, StatusCode::OK) => Ok(()),
             (res1, res2) => Err(anyhow!(
                 "Ending session not successful, results are: \n{res1}\n\n{res2}"
@@ -193,7 +211,8 @@ impl JanusManagerClient {
     /// Send requests to the aggregators to start a new round.
     ///
     /// We return the task id with which the task can be collected.
-    pub async fn start_round(&self, training_session_id: TrainingSessionId) -> Result<TaskId> {
+    pub async fn start_round(&self, training_session_id: TrainingSessionId) -> Result<TaskId>
+    {
         let task_id: TaskId = random();
         let task_id_encoded = general_purpose::URL_SAFE_NO_PAD.encode(&task_id.get_encoded());
         let request: StartRoundRequest = StartRoundRequest {
@@ -226,7 +245,8 @@ impl JanusManagerClient {
             .send()
             .await?;
 
-        match (leader_response.status(), helper_response.status()) {
+        match (leader_response.status(), helper_response.status())
+        {
             (StatusCode::OK, StatusCode::OK) => Ok(task_id),
             (res1, res2) => Err(anyhow!(
                 "Starting round not successful, results are: \n{res1}\n\n{res2}"
@@ -234,14 +254,18 @@ impl JanusManagerClient {
         }
     }
 
-    pub async fn collect(&self, task_id: TaskId) -> Result<Collection<Vec<f64>, TimeInterval>> {
-        match self.vdaf_parameter.submission_type {
-            crate::core::fixed::FixedTypeTag::FixedType16Bit => {
+    pub async fn collect(&self, task_id: TaskId) -> Result<Collection<Vec<f64>, TimeInterval>>
+    {
+        match self.vdaf_parameter.submission_type
+        {
+            crate::core::fixed::FixedTypeTag::FixedType16Bit =>
+            {
                 self.collect_generic::<FixedI16<U15>>(task_id).await
-            },
-            crate::core::fixed::FixedTypeTag::FixedType32Bit => {
+            }
+            crate::core::fixed::FixedTypeTag::FixedType32Bit =>
+            {
                 self.collect_generic::<FixedI32<U31>>(task_id).await
-            },
+            }
             // crate::core::fixed::FixedTypeTag::FixedType64Bit => {
             //     self.collect_generic::<FixedI64<U63>>(task_id).await
             // },
@@ -249,7 +273,11 @@ impl JanusManagerClient {
     }
 
     /// Collect results
-    pub async fn collect_generic<Fx : Fixed + CompatibleFloat>(&self, task_id: TaskId) -> Result<Collection<Vec<f64>, TimeInterval>> {
+    pub async fn collect_generic<Fx: Fixed + CompatibleFloat>(
+        &self,
+        task_id: TaskId,
+    ) -> Result<Collection<Vec<f64>, TimeInterval>>
+    {
         // let params = CollectorParameters::new(
         //     task_id,
         //     self.location.main.external_leader.clone(),
@@ -259,10 +287,10 @@ impl JanusManagerClient {
         // );
 
         let vdaf_collector =
-                Prio3FixedPointBoundedL2VecSum::<Fx>::new_fixedpoint_boundedl2_vec_sum(
-                    2,
-                    self.vdaf_parameter.gradient_len,
-                )?;
+            Prio3FixedPointBoundedL2VecSum::<Fx>::new_fixedpoint_boundedl2_vec_sum(
+                2,
+                self.vdaf_parameter.gradient_len,
+            )?;
 
         // let collector_http_client = reqwest::Client::builder()
         //     .redirect(reqwest::redirect::Policy::none())
@@ -316,7 +344,8 @@ impl JanusManagerClient {
                 &aggregation_parameter,
                 // &host.to_string(),
                 // port,
-            ).await?;
+            )
+            .await?;
 
         Ok(result)
     }
@@ -329,7 +358,8 @@ impl JanusManagerClient {
 pub async fn get_vdaf_parameter_from_task(
     manager_server: Url,
     task_id: TaskId,
-) -> Result<VdafParameter> {
+) -> Result<VdafParameter>
+{
     let task_id_encoded = general_purpose::URL_SAFE_NO_PAD.encode(&task_id.get_encoded());
 
     let request = GetVdafParameterRequest { task_id_encoded };
@@ -347,7 +377,8 @@ pub async fn get_vdaf_parameter_from_task(
 }
 
 /// Get the janus aggregator locations associated to the given manager servers.
-pub async fn get_main_locations(manager_servers: ManagerLocations) -> Result<MainLocations> {
+pub async fn get_main_locations(manager_servers: ManagerLocations) -> Result<MainLocations>
+{
     let response_leader = reqwest::Client::new()
         .get(
             manager_servers
@@ -371,11 +402,16 @@ pub async fn get_main_locations(manager_servers: ManagerLocations) -> Result<Mai
     let result_leader: Result<MainLocations, _> = response_leader.json().await;
     let result_helper: Result<MainLocations, _> = response_helper.json().await;
 
-    match (result_leader, result_helper) {
-        (Ok(a), Ok(b)) => {
-            if a == b {
+    match (result_leader, result_helper)
+    {
+        (Ok(a), Ok(b)) =>
+        {
+            if a == b
+            {
                 Ok(a)
-            } else {
+            }
+            else
+            {
                 Err(anyhow!(
                     "The aggregators returned different main locations ({a:?} and {b:?})"
                 ))

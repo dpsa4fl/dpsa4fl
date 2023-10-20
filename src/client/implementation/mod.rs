@@ -1,6 +1,6 @@
 use std::any::Any;
 
-use crate::core::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny, Fixed16, Fixed32};
+use crate::core::fixed::{Fixed16, Fixed32, FixedTypeTag, IsTagInstance, VecFixedAny};
 use crate::core::types::{CommonStateParametrization, VdafParameter};
 use crate::core::types::{Locations, ManagerLocations};
 use crate::janus_manager::interface::network::consumer::{
@@ -65,16 +65,31 @@ use super::interface::types::{
 //     })
 // }
 
-async fn get_janus_client(round_settings: RoundSettings, l: Locations, vdaf_parameter: VdafParameter) -> Result<Box<dyn Any>>
+async fn get_janus_client(
+    round_settings: RoundSettings,
+    l: Locations,
+    vdaf_parameter: VdafParameter,
+) -> Result<Box<dyn Any>>
 {
-    match vdaf_parameter.submission_type {
-        FixedTypeTag::FixedType16Bit => get_janus_client_impl::<Fixed16>(round_settings, l, vdaf_parameter).await,
-        FixedTypeTag::FixedType32Bit => get_janus_client_impl::<Fixed32>(round_settings, l, vdaf_parameter).await,
+    match vdaf_parameter.submission_type
+    {
+        FixedTypeTag::FixedType16Bit =>
+        {
+            get_janus_client_impl::<Fixed16>(round_settings, l, vdaf_parameter).await
+        }
+        FixedTypeTag::FixedType32Bit =>
+        {
+            get_janus_client_impl::<Fixed32>(round_settings, l, vdaf_parameter).await
+        }
         // FixedTypeTag::FixedType64Bit => get_janus_client_impl(round_settings, l, vdaf_parameter).await,
     }
 }
 
-async fn get_janus_client_impl<Fx: Fixed + CompatibleFloat>(round_settings: RoundSettings, l: Locations, vdaf_parameter: VdafParameter) -> Result<Box<dyn Any>>
+async fn get_janus_client_impl<Fx: Fixed + CompatibleFloat>(
+    round_settings: RoundSettings,
+    l: Locations,
+    vdaf_parameter: VdafParameter,
+) -> Result<Box<dyn Any>>
 {
     let num_aggregators = 2;
     let len = vdaf_parameter.gradient_len;
@@ -92,14 +107,15 @@ async fn get_janus_client_impl<Fx: Fixed + CompatibleFloat>(round_settings: Roun
         l.main.external_helper,
         Duration::from_seconds(1),
         vdaf_client,
-    ).build().await?;
+    )
+    .build()
+    .await?;
 
     Ok(Box::new(c))
 }
 
-
-
-async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStateParametrization> {
+async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStateParametrization>
+{
     let leader_param =
         get_vdaf_parameter_from_task(l.manager.external_leader.clone(), task_id).await?;
     let helper_param =
@@ -108,12 +124,15 @@ async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStat
     // make sure that the information matchs
     //
     // TODO: For the noise parameter we COULD take the minimum instead
-    if leader_param == helper_param {
+    if leader_param == helper_param
+    {
         Ok(CommonStateParametrization {
             location: l,
             vdaf_parameter: leader_param,
         })
-    } else {
+    }
+    else
+    {
         Err(anyhow!("The leader and helper have different vdaf params:\nleader:\n{leader_param:?}\nhelper:\n{helper_param:?}"))
     }
 }
@@ -121,11 +140,13 @@ async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStat
 //
 // Functions that take client state as parameter.
 //
-impl ClientState {
+impl ClientState
+{
     pub async fn new(
         manager_locations: ManagerLocations,
         round_settings: RoundSettings,
-    ) -> anyhow::Result<ClientState> {
+    ) -> anyhow::Result<ClientState>
+    {
         let permanent = ClientStatePermanent {
             http_client: default_http_client()?,
         };
@@ -146,7 +167,12 @@ impl ClientState {
             get_parametrization(round_settings.task_id, locations.clone()).await?;
 
         // we create a new client
-        let c = get_janus_client(round_settings.clone(), locations, parametrization.clone().vdaf_parameter).await?;
+        let c = get_janus_client(
+            round_settings.clone(),
+            locations,
+            parametrization.clone().vdaf_parameter,
+        )
+        .await?;
 
         Ok(ClientState {
             parametrization,
@@ -201,15 +227,20 @@ impl ClientState {
     pub async fn update_to_next_round_config(
         &mut self,
         round_settings: RoundSettings,
-    ) -> anyhow::Result<()> {
-
+    ) -> anyhow::Result<()>
+    {
         // NOTE: We assume that the vdaf parameters don't change between tasks of the same session
         //       If they could, we would have to get the current vdaf parameters here.
 
-        if round_settings.should_request_hpke_config {
-
+        if round_settings.should_request_hpke_config
+        {
             // we create a new client
-            let c = get_janus_client(round_settings.clone(), self.parametrization.location.clone(), self.parametrization.clone().vdaf_parameter).await?;
+            let c = get_janus_client(
+                round_settings.clone(),
+                self.parametrization.location.clone(),
+                self.parametrization.clone().vdaf_parameter,
+            )
+            .await?;
 
             self.round.config.janus_client = c;
         }
@@ -219,8 +250,10 @@ impl ClientState {
 
     ///////////////////////////////////////
     // Submission
-    pub async fn get_submission_result(&self, measurement: &VecFixedAny) -> anyhow::Result<()> {
-        match measurement {
+    pub async fn get_submission_result(&self, measurement: &VecFixedAny) -> anyhow::Result<()>
+    {
+        match measurement
+        {
             VecFixedAny::VecFixed16(v) => self.get_submission_result_impl(v).await,
             VecFixedAny::VecFixed32(v) => self.get_submission_result_impl(v).await,
             // VecFixedAny::VecFixed64(v) => self.get_submission_result_impl(v).await,
@@ -240,7 +273,8 @@ impl ClientState {
         // check length
         let actual_len = measurement.len();
         let expected_len = self.parametrization.vdaf_parameter.gradient_len;
-        if actual_len != expected_len {
+        if actual_len != expected_len
+        {
             return Err(anyhow!(
                 "Expected data to be have length {expected_len} but it was {actual_len}"
             ));
@@ -251,7 +285,8 @@ impl ClientState {
         let aggregator_tag = &self.parametrization.vdaf_parameter.submission_type;
 
         // assert that the compile time type `Fx` matches with the type tag for this round
-        if &Fx::get_tag() != aggregator_tag {
+        if &Fx::get_tag() != aggregator_tag
+        {
             return Err(anyhow!("Tried to submit gradient with fixed type {:?}, but the task has been registered for fixed type {:?}", Fx::get_tag(), aggregator_tag));
         }
 
@@ -282,7 +317,12 @@ impl ClientState {
         //     self.round.config.crypto.leader_hpke_config.clone(),
         //     self.round.config.crypto.helper_hpke_config.clone(),
         // );
-        let client = match self.round.config.janus_client.downcast_ref::<Client<Prio3FixedPointBoundedL2VecSum<Fx>>>() {
+        let client = match self
+            .round
+            .config
+            .janus_client
+            .downcast_ref::<Client<Prio3FixedPointBoundedL2VecSum<Fx>>>()
+        {
             Some(a) => a,
             None => return Err(anyhow!("internal error: wrong janus client type!")),
         };
