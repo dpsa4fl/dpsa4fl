@@ -14,7 +14,6 @@ pub struct CommonStateParametrization
 // Locations
 
 use janus_core::{
-    dp::NoDifferentialPrivacy,
     vdaf::{Prio3FixedPointBoundedL2VecSumBitSize, VdafInstance},
 };
 use prio::dp::{

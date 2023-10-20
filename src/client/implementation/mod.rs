@@ -8,17 +8,17 @@ use crate::janus_manager::interface::network::consumer::{
 };
 
 use anyhow::{anyhow, Result};
-use async_std::future::try_join;
+
 use fixed::traits::Fixed;
 use janus_client::{default_http_client, Client, ClientBuilder};
-use janus_core::time::RealClock;
-use janus_messages::{Duration, Role, TaskId};
-use prio::field::Field128;
+
+use janus_messages::{Duration, TaskId};
+
 use prio::flp::types::fixedpoint_l2::compatible_float::CompatibleFloat;
 use prio::vdaf::prio3::Prio3FixedPointBoundedL2VecSum;
 
 use super::interface::types::{
-    ClientState, ClientStatePermanent, ClientStateRound, CryptoConfig, RoundConfig, RoundSettings,
+    ClientState, ClientStatePermanent, ClientStateRound, RoundConfig, RoundSettings,
 };
 
 /////////////////////////////////////////////////////////////////////////
