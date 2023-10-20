@@ -149,7 +149,7 @@ impl<C: Clock> TaskProvisioner<C> {
         )?;
 
         println!("provisioning task now with id {}", task_id);
-        provision_tasks(&self.datastore, vec![task]).await?;
+        provision_task(&self.datastore, task).await?;
 
         // write the task id into the session
         training_session.tasks.push(task_id);
@@ -275,27 +275,57 @@ impl<C: Clock> TaskProvisioner<C> {
 //////////////////////////////////////////////////
 // code:
 
-pub async fn provision_tasks<C: Clock>(datastore: &Datastore<C>, tasks: Vec<Task>) -> Result<()> {
+pub async fn provision_task<C: Clock>(datastore: &Datastore<C>, task: Task) -> Result<()> {
     // Write all tasks requested.
-    let tasks = Arc::new(tasks);
+    let task = Arc::new(task);
     // info!(task_count = %tasks.len(), "Writing tasks");
-    datastore
-        .run_tx(|tx| {
-            let tasks = Arc::clone(&tasks);
-            Box::pin(async move {
-                for task in tasks.iter() {
-                    // We attempt to delete the task, but ignore "task not found" errors since
-                    // the task not existing is an OK outcome too.
-                    match tx.delete_task(task.id()).await {
-                        Ok(_) | Err(datastore::Error::MutationTargetNotFound) => (),
-                        err => err?,
-                    }
-
-                    tx.put_task(task).await?;
+    datastore.run_tx("post_task", |tx| {
+        let task = Arc::clone(&task);
+        Box::pin(async move {
+            if let Some(existing_task) = tx.get_aggregator_task(task.id()).await? {
+            // Check whether the existing task in the DB corresponds to the incoming task, ignoring
+            // those fields that are randomly generated.
+            if existing_task.peer_aggregator_endpoint() == task.peer_aggregator_endpoint()
+                && existing_task.query_type() == task.query_type()
+                && existing_task.vdaf() == task.vdaf()
+                && existing_task.opaque_vdaf_verify_key() == task.opaque_vdaf_verify_key()
+                && existing_task.role() == task.role()
+                && existing_task.max_batch_query_count() == task.max_batch_query_count()
+                && existing_task.task_expiration() == task.task_expiration()
+                && existing_task.min_batch_size() == task.min_batch_size()
+                && existing_task.time_precision() == task.time_precision()
+                && existing_task.collector_hpke_config() == task.collector_hpke_config() {
+                    return Ok(())
                 }
-                Ok(())
-            })
+
+                let err = anyhow!(
+                    "task with same VDAF verify key and task ID already exists with different parameters".to_string(),
+                );
+                return Err(datastore::Error::User(err.into()));
+            }
+
+            tx.put_aggregator_task(&task).await
         })
+    })
         .await
         .context("couldn't write tasks")
+
+        // .run_tx(|tx| {
+        //     let tasks = Arc::clone(&tasks);
+        //     Box::pin(async move {
+        //         for task in tasks.iter() {
+        //             // We attempt to delete the task, but ignore "task not found" errors since
+        //             // the task not existing is an OK outcome too.
+        //             match tx.delete_task(task.id()).await {
+        //                 Ok(_) | Err(datastore::Error::MutationTargetNotFound) => (),
+        //                 err => err?,
+        //             }
+
+        //             tx.put_task(task).await?;
+        //         }
+        //         Ok(())
+        //     })
+        // })
+        // .await
+        // .context("couldn't write tasks")
 }
