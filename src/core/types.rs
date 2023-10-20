@@ -81,7 +81,6 @@ impl VdafParameter
         {
             FixedTypeTag::FixedType16Bit => Prio3FixedPointBoundedL2VecSumBitSize::BitSize16,
             FixedTypeTag::FixedType32Bit => Prio3FixedPointBoundedL2VecSumBitSize::BitSize32,
-            FixedTypeTag::FixedType64Bit => Prio3FixedPointBoundedL2VecSumBitSize::BitSize64,
         };
 
         VdafInstance::Prio3FixedPointBoundedL2VecSum {

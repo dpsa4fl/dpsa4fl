@@ -4,17 +4,15 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-janus_client = { git = "https://github.com/dpsa4fl/janus.git", branch = "feature-differential-privacy", features = []}
-janus_core = { git = "https://github.com/dpsa4fl/janus.git", branch = "feature-differential-privacy", features = ["fpvec_bounded_l2"] }
-janus_messages = { git = "https://github.com/dpsa4fl/janus.git", branch = "feature-differential-privacy", features = [] }
-janus_aggregator = { git = "https://github.com/dpsa4fl/janus.git", branch = "feature-differential-privacy", features = ["fpvec_bounded_l2"] }
-janus_aggregator_core = { git = "https://github.com/dpsa4fl/janus.git", branch = "feature-differential-privacy", features = [] }
-janus_collector = { git = "https://github.com/dpsa4fl/janus.git", branch = "feature-differential-privacy", features = ["fpvec_bounded_l2"] }
-# prio = {git = "https://github.com/dpsa4fl/libprio-rs.git", branch ="dp-update-for-janus-rebased", features = ["multithreaded", "experimental"]}
-prio = { version = "0.15.2", features = ["multithreaded", "experimental"]}
+janus_client = { git = "https://github.com/divviup/janus.git" }
+janus_core = { git = "https://github.com/divviup/janus.git", features = ["fpvec_bounded_l2"] }
+janus_messages = { git = "https://github.com/divviup/janus.git" }
+janus_aggregator = { git = "https://github.com/divviup/janus.git", features = ["fpvec_bounded_l2"] }
+janus_aggregator_core = { git = "https://github.com/divviup/janus.git" }
+janus_collector = { git = "https://github.com/divviup/janus.git", features = ["fpvec_bounded_l2"] }
+prio = { version = "0.15.3", features = ["multithreaded", "experimental"] }
 url = { version = "2.3.1" }
 anyhow = "1.0"
-# reqwest = "0.11.12"
 async-std = "0.99.12"
 fixed = { version = "1.23", features = ["serde"] }
 
