@@ -1,10 +1,7 @@
 use std::time::UNIX_EPOCH;
 
 use crate::{
-    core::{
-        fixed::FixedTypeTag,
-        types::{MainLocations, VdafParameter},
-    },
+    core::types::{MainLocations, VdafParameter},
     janus_manager::interface::{
         network::consumer::TIME_PRECISION,
         types::{
@@ -16,11 +13,14 @@ use crate::{
 
 use anyhow::{anyhow, Context, Error, Result};
 use base64::{engine::general_purpose, Engine};
-use janus_aggregator_core::datastore::models::AuthenticationTokenType::DapAuthToken;
 use janus_aggregator_core::datastore::{self, Datastore};
-use janus_aggregator_core::task::{QueryType, Task};
+use janus_aggregator_core::task::{AggregatorTask, AggregatorTaskParameters, QueryType};
 use janus_aggregator_core::SecretBytes;
-use janus_core::{hpke::HpkeKeypair, auth_tokens::AuthenticationToken, time::Clock};
+use janus_core::{
+    auth_tokens::{AuthenticationToken, AuthenticationTokenHash},
+    hpke::HpkeKeypair,
+    time::Clock,
+};
 use janus_messages::{Duration, HpkeConfig, Role, TaskId, Time};
 use prio::codec::Decode;
 use rand::random;
@@ -33,7 +33,8 @@ use url::Url;
 //////////////////////////////////////////////////
 // self:
 
-struct TrainingSession {
+struct TrainingSession
+{
     role: Role,
 
     collector_hpke_config: HpkeConfig,
@@ -56,7 +57,8 @@ struct TrainingSession {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-pub struct TaskProvisionerConfig {
+pub struct TaskProvisionerConfig
+{
     // the internal endpoint urls
     pub leader_endpoint: Url,
     pub helper_endpoint: Url,
@@ -65,7 +67,8 @@ pub struct TaskProvisionerConfig {
     pub main_locations: MainLocations,
 }
 
-pub struct TaskProvisioner<C: Clock> {
+pub struct TaskProvisioner<C: Clock>
+{
     /// Datastore used for durable storage.
     datastore: Arc<Datastore<C>>,
 
@@ -79,8 +82,10 @@ pub struct TaskProvisioner<C: Clock> {
     keyring: Mutex<HpkeConfigRegistry>,
 }
 
-impl<C: Clock> TaskProvisioner<C> {
-    pub fn new(datastore: Arc<Datastore<C>>, config: TaskProvisionerConfig) -> Self {
+impl<C: Clock> TaskProvisioner<C>
+{
+    pub fn new(datastore: Arc<Datastore<C>>, config: TaskProvisionerConfig) -> Self
+    {
         Self {
             datastore,
             training_sessions: Mutex::new(HashMap::new()),
@@ -89,7 +94,8 @@ impl<C: Clock> TaskProvisioner<C> {
         }
     }
 
-    pub async fn handle_start_round(&self, request: StartRoundRequest) -> Result<(), Error> {
+    pub async fn handle_start_round(&self, request: StartRoundRequest) -> Result<(), Error>
+    {
         //---------------------- decode parameters --------------------------
         // session id
         let training_session_id = request.training_session_id;
@@ -111,10 +117,22 @@ impl<C: Clock> TaskProvisioner<C> {
         // -------------------- create new task -----------------------------
         let deadline = UNIX_EPOCH.elapsed()?.as_secs() + 10000 * 60;
 
-        let collector_auth_tokens = if training_session.role == Role::Leader {
-            Some(training_session.collector_auth_token.clone())
-        } else {
-            None
+        let task_params = match training_session.role
+        {
+            Role::Leader => AggregatorTaskParameters::Leader {
+                aggregator_auth_token: training_session.leader_auth_token.clone(), // leader auth tokens
+                collector_auth_token_hash: AuthenticationTokenHash::from(
+                    &training_session.collector_auth_token,
+                ),
+                collector_hpke_config: training_session.collector_hpke_config.clone(),
+            },
+            Role::Helper => AggregatorTaskParameters::Helper {
+                aggregator_auth_token_hash: AuthenticationTokenHash::from(
+                    &training_session.leader_auth_token,
+                ), // leader auth tokens
+                collector_hpke_config: training_session.collector_hpke_config.clone(),
+            },
+            _ => todo!(),
         };
 
         // choose vdafinstance
@@ -128,13 +146,11 @@ impl<C: Clock> TaskProvisioner<C> {
         );
 
         // create the task
-        let task = Task::new(
+        let task = AggregatorTask::new(
             task_id,
-            self.config.leader_endpoint.clone(),
             self.config.helper_endpoint.clone(),
             QueryType::TimeInterval,
             vdafinst,
-            training_session.role,
             training_session.verify_key.clone(),
             10,                                             // max_batch_query_count
             Some(Time::from_seconds_since_epoch(deadline)), // task_expiration
@@ -142,10 +158,8 @@ impl<C: Clock> TaskProvisioner<C> {
             2,                                              // min_batch_size
             Duration::from_seconds(TIME_PRECISION),         // time_precision
             Duration::from_seconds(1000),                   // tolerable_clock_skew,
-            training_session.collector_hpke_config.clone(),
-            Some(training_session.leader_auth_token.clone()), // leader auth tokens
-            collector_auth_tokens,                            // collector auth tokens
             [training_session.hpke_config_and_key.clone()],
+            task_params,
         )?;
 
         println!("provisioning task now with id {}", task_id);
@@ -160,7 +174,8 @@ impl<C: Clock> TaskProvisioner<C> {
     pub async fn handle_create_session(
         &self,
         request: CreateTrainingSessionRequest,
-    ) -> Result<TrainingSessionId> {
+    ) -> Result<TrainingSessionId>
+    {
         // decode fields
         let CreateTrainingSessionRequest {
             training_session_id,
@@ -174,14 +189,18 @@ impl<C: Clock> TaskProvisioner<C> {
 
         // prepare id
         // (take requested id if exists, else generate new one)
-        let training_session_id = if let Some(id) = training_session_id {
-            if self.training_sessions.lock().await.contains_key(&id) {
+        let training_session_id = if let Some(id) = training_session_id
+        {
+            if self.training_sessions.lock().await.contains_key(&id)
+            {
                 return Err(anyhow!(
                     "There already exists a training session with id {id}."
                 ));
             }
             id
-        } else {
+        }
+        else
+        {
             let id: u16 = random();
             id.into()
         };
@@ -228,12 +247,16 @@ impl<C: Clock> TaskProvisioner<C> {
         Ok(training_session_id)
     }
 
-    pub async fn handle_end_session(&self, session: TrainingSessionId) -> Result<()> {
+    pub async fn handle_end_session(&self, session: TrainingSessionId) -> Result<()>
+    {
         let mut sessions = self.training_sessions.lock().await;
-        if let Some(_) = sessions.remove(&session) {
+        if let Some(_) = sessions.remove(&session)
+        {
             println!("Removed session with id {session}");
             Ok(())
-        } else {
+        }
+        else
+        {
             println!(
                 "Attempted to remove session with id {session}, but there was no such session."
             );
@@ -246,7 +269,8 @@ impl<C: Clock> TaskProvisioner<C> {
     pub async fn handle_get_vdaf_parameter(
         &self,
         request: GetVdafParameterRequest,
-    ) -> Result<VdafParameter, Error> {
+    ) -> Result<VdafParameter, Error>
+    {
         // task id
         let task_id_bytes = general_purpose::URL_SAFE_NO_PAD.decode(request.task_id_encoded)?;
         let task_id = TaskId::get_decoded(&task_id_bytes)?;
@@ -258,7 +282,8 @@ impl<C: Clock> TaskProvisioner<C> {
             .filter(|v| v.tasks.contains(&task_id))
             .collect();
 
-        let session_with_id = match sessions_with_id.len() {
+        let session_with_id = match sessions_with_id.len()
+        {
             0 => Err(anyhow!(
                 "Could not find session containing task with id {task_id}."
             )),
@@ -275,7 +300,9 @@ impl<C: Clock> TaskProvisioner<C> {
 //////////////////////////////////////////////////
 // code:
 
-pub async fn provision_task<C: Clock>(datastore: &Datastore<C>, task: Task) -> Result<()> {
+pub async fn provision_task<C: Clock>(datastore: &Datastore<C>, task: AggregatorTask)
+    -> Result<()>
+{
     // Write all tasks requested.
     let task = Arc::new(task);
     // info!(task_count = %tasks.len(), "Writing tasks");
@@ -310,22 +337,22 @@ pub async fn provision_task<C: Clock>(datastore: &Datastore<C>, task: Task) -> R
         .await
         .context("couldn't write tasks")
 
-        // .run_tx(|tx| {
-        //     let tasks = Arc::clone(&tasks);
-        //     Box::pin(async move {
-        //         for task in tasks.iter() {
-        //             // We attempt to delete the task, but ignore "task not found" errors since
-        //             // the task not existing is an OK outcome too.
-        //             match tx.delete_task(task.id()).await {
-        //                 Ok(_) | Err(datastore::Error::MutationTargetNotFound) => (),
-        //                 err => err?,
-        //             }
+    // .run_tx(|tx| {
+    //     let tasks = Arc::clone(&tasks);
+    //     Box::pin(async move {
+    //         for task in tasks.iter() {
+    //             // We attempt to delete the task, but ignore "task not found" errors since
+    //             // the task not existing is an OK outcome too.
+    //             match tx.delete_task(task.id()).await {
+    //                 Ok(_) | Err(datastore::Error::MutationTargetNotFound) => (),
+    //                 err => err?,
+    //             }
 
-        //             tx.put_task(task).await?;
-        //         }
-        //         Ok(())
-        //     })
-        // })
-        // .await
-        // .context("couldn't write tasks")
+    //             tx.put_task(task).await?;
+    //         }
+    //         Ok(())
+    //     })
+    // })
+    // .await
+    // .context("couldn't write tasks")
 }
