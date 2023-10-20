@@ -23,12 +23,12 @@ pub struct CryptoConfig
 }
 
 /// Full configuration for a round, consisting of settings and crypto config.
-// #[derive(Clone)]
+#[derive(Clone)]
 pub struct RoundConfig
 {
     pub settings: RoundSettings,
     // pub crypto: CryptoConfig,
-    pub janus_client: Box<dyn Any>, // this should be one of Prio3FixedPointBoundedL2VecSum<Fx>, for the correctFx
+    //pub janus_client: Box<dyn Any>, // this should be one of Prio3FixedPointBoundedL2VecSum<Fx>, for the correctFx
 }
 
 ////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ pub struct ClientStatePermanent
 }
 
 /// State relevant for a single round.
-// #[derive(Clone)]
+#[derive(Clone)]
 pub struct ClientStateRound
 {
     pub config: RoundConfig,

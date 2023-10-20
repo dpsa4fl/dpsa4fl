@@ -8,9 +8,7 @@ use crate::{
 use anyhow::{anyhow, Result};
 use base64::{engine::general_purpose, Engine};
 use fixed::FixedI32;
-use fixed::{
-    traits::Fixed, types::extra::U15, types::extra::U31, FixedI16,
-};
+use fixed::{traits::Fixed, types::extra::U15, types::extra::U31, FixedI16};
 use http::StatusCode;
 // use janus_aggregator_core::task::PRIO3_AES128_VERIFY_KEY_LENGTH;
 use janus_collector::{Collection, Collector};

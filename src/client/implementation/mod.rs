@@ -65,31 +65,31 @@ use super::interface::types::{
 //     })
 // }
 
-async fn get_janus_client(
-    round_settings: RoundSettings,
-    l: Locations,
-    vdaf_parameter: VdafParameter,
-) -> Result<Box<dyn Any>>
-{
-    match vdaf_parameter.submission_type
-    {
-        FixedTypeTag::FixedType16Bit =>
-        {
-            get_janus_client_impl::<Fixed16>(round_settings, l, vdaf_parameter).await
-        }
-        FixedTypeTag::FixedType32Bit =>
-        {
-            get_janus_client_impl::<Fixed32>(round_settings, l, vdaf_parameter).await
-        }
-        // FixedTypeTag::FixedType64Bit => get_janus_client_impl(round_settings, l, vdaf_parameter).await,
-    }
-}
+// async fn get_janus_client(
+//     round_settings: RoundSettings,
+//     l: Locations,
+//     vdaf_parameter: VdafParameter,
+// ) -> Result<Box<dyn Any>>
+// {
+//     match vdaf_parameter.submission_type
+//     {
+//         FixedTypeTag::FixedType16Bit =>
+//         {
+//             get_janus_client_impl::<Fixed16>(round_settings, l, vdaf_parameter).await
+//         }
+//         FixedTypeTag::FixedType32Bit =>
+//         {
+//             get_janus_client_impl::<Fixed32>(round_settings, l, vdaf_parameter).await
+//         }
+//         // FixedTypeTag::FixedType64Bit => get_janus_client_impl(round_settings, l, vdaf_parameter).await,
+//     }
+// }
 
-async fn get_janus_client_impl<Fx: Fixed + CompatibleFloat>(
+async fn get_janus_client<Fx: Fixed + CompatibleFloat>(
     round_settings: RoundSettings,
     l: Locations,
     vdaf_parameter: VdafParameter,
-) -> Result<Box<dyn Any>>
+) -> Result<Client<Prio3FixedPointBoundedL2VecSum<Fx>>>
 {
     let num_aggregators = 2;
     let len = vdaf_parameter.gradient_len;
@@ -111,7 +111,7 @@ async fn get_janus_client_impl<Fx: Fixed + CompatibleFloat>(
     .build()
     .await?;
 
-    Ok(Box::new(c))
+    Ok(c)
 }
 
 async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStateParametrization>
@@ -167,12 +167,12 @@ impl ClientState
             get_parametrization(round_settings.task_id, locations.clone()).await?;
 
         // we create a new client
-        let c = get_janus_client(
-            round_settings.clone(),
-            locations,
-            parametrization.clone().vdaf_parameter,
-        )
-        .await?;
+        // let c = get_janus_client(
+        //     round_settings.clone(),
+        //     locations,
+        //     parametrization.clone().vdaf_parameter,
+        // )
+        // .await?;
 
         Ok(ClientState {
             parametrization,
@@ -180,7 +180,7 @@ impl ClientState
             round: ClientStateRound {
                 config: RoundConfig {
                     settings: round_settings,
-                    janus_client: c,
+                    // janus_client: c,
                 },
             },
         })
@@ -235,14 +235,14 @@ impl ClientState
         if round_settings.should_request_hpke_config
         {
             // we create a new client
-            let c = get_janus_client(
-                round_settings.clone(),
-                self.parametrization.location.clone(),
-                self.parametrization.clone().vdaf_parameter,
-            )
-            .await?;
+            // let c = get_janus_client(
+            //     round_settings.clone(),
+            //     self.parametrization.location.clone(),
+            //     self.parametrization.clone().vdaf_parameter,
+            // )
+            // .await?;
 
-            self.round.config.janus_client = c;
+            // self.round.config.janus_client = c;
         }
 
         Ok(())
@@ -317,15 +317,23 @@ impl ClientState
         //     self.round.config.crypto.leader_hpke_config.clone(),
         //     self.round.config.crypto.helper_hpke_config.clone(),
         // );
-        let client = match self
-            .round
-            .config
-            .janus_client
-            .downcast_ref::<Client<Prio3FixedPointBoundedL2VecSum<Fx>>>()
-        {
-            Some(a) => a,
-            None => return Err(anyhow!("internal error: wrong janus client type!")),
-        };
+
+        let client = get_janus_client(
+            self.round.config.settings.clone(),
+            self.parametrization.location.clone(),
+            self.parametrization.clone().vdaf_parameter,
+        )
+        .await?;
+
+        // let client = match self
+        //     .round
+        //     .config
+        //     .janus_client
+        //     .downcast_ref::<Client<Prio3FixedPointBoundedL2VecSum<Fx>>>()
+        // {
+        //     Some(a) => a,
+        //     None => return Err(anyhow!("internal error: wrong janus client type!")),
+        // };
 
         let () = client.upload(measurement).await?;
 

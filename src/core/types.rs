@@ -13,9 +13,7 @@ pub struct CommonStateParametrization
 /////////////////////////////
 // Locations
 
-use janus_core::{
-    vdaf::{Prio3FixedPointBoundedL2VecSumBitSize, VdafInstance},
-};
+use janus_core::vdaf::{Prio3FixedPointBoundedL2VecSumBitSize, VdafInstance};
 use prio::dp::{
     distributions::ZCdpDiscreteGaussian, DifferentialPrivacyStrategy, Rational, ZCdpBudget,
 };
