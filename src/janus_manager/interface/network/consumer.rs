@@ -11,7 +11,7 @@ use fixed::{types::extra::U15, types::extra::U31, types::extra::U63, FixedI64, F
 use fixed::FixedI32;
 use http::StatusCode;
 // use janus_aggregator_core::task::PRIO3_AES128_VERIFY_KEY_LENGTH;
-use janus_collector::{Collection, Collector, CollectorParameters};
+use janus_collector::{Collection, Collector};
 use janus_core::{
     hpke::{generate_hpke_config_and_private_key, HpkeKeypair},
     auth_tokens::AuthenticationToken,
@@ -242,21 +242,21 @@ impl JanusManagerClient {
             crate::core::fixed::FixedTypeTag::FixedType32Bit => {
                 self.collect_generic::<FixedI32<U31>>(task_id).await
             },
-            crate::core::fixed::FixedTypeTag::FixedType64Bit => {
-                self.collect_generic::<FixedI64<U63>>(task_id).await
-            },
+            // crate::core::fixed::FixedTypeTag::FixedType64Bit => {
+            //     self.collect_generic::<FixedI64<U63>>(task_id).await
+            // },
         }
     }
 
     /// Collect results
     pub async fn collect_generic<Fx : Fixed + CompatibleFloat>(&self, task_id: TaskId) -> Result<Collection<Vec<f64>, TimeInterval>> {
-        let params = CollectorParameters::new(
-            task_id,
-            self.location.main.external_leader.clone(),
-            self.collector_auth_token.clone(),
-            self.hpke_keypair.config().clone(),
-            self.hpke_keypair.private_key().clone(),
-        );
+        // let params = CollectorParameters::new(
+        //     task_id,
+        //     self.location.main.external_leader.clone(),
+        //     self.collector_auth_token.clone(),
+        //     self.hpke_keypair.config().clone(),
+        //     self.hpke_keypair.private_key().clone(),
+        // );
 
         let vdaf_collector =
                 Prio3FixedPointBoundedL2VecSum::<Fx>::new_fixedpoint_boundedl2_vec_sum(
@@ -264,11 +264,18 @@ impl JanusManagerClient {
                     self.vdaf_parameter.gradient_len,
                 )?;
 
-        let collector_http_client = reqwest::Client::builder()
-            .redirect(reqwest::redirect::Policy::none())
-            .build()?;
+        // let collector_http_client = reqwest::Client::builder()
+        //     .redirect(reqwest::redirect::Policy::none())
+        //     .build()?;
 
-        let collector_client = Collector::new(params, vdaf_collector, collector_http_client);
+        // let collector_client = Collector::new(params, vdaf_collector, collector_http_client);
+        let collector_client = Collector::new(
+            task_id,
+            self.location.main.external_leader.clone(),
+            self.collector_auth_token.clone(),
+            self.hpke_keypair.clone(),
+            vdaf_collector,
+        )?;
 
         let start = UNIX_EPOCH.elapsed()?.as_secs();
         let rounded_start = (start / TIME_PRECISION) * TIME_PRECISION;
@@ -309,8 +316,7 @@ impl JanusManagerClient {
                 &aggregation_parameter,
                 // &host.to_string(),
                 // port,
-            )
-            .await?;
+            ).await?;
 
         Ok(result)
     }

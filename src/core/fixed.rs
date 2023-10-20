@@ -23,13 +23,13 @@ pub type Fixed64 = FixedI64<U63>;
 pub enum FixedAny {
     Fixed16(Fixed16),
     Fixed32(Fixed32),
-    Fixed64(Fixed64),
+    // Fixed64(Fixed64),
 }
 
 pub enum VecFixedAny {
     VecFixed16(Vec<Fixed16>),
     VecFixed32(Vec<Fixed32>),
-    VecFixed64(Vec<Fixed64>),
+    // VecFixed64(Vec<Fixed64>),
 }
 
 ///////////////////////////////////////////////////
@@ -39,7 +39,7 @@ pub enum VecFixedAny {
 pub enum FixedTypeTag {
     FixedType16Bit,
     FixedType32Bit,
-    FixedType64Bit,
+    // FixedType64Bit,
 }
 
 pub trait IsTagInstance<Tag> {
@@ -57,11 +57,11 @@ impl IsTagInstance<FixedTypeTag> for Fixed32 {
         FixedTypeTag::FixedType32Bit
     }
 }
-impl IsTagInstance<FixedTypeTag> for Fixed64 {
-    fn get_tag() -> FixedTypeTag {
-        FixedTypeTag::FixedType64Bit
-    }
-}
+// impl IsTagInstance<FixedTypeTag> for Fixed64 {
+//     fn get_tag() -> FixedTypeTag {
+//         FixedTypeTag::FixedType64Bit
+//     }
+// }
 
 //////////////////////////////////////////////////
 // converting float to fixed

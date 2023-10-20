@@ -1,5 +1,7 @@
-use crate::core::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny};
-use crate::core::types::CommonStateParametrization;
+use std::any::Any;
+
+use crate::core::fixed::{FixedTypeTag, IsTagInstance, VecFixedAny, Fixed16, Fixed32};
+use crate::core::types::{CommonStateParametrization, VdafParameter};
 use crate::core::types::{Locations, ManagerLocations};
 use crate::janus_manager::interface::network::consumer::{
     get_main_locations, get_vdaf_parameter_from_task,
@@ -8,7 +10,7 @@ use crate::janus_manager::interface::network::consumer::{
 use anyhow::{anyhow, Result};
 use async_std::future::try_join;
 use fixed::traits::Fixed;
-use janus_client::{aggregator_hpke_config, default_http_client, Client, ClientParameters};
+use janus_client::{default_http_client, Client, ClientBuilder};
 use janus_core::time::RealClock;
 use janus_messages::{Duration, Role, TaskId};
 use prio::field::Field128;
@@ -41,27 +43,61 @@ use super::interface::types::{
 // directly. See 4.3.1 of ietf-ppm-dap.
 //
 
-async fn get_crypto_config(
-    permanent: &ClientStatePermanent,
-    task_id: TaskId,
-    l: Locations,
-) -> anyhow::Result<CryptoConfig> {
-    let c: ClientParameters = ClientParameters::new(
-        task_id,
+// async fn get_crypto_config(
+//     permanent: &ClientStatePermanent,
+//     task_id: TaskId,
+//     l: Locations,
+// ) -> anyhow::Result<CryptoConfig> {
+//     let c: ClientParameters = ClientParameters::new(
+//         task_id,
+//         l.main.external_leader,
+//         l.main.external_helper,
+//         Duration::from_seconds(1),
+//     );
+//     let f_leader = aggregator_hpke_config(&c, &Role::Leader, &task_id, &permanent.http_client);
+//     let f_helper = aggregator_hpke_config(&c, &Role::Helper, &task_id, &permanent.http_client);
+
+//     let (l, h) = try_join!(f_leader, f_helper).await?;
+
+//     Ok(CryptoConfig {
+//         leader_hpke_config: l,
+//         helper_hpke_config: h,
+//     })
+// }
+
+async fn get_janus_client(round_settings: RoundSettings, l: Locations, vdaf_parameter: VdafParameter) -> Result<Box<dyn Any>>
+{
+    match vdaf_parameter.submission_type {
+        FixedTypeTag::FixedType16Bit => get_janus_client_impl::<Fixed16>(round_settings, l, vdaf_parameter).await,
+        FixedTypeTag::FixedType32Bit => get_janus_client_impl::<Fixed32>(round_settings, l, vdaf_parameter).await,
+        // FixedTypeTag::FixedType64Bit => get_janus_client_impl(round_settings, l, vdaf_parameter).await,
+    }
+}
+
+async fn get_janus_client_impl<Fx: Fixed + CompatibleFloat>(round_settings: RoundSettings, l: Locations, vdaf_parameter: VdafParameter) -> Result<Box<dyn Any>>
+{
+    let num_aggregators = 2;
+    let len = vdaf_parameter.gradient_len;
+
+    let vdaf_client: Prio3FixedPointBoundedL2VecSum<Fx> =
+        Prio3FixedPointBoundedL2VecSum::new_fixedpoint_boundedl2_vec_sum(
+            num_aggregators,
+            len,
+            // privacy_parameter, // actually this does not matter for the client
+        )?;
+
+    let c = ClientBuilder::new(
+        round_settings.task_id,
         l.main.external_leader,
         l.main.external_helper,
         Duration::from_seconds(1),
-    );
-    let f_leader = aggregator_hpke_config(&c, &Role::Leader, &task_id, &permanent.http_client);
-    let f_helper = aggregator_hpke_config(&c, &Role::Helper, &task_id, &permanent.http_client);
+        vdaf_client,
+    ).build().await?;
 
-    let (l, h) = try_join!(f_leader, f_helper).await?;
-
-    Ok(CryptoConfig {
-        leader_hpke_config: l,
-        helper_hpke_config: h,
-    })
+    Ok(Box::new(c))
 }
+
+
 
 async fn get_parametrization(task_id: TaskId, l: Locations) -> Result<CommonStateParametrization> {
     let leader_param =
@@ -103,11 +139,14 @@ impl ClientState {
         };
 
         // we get a new crypto config if we were asked for it
-        let c = get_crypto_config(&permanent, round_settings.task_id, locations.clone()).await?;
+        // let c = get_crypto_config(&permanent, round_settings.task_id, locations.clone()).await?;
 
         // get a parametrization from locations
         let parametrization: CommonStateParametrization =
             get_parametrization(round_settings.task_id, locations.clone()).await?;
+
+        // we create a new client
+        let c = get_janus_client(round_settings.clone(), locations, parametrization.clone().vdaf_parameter).await?;
 
         Ok(ClientState {
             parametrization,
@@ -115,12 +154,13 @@ impl ClientState {
             round: ClientStateRound {
                 config: RoundConfig {
                     settings: round_settings,
-                    crypto: c,
+                    janus_client: c,
                 },
             },
         })
     }
 
+    /*
     //
     // Generate a round config for the next round.
     //
@@ -156,12 +196,24 @@ impl ClientState {
             })
         }
     }
+    */
 
     pub async fn update_to_next_round_config(
         &mut self,
         round_settings: RoundSettings,
     ) -> anyhow::Result<()> {
-        self.round.config = self.get_next_round_config(round_settings).await?;
+
+        // NOTE: We assume that the vdaf parameters don't change between tasks of the same session
+        //       If they could, we would have to get the current vdaf parameters here.
+
+        if round_settings.should_request_hpke_config {
+
+            // we create a new client
+            let c = get_janus_client(round_settings.clone(), self.parametrization.location.clone(), self.parametrization.clone().vdaf_parameter).await?;
+
+            self.round.config.janus_client = c;
+        }
+
         Ok(())
     }
 
@@ -171,7 +223,7 @@ impl ClientState {
         match measurement {
             VecFixedAny::VecFixed16(v) => self.get_submission_result_impl(v).await,
             VecFixedAny::VecFixed32(v) => self.get_submission_result_impl(v).await,
-            VecFixedAny::VecFixed64(v) => self.get_submission_result_impl(v).await,
+            // VecFixedAny::VecFixed64(v) => self.get_submission_result_impl(v).await,
         }
     }
 
@@ -204,32 +256,36 @@ impl ClientState {
         }
 
         // create vdaf instance
-        let num_aggregators = 2;
-        let len = self.parametrization.vdaf_parameter.gradient_len;
-        // let privacy_parameter = self.parametrization.vdaf_parameter.privacy_parameter.clone();
-        let vdaf_client: Prio3FixedPointBoundedL2VecSum<Fx> =
-            Prio3FixedPointBoundedL2VecSum::new_fixedpoint_boundedl2_vec_sum(
-                num_aggregators,
-                len,
-                // privacy_parameter, // actually this does not matter for the client
-            )?;
+        // let num_aggregators = 2;
+        // let len = self.parametrization.vdaf_parameter.gradient_len;
+        // // let privacy_parameter = self.parametrization.vdaf_parameter.privacy_parameter.clone();
+        // let vdaf_client: Prio3FixedPointBoundedL2VecSum<Fx> =
+        //     Prio3FixedPointBoundedL2VecSum::new_fixedpoint_boundedl2_vec_sum(
+        //         num_aggregators,
+        //         len,
+        //         // privacy_parameter, // actually this does not matter for the client
+        //     )?;
 
-        let parameters = ClientParameters::new(
-            self.round.config.settings.task_id,
-            self.parametrization.location.main.external_leader.clone(),
-            self.parametrization.location.main.external_helper.clone(),
-            // .get_external_aggregator_endpoints(),
-            self.round.config.settings.time_precision,
-        );
+        // let parameters = ClientParameters::new(
+        //     self.round.config.settings.task_id,
+        //     self.parametrization.location.main.external_leader.clone(),
+        //     self.parametrization.location.main.external_helper.clone(),
+        //     // .get_external_aggregator_endpoints(),
+        //     self.round.config.settings.time_precision,
+        // );
 
-        let client = Client::new(
-            parameters,
-            vdaf_client,
-            RealClock::default(),
-            &self.permanent.http_client,
-            self.round.config.crypto.leader_hpke_config.clone(),
-            self.round.config.crypto.helper_hpke_config.clone(),
-        );
+        // let client = Client::new(
+        //     parameters,
+        //     vdaf_client,
+        //     RealClock::default(),
+        //     &self.permanent.http_client,
+        //     self.round.config.crypto.leader_hpke_config.clone(),
+        //     self.round.config.crypto.helper_hpke_config.clone(),
+        // );
+        let client = match self.round.config.janus_client.downcast_ref::<Client<Prio3FixedPointBoundedL2VecSum<Fx>>>() {
+            Some(a) => a,
+            None => return Err(anyhow!("internal error: wrong janus client type!")),
+        };
 
         let () = client.upload(measurement).await?;
 
