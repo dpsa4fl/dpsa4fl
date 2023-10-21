@@ -153,7 +153,7 @@ impl<C: Clock> TaskProvisioner<C>
             vdafinst,
             training_session.verify_key.clone(),
             10,                                             // max_batch_query_count
-            Some(Time::from_seconds_since_epoch(deadline)), // task_expiration
+            None, // Some(Time::from_seconds_since_epoch(deadline)), // task_expiration
             None,                                           // report_expiry_age
             2,                                              // min_batch_size
             Duration::from_seconds(TIME_PRECISION),         // time_precision
