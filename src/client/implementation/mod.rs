@@ -229,11 +229,12 @@ impl ClientState
         round_settings: RoundSettings,
     ) -> anyhow::Result<()>
     {
+        self.round.config.settings = round_settings;
         // NOTE: We assume that the vdaf parameters don't change between tasks of the same session
         //       If they could, we would have to get the current vdaf parameters here.
 
-        if round_settings.should_request_hpke_config
-        {
+        // if round_settings.should_request_hpke_config
+        // {
             // we create a new client
             // let c = get_janus_client(
             //     round_settings.clone(),
@@ -243,7 +244,7 @@ impl ClientState
             // .await?;
 
             // self.round.config.janus_client = c;
-        }
+        // }
 
         Ok(())
     }
