@@ -14,6 +14,7 @@ See our [example project](https://github.com/dpsa-project/dpsa4fl-example-projec
 
 ## Changelog
 
+ - *Beta release 2* (2023-10-21): The library now works with the [official janus release](https://github.com/divviup/janus), and does not require a custom fork anymore.
  - *Beta release* (2023-05-09): Using the library is now more user-friendly (stream-lined configuration, more error checking). Automatic error recovery when gradients contain malformed data. Three bitsizes are now available for the internal fixed-point representation (16, 32, 64 bit).
  - *Differential privacy* (2023-02-27): Gradient vectors are now noised by the aggregators, the amount of noise is configurable. The discrete gaussian distribution is used for sampling.
  - *Initial release* (2023-01-19): The dpsa4fl library can be used for aggregation of gradient vectors (without differential privacy).
